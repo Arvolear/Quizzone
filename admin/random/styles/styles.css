@@ -1,0 +1,290 @@
+.add_columns {
+    display: flex;
+    padding-bottom: 10px;
+}
+
+.publish_columns {
+    display: flex;
+}
+
+.column_left {
+    flex: 50%;
+    padding-right: 15px;
+}
+
+.column_right {
+    flex: 50%;
+}
+
+.column_left_more {
+    flex: 52%;
+    padding-right: 12px;
+}
+
+.column_right_center {
+    display: flex;
+    flex: 15%;
+    justify-content: center;
+    align-items: center;
+}
+
+.green_submit:focus,
+.red_submit:focus,
+.blue_submit:focus {
+    outline: none;
+}
+
+.blue_submit:hover,
+.red_submit:hover,
+.green_submit:hover {
+    color: #eeeeee;
+}
+
+.green_submit {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    background: #66cc22;
+    border: 2px solid #111111;
+    color: #333333;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.green_submit:active {
+    border: 2px solid #66cc22;
+    outline: none;
+    color: #eeeeee;
+}
+
+.red_submit {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    background: #da312c;
+    border: 2px solid #111111;
+    color: #333333;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.red_submit:active {
+    border: 2px solid #da312c;
+    outline: none;
+    color: #eeeeee;
+}
+
+.blue_submit {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    background: #5754ee;
+    border: 2px solid #111111;
+    color: #333333;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.blue_submit:active {
+    border: 2px solid #5754ee;
+    color: #eeeeee;
+    outline: none;
+}
+
+.blue_radio:checked:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #5754ee;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+.green_radio:checked:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #66cc22;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+.green_text:focus {
+    border: 2px solid #66cc22;
+    outline: none;
+}
+
+.blue_text:focus {
+    border: 2px solid #5754ee;
+    outline: none;
+}
+
+.error {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #da312c;
+    transition: 0.2s;
+    color: white;
+}
+
+.confirm {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #5754ee;
+    transition: 0.2s;
+    color: white;
+    text-align: center;
+}
+
+.success {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #66cc22;
+    transition: 0.2s;
+    color: white;
+}
+
+.closeButton {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 30px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.confirm_button {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    background: transparent;
+    border: 2px solid #eeeeee;
+    color: #eeeeee;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.confirm_button:active {
+    color: #111111;
+    border: 2px solid #5754ee;
+    outline: none;
+}
+
+.confirm_button:focus {
+    outline: none;
+}
+
+.confirm_button:hover {
+    color: #111111;
+}
+
+.closeButton:hover {
+    color: #111111;
+}
+
+.blue_file {
+    width: 99.8%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    background: #5754ee;
+    border: 2px solid #111111;
+    color: #333333;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+}
+
+.blue_file:active {
+    color: #eeeeee;
+    border: 2px solid #5754ee;
+    outline: none;
+}
+
+.blue_file:focus {
+    outline: none;
+}
+
+.blue_file:hover {
+    color: #eeeeee;
+}
+
+.green_check {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    background: #da312c;
+    border: 2px solid #111111;
+    color: #333333;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+}
+
+.green_check_clicked {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    background: #66cc22;
+    border: 2px solid #111111;
+    color: #333333;
+    font-size: 20px;
+    font-family: 'Aldrich';
+    font-weight: bold;
+    transition: 0.2s;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+}
+
+.green_check:focus,
+.green_check_clicked:focus {
+    outline: none;
+}
+
+.green_check:hover,
+.green_check_clicked:hover {
+    color: #eeeeee;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+input[type="checkbox"] {
+    display: none;
+}

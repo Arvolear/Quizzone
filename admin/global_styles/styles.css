@@ -1,0 +1,203 @@
+html {
+    font-family: 'Aldrich';
+    font-weight: bold;
+}
+
+body {
+    background: #111111;
+}
+
+a {
+    color: #eeeeee;
+    text-decoration: none;
+}
+
+table,
+th,
+td {
+    border: 1px solid #eeeeee;
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    height: 50px;
+    font-size: 20px;
+    font-weight: normal;
+}
+
+td {
+    font-size: 17px;
+    height: 35px;
+}
+
+label {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.normal {
+    font-size: 19px;
+    font-weight: normal;
+}
+
+.tableButton {
+    width: 170px;
+}
+
+.tableId {
+    width: 40px;
+}
+
+.current_page {
+    text-decoration: underline;
+}
+
+.name {
+    color: #EEEEEE;
+    font-size: 50px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.main_header {
+    max-width: 1300px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 80px;
+    font-size: 40px;
+    font-weight: normal
+}
+
+.other_header {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.back_page {
+    line-height: 80px;
+    font-size: 20px;
+    padding: 20px;
+}
+
+.sub_header {
+    line-height: 80px;
+    font-size: 40px;
+    font-weight: normal;
+    margin-left: 200px;
+}
+
+.diff_page {
+    color: #EEEEEE;
+    vertical-align: middle;
+    padding: 20px;
+}
+
+.content {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.card {
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+}
+
+.card_question {
+    padding: 20px;
+    color: #EEEEEE;
+    background: #333333;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.grid {
+    display: flex;
+    margin-top: 10px;
+}
+
+.radio_label {
+    flex: 25%;
+    text-align: center;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 23px;
+}
+
+.table {
+    padding: 20px;
+    color: #EEEEEE;
+    background: #333333;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.quiz {
+    font-size: 34px;
+    text-align: center;
+    text-decoration: underline;
+}
+
+.space {
+    margin-top: 15px;
+}
+
+input[type=text] {
+    width: 100%;
+    padding: 5px 10px;
+    margin: 7px 0;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 2px solid #EEEEEE;
+    font-family: 'Aldrich';
+    font-size: 18px;
+    background: #555555;
+    color: #EEEEEE;
+    transition: 0.2s;
+}
+
+input[type=password] {
+    width: 100%;
+    padding: 5px 10px;
+    margin: 7px 0;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 2px solid #EEEEEE;
+    font-family: 'Aldrich';
+    font-size: 18px;
+    background: #555555;
+    color: #EEEEEE;
+    transition: 0.2s;
+}
+
+input[type=radio]:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #d1d3d1;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+    transition: 0.2s;
+    cursor: pointer;
+}
