@@ -1,10 +1,10 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.6.2;
 
 import "../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 
 contract Booster is ERC721 {
-    address private _creator;
+    address payable private _creator;
     uint256 private _price;
 
     Counters.Counter private _curTokenId;
@@ -14,39 +14,50 @@ contract Booster is ERC721 {
         _price = price;
     }
 
-    function changePrice(uint256 price) external {
+    function withdrawAll() public {
+        require(msg.sender == _creator);
+
+        _creator.transfer(address(this).balance);
+    }
+
+    function getPrice() public view returns(uint256) {
+        return _price;
+    }
+
+    function changePrice(uint256 price) public {
         require(msg.sender == _creator);
         require(price > 0);
 
         _price = price;
     }
 
-    function buy(address player, uint265 quantity) external payable {
-        require(msg.value == mul(_price, quantity));
+    function buy(address player, uint256 quantity) public payable {
+        require(msg.value == SafeMath.mul(_price, quantity));
         require(quantity > 0);
 
-        for (uint256 i = 0; i < quantity; i = add(i, 1)) {
-            _curTokenId.increment();
+        for (uint256 i = 0; i < quantity; i = SafeMath.add(i, 1)) {
+            Counters.increment(_curTokenId);
 
-            uint256 newTokenId = _curTokenId.current();
-            _safeMint(player, newItemId);
+            uint256 newTokenId = Counters.current(_curTokenId);
+            _safeMint(player, newTokenId);
         }
     }
 
-    function burn(address player, uint256 token) external {
-        require(_isApprovedOrOwner(player, token));
+    function burn(address player, uint256[] memory tokens) public {
+        for (uint256 i = 0; i < tokens.length; i = SafeMath.add(i, 1)) {
+            require(_isApprovedOrOwner(player, tokens[i]));
 
-        _burn(token);
+            _burn(tokens[i]);
+        }
     }
 
-    function getOwnedTokens(address player) returns (uint256[]) {
-        EnumerableSet.UintSet playerSet = _holderTokens[address];
+    function getOwnedTokens(address player) public view returns (uint256[] memory) {        
         uint256 playerBalance = balanceOf(player);
 
-        uint265[] tokens = new uint256(playerBalance);
+        uint256[] memory tokens = new uint256[](playerBalance);
 
-        for (uint256 i = 0; i < playerBalance; i = add(i, 1)) {
-            tokens[i] = playerSet.at(i);
+        for (uint256 i = 0; i < playerBalance; i = SafeMath.add(i, 1)) {
+            tokens[i] = tokenOfOwnerByIndex(player, i);
         }
 
         return tokens;
