@@ -13,9 +13,12 @@ import { LifetimeBestScreen } from "../entities/lifetime_best_screen"
 import { TimedQuizScreen } from "../entities/timed_quiz_screen"
 import { TimerSystem } from "../systems/timer_system"
 import { Beam } from "../entities/beam"
+import { UI } from "./ui"
 
 export class App
 {
+    private ui: UI;
+
     private buttons: Array<Button> = []
 
     private beams: Array<Beam> = []
@@ -35,14 +38,15 @@ export class App
     private static SCALE_OFFSET = 0.1
 
     constructor()
-    {
+    {        
         this.configureButtons()
         this.configureBeams()
         this.configureScreens()
         this.configureSocket()
         this.configureSystems()
+        this.configureUI()
     }
-
+    
     private configureBeams(): void
     {
         let beam1 = new Beam(
@@ -108,6 +112,11 @@ export class App
         engine.addSystem(new ResultsSystem())
         engine.addSystem(new ScreenDistanceSystem(this.dappClientSocket))
         engine.addSystem(new TimerSystem())
+    }
+
+    private configureUI(): void
+    {
+        this.ui = new UI(this.dappClientSocket);
     }
 
     startGame(): void

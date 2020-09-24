@@ -4,5 +4,5 @@
     "allowJs": true
   },
   "include": ["src/**/*.ts"],
-  "extends": "./node_modules/decentraland-ecs/types/tsconfig.json"
+  "extends": "./node_modules/decentraland-ecs/types/tsconfig.json",  
 }
