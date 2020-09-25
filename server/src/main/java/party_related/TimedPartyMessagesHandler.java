@@ -1,6 +1,6 @@
 package party_related;
 
-import org.eclipse.jetty.websocket.api.Session;
+import game.Client;
 
 public class TimedPartyMessagesHandler extends PartyMessagesHandler
 {
@@ -37,7 +37,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     }
 
     @Override
-    public String getFinishMessage(Session player)
+    public String getFinishMessage(Client player)
     {
         return "finish\n" +
                 "Thanks for playing! See you in a week!\n" +

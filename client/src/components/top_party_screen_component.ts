@@ -5,6 +5,7 @@ export class TopPartyScreenComponent
     topPartyPlayersLoaded: boolean
 
     selectedButton: number
+    mustSelectedButton: number
 
     constructor()
     {
@@ -17,5 +18,6 @@ export class TopPartyScreenComponent
         this.topPartyPlayersLoaded = false
 
         this.selectedButton = -1
+        this.mustSelectedButton = -1
     }
 }

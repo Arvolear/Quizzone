@@ -1,6 +1,6 @@
 package party_related;
 
-import org.eclipse.jetty.websocket.api.Session;
+import game.Client;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -59,11 +59,47 @@ public class PartyMessagesHandler
                 timeLeft;
     }
 
+    public String getShowMessage(String type)
+    {
+        if (type.equals("autocomplete") || type.equals("autocut"))
+        {
+            return type + "\n" + "show";
+        }
+
+        return "";
+    }
+
+    public String getDisplayMessage(String type)
+    {
+        if (type.equals("autocomplete"))
+        {
+            return type + "\n" + "display" + "\n" + party.questionnaire.getCurrentQuestion().getAnswer();
+        }
+        else if (type.equals("autocut"))
+        {
+            // TODO
+        }
+
+        return "";
+    }
+
+    public String getHideMessage(String type)
+    {
+        if (type.equals("autocomplete") || type.equals("autocut"))
+        {
+            return type + "\n" + "hide";
+        }
+
+        return "";
+    }
+
     public String getStartMessage()
     {
         Question question = party.questionnaire.getCurrentQuestion();
 
         return "start\n" +
+                Party.AUTOCOMPLETE_PRICE + "\n" +
+                Party.AUTOCUT_PRICE + "\n" +
                 party.questionnaire.getTotalNumber() + "\n" +
                 question.toString();
     }
@@ -94,7 +130,7 @@ public class PartyMessagesHandler
                 "Sorry, that's wrong!";
     }
 
-    public String getFinishMessage(Session player)
+    public String getFinishMessage(Client player)
     {
         return "finish\n" +
                 "Thanks for playing!\n" +
@@ -113,14 +149,14 @@ public class PartyMessagesHandler
         builder.append("top_party\n").
                 append("Party best\n");
 
-        ArrayList<Map.Entry<Session, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
+        ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
 
         topParty.sort((left, right) ->
         {
             int res = right.getValue() - left.getValue();
 
             return res == 0 ?
-                    party.playingPlayers.get(left.getKey()).compareTo(party.playingPlayers.get(right.getKey())) :
+                    party.playingPlayers.get(left.getKey()).getNick().compareTo(party.playingPlayers.get(right.getKey()).getNick()) :
                     res;
         });
 
@@ -134,7 +170,7 @@ public class PartyMessagesHandler
             }
 
             builder.append(place).append(") ").
-                    append(party.playingPlayers.get(pair.getKey())).
+                    append(pair.getKey().getNick()).
                     append(" ----- ").append(pair.getValue()).
                     append("/").
                     append(party.questionnaire.getTotalNumber()).
@@ -146,15 +182,15 @@ public class PartyMessagesHandler
         return builder.toString();
     }
 
-    public String getLifetimeBestResponse(Session player)
+    public String getLifetimeBestResponse(Client player)
     {
         return getLifetimeBestResponse(party.sqlAccess.getAllLifetimeBest(), player);
     }
 
-    public String getLifetimeBestResponse(ArrayList<String> allLifetimeBest, Session player)
+    public String getLifetimeBestResponse(ArrayList<String> allLifetimeBest, Client player)
     {
         StringBuilder builder = new StringBuilder();
-        String lifetimeBest = party.sqlAccess.getLifetimeBest(party.idlePlayers.get(player));
+        String lifetimeBest = party.sqlAccess.getLifetimeBest(player.getNick());
 
         builder.append("lifetime_best\n").
                 append("Lifetime best\n");

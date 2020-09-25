@@ -1,130 +1,135 @@
 import { DappClientSocket } from "./dapp_client_socket";
 import { getUserData } from "@decentraland/Identity"
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
+import * as ui from '../../node_modules/@dcl/ui-utils/index'
+import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types";
+import { UIPropertiesComponent } from "../components/ui_properties_component";
+import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index";
 
 export class UI 
 {
+    private static ui: UI
+
+    private static properties: Entity
+
     private static canvas: UICanvas
     private static dappClientSocket: DappClientSocket
+    
+    private static autocompleter: ui.CustomPrompt
+    private static fundsError: ui.CustomPrompt
 
-    private static background: UIImage
-    private static centralRect: UIContainerRect
-    private static errorRect: UIContainerRect
     private static bottomRect: UIContainerRect
+    private static autocompleteButton: UIImage
 
-    constructor(dappClientSocket: DappClientSocket)
+    // private static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
+    private static myWallet = "0x0704675A283396508c4C989570BC4b63D6e331B0"
+    private static network = "goerli"
+
+    private constructor()
     {
-        UI.canvas = new UICanvas()
-        UI.dappClientSocket = dappClientSocket
+        UI.canvas = new UICanvas()                
 
+        this.configureProperties()
         this.configInitialDisplay()
     }
 
-    private configInitialDisplay(): void
+    public static setClientSocket(dappClientSocket: DappClientSocket): void
     {
-        UI.background = new UIImage(UI.canvas, null);        
-        UI.background.width = "100%"
-        UI.background.height = "100%"    
-        UI.background.onClick = new OnClick(this.closeConfirm)
-        UI.background.visible = false;        
-
-        this.configCentral()
-        this.configBottom()
-        this.configError()
+        UI.dappClientSocket = dappClientSocket;
     }
+
+    public static getInstance(): UI
+    {
+        if (UI.ui == null)
+        {
+            UI.ui = new UI()
+        }
+
+        return UI.ui;
+    }
+
+    private configureProperties(): void
+    {
+        UI.properties = new Entity()
+
+        UI.properties.addComponent(new UIPropertiesComponent())
+
+        engine.addEntity(UI.properties)
+    }
+
+    private configInitialDisplay(): void
+    {        
+        this.configBottom()   
+        this.configAutocomplete()    
+        this.configError() 
+    }    
 
     private configError(): void
     {
-        UI.errorRect = new UIContainerRect(UI.canvas)
-        UI.errorRect.adaptHeight = true
-        UI.errorRect.adaptWidth = true
-        UI.errorRect.width = "100%"
-        UI.errorRect.vAlign = "center"
+        UI.fundsError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UI.fundsError.addText('Error', 0, 153, Color4.Black(), 30)
+        UI.fundsError.addText('Not enough funds', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UI.fundsError.addText('Please consider transferring', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)        
+        UI.fundsError.addText('MANA to matic', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
-        let fundsPath = "images/not_enough_funds.png"
-        let fundsTexture = new Texture(fundsPath);
+        UI.fundsError.addButton(
+            'Close',
+            -0,
+            -120,
+            () =>
+            {
+                UI.closeConfirm()
+            },
+            ButtonStyles.F
+        )
 
-        let errorDialog = new UIImage(UI.errorRect, fundsTexture);
-        errorDialog.hAlign = "center"
-        errorDialog.sourceWidth = 1920
-        errorDialog.sourceHeight = 1080
-        errorDialog.positionY = "50px"
-        errorDialog.width = 533
-        errorDialog.height = 300 
-
-        let crossPath = "images/cross.png"
-        let crossTexture = new Texture(crossPath);
-
-        let crossButton = new UIImage(UI.errorRect, crossTexture);
-        crossButton.hAlign = "center"
-        crossButton.sourceWidth = 700
-        crossButton.sourceHeight = 700
-        crossButton.positionX = "222px"
-        crossButton.positionY = "153px"
-        crossButton.width = 35
-        crossButton.height = 35
-        crossButton.onClick = new OnClick(this.closeConfirm)
-
-        UI.errorRect.visible = false;
+        UI.fundsError.close()
     }
 
-    private configCentral(): void
+    public updateAutocompletePrice()
     {
-        UI.centralRect = new UIContainerRect(UI.canvas)
-        UI.centralRect.adaptHeight = true
-        UI.centralRect.adaptWidth = true
-        UI.centralRect.width = "100%"
-        UI.centralRect.vAlign = "center"
+        let valueText = UI.autocompleter.elements[2] as CustomPromptText
+        valueText.text.value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
+    }
 
-        let confirmPath = "images/confirm.png"
-        let confirmTexture = new Texture(confirmPath);
+    public updateAutocutPrice()
+    {
+        // TODO
+    }
 
-        let confirmDialog = new UIImage(UI.centralRect, confirmTexture);
-        confirmDialog.hAlign = "center"
-        confirmDialog.sourceWidth = 1920
-        confirmDialog.sourceHeight = 1080
-        confirmDialog.positionY = "50px"
-        confirmDialog.width = 533
-        confirmDialog.height = 300   
+    private configAutocomplete()
+    {
+        UI.autocompleter = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UI.autocompleter.addText('Autocompleter', 0, 153, Color4.Black(), 30)
+        UI.autocompleter.addText('Pay', -90, 80, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UI.autocompleter.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -20, 80, new Color4(1.0, 0.15, 0.3, 1.0), 33)
+        UI.autocompleter.addText('MANA', 70, 80, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UI.autocompleter.addText('to autocomplete', 0, 30, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UI.autocompleter.addText('the question?', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 30)
 
-        let noPath = "images/no.png"
-        let noTexture = new Texture(noPath);
-        
-        let noButton = new UIImage(UI.centralRect, noTexture);
-        noButton.hAlign = "center"
-        noButton.sourceWidth = 711
-        noButton.sourceHeight = 400
-        noButton.positionX = "-110px"
-        noButton.width = 195
-        noButton.height = 110
-        noButton.onClick = new OnClick(this.closeConfirm)
+        UI.autocompleter.addButton(
+            'Yeah',
+            -95,
+            -120,
+            () =>
+            {
+                UI.checkBuyAutocomplete()
+            },
+            ButtonStyles.E
+        )
 
-        let yesPath = "images/yes.png"
-        let yesTexture = new Texture(yesPath);
+        UI.autocompleter.addButton(
+            'Nope',
+            95,
+            -120,
+            () =>
+            {
+                UI.closeConfirm()
+            },
+            ButtonStyles.F
+        )        
 
-        let yesButton = new UIImage(UI.centralRect, yesTexture);
-        yesButton.hAlign = "center"
-        yesButton.sourceWidth = 711
-        yesButton.sourceHeight = 400
-        yesButton.positionX = "110px"
-        yesButton.width = 195
-        yesButton.height = 110
-        yesButton.onClick = new OnClick(this.buy);
-
-        let crossPath = "images/cross.png"
-        let crossTexture = new Texture(crossPath);
-
-        let crossButton = new UIImage(UI.centralRect, crossTexture);
-        crossButton.hAlign = "center"
-        crossButton.sourceWidth = 700
-        crossButton.sourceHeight = 700
-        crossButton.positionX = "222px"
-        crossButton.positionY = "153px"
-        crossButton.width = 35
-        crossButton.height = 35
-        crossButton.onClick = new OnClick(this.closeConfirm)
-
-        UI.centralRect.visible = false
+        UI.autocompleter.close()
     }
 
     private configBottom(): void
@@ -135,48 +140,61 @@ export class UI
         UI.bottomRect.width = "100%"
         UI.bottomRect.vAlign = "bottom"
         UI.bottomRect.opacity = 0.9
-    
+
         let autocompletePath = "images/autocomplete.png"
         let autocompleteTexture = new Texture(autocompletePath);
 
-        let autocompleteButton = new UIImage(UI.bottomRect, autocompleteTexture);
-        autocompleteButton.hAlign = "center"
-        autocompleteButton.sourceWidth = 3000
-        autocompleteButton.sourceHeight = 600
-        autocompleteButton.positionY = "-5px"
-        autocompleteButton.width = 300
-        autocompleteButton.height = 60
-        autocompleteButton.onClick = new OnClick(this.showConfirm)
+        UI.autocompleteButton = new UIImage(UI.bottomRect, autocompleteTexture);
+        UI.autocompleteButton.hAlign = "center"
+        UI.autocompleteButton.sourceWidth = 3000
+        UI.autocompleteButton.sourceHeight = 600
+        UI.autocompleteButton.positionY = "-5px"
+        UI.autocompleteButton.width = 300
+        UI.autocompleteButton.height = 60
+        UI.autocompleteButton.onClick = new OnClick(this.showConfirmAutocomplete)
     }
 
-    private showConfirm(): void
-    {     
-        UI.canvas.isPointerBlocker = true
-        UI.background.visible = true
-        UI.background.opacity = 0.0;
-        UI.centralRect.visible = true
-        UI.bottomRect.visible = false        
+    private showConfirmAutocomplete(): void
+    {
+        UI.canvas.isPointerBlocker = true         
+
+        UI.autocompleter.reopen()
     }
 
-    private closeConfirm(): void
-    {        
-        UI.canvas.isPointerBlocker = false
-        UI.background.visible = false
-        UI.centralRect.visible = false
-        UI.bottomRect.visible = true      
-        UI.errorRect.visible = false;  
+    private static closeConfirm(): void
+    {
+        UI.canvas.isPointerBlocker = false        
+
+        UI.autocompleter.close()
+        UI.fundsError.close()
     }
 
     private static displayNotEnoughFunds(): void
     {
-        UI.errorRect.visible = true;
+        UI.autocompleter.close()
+        UI.fundsError.reopen()
     }
 
-    private buy(): void
+    private static buyAutocomplete(wallet): void
+    {
+        const sendAutocomplete = executeTask(async () =>
+        {
+            await matic.sendMana(this.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, UI.network).then(() => 
+            {
+                var toSend = "buy_autocomlete\n" + wallet
+
+                this.dappClientSocket.send(toSend)
+            })
+        })
+
+        sendAutocomplete.then()
+    }
+
+    private static checkBuyAutocomplete(): void
     {
         const playerDataPromise = executeTask(async () =>
-        {            
-            let data = await getUserData()       
+        {
+            let data = await getUserData()
             let wallet = data.publicKey;
 
             return wallet
@@ -186,16 +204,53 @@ export class UI
         {
             const balancePromise = executeTask(async () =>
             {
-                return await matic.balance(wallet, "goerli")                
+                return await matic.balance(wallet, UI.network)
             })
 
             balancePromise.then((balance) => 
             {
-                if (balance.l2 < 100)
+                if (balance.l2 < UI.properties.getComponent(UIPropertiesComponent).autocompletePrice)
                 {
                     UI.displayNotEnoughFunds()
                 }
+                else
+                {
+                    UI.buyAutocomplete(wallet)
+                }
             });
         })
+    }
+
+    public showAutocomplete(): void
+    {
+        UI.autocompleteButton.visible = true
+    }
+
+    public hideAutocomplete(): void
+    {
+        UI.canvas.isPointerBlocker = false
+
+        UI.autocompleter.close()
+        UI.fundsError.close()
+        UI.autocompleteButton.visible = false
+    }
+
+    public showAutocut(): void
+    {
+        // UI.autocutButton.visible = true
+    }
+
+    public hideAutocut(): void
+    {
+        // UI.canvas.isPointerBlocker = false
+
+        // UI.autocutter.close()
+        // UI.fundsError.close()
+        // UI.autocompleteButton.visible = false
+    }
+
+    public getProperties(): Entity
+    {
+        return UI.properties
     }
 }

@@ -19,7 +19,7 @@ public class Controller implements IStopWatchCallback
     private boolean canConnectToTimedParty;
 
     private final ConcurrentHashMap<String, Party> realmToParties;
-    private final ConcurrentHashMap<Session, String> playerToRealm;
+    private final ConcurrentHashMap<Session, Client> sessionToPlayer;
 
     public static Controller getInstance()
     {
@@ -43,12 +43,12 @@ public class Controller implements IStopWatchCallback
         timedParty.loadCategory();
 
         realmToParties = new ConcurrentHashMap<>();
-        playerToRealm = new ConcurrentHashMap<>();
+        sessionToPlayer = new ConcurrentHashMap<>();
     }
 
-    synchronized public void receiveMessage(Session player, String message)
+    synchronized public void receiveMessage(Session session, String message)
     {
-        if (!player.isOpen() || message.isEmpty())
+        if (!session.isOpen() || message.isEmpty())
         {
             return;
         }
@@ -59,23 +59,26 @@ public class Controller implements IStopWatchCallback
         {
             case "connect":
             {
-                if (lines.length > 2)
+                if (lines.length > 3)
                 {
+                    String realm = lines[1];
+                    String wallet = lines[2];
+                    String nick = lines[3];
+
+                    Client player = new Client(session, realm, wallet, nick);
+
                     if (canConnectToTimedParty)
                     {
-                        String realm = lines[1];
-                        String nick = lines[2];
-
-                        if (!playerToRealm.containsKey(player))
+                        if (!sessionToPlayer.containsKey(session))
                         {
-                            playerToRealm.put(player, realm);
+                            sessionToPlayer.put(session, player);
                         }
 
-                        timedParty.connectPlayer(player, nick);
+                        timedParty.connectPlayer(player);
                     }
                     else
                     {
-                        connectToParty(player, lines);
+                        connectToParty(player);
                     }
                 }
 
@@ -85,27 +88,28 @@ public class Controller implements IStopWatchCallback
             {
                 if (canJoinTimedParty)
                 {
-                    timedParty.joinPlayer(player);
+                    timedParty.joinPlayer(sessionToPlayer.get(session));
                 }
                 else if (!canConnectToTimedParty)
                 {
-                    joinParty(player);
+                    joinParty(session);
                 }
 
                 break;
             }
             default:
             {
-                if (playerToRealm.containsKey(player))
+                if (sessionToPlayer.containsKey(session))
                 {
+                    Client player = sessionToPlayer.get(session);
+
                     if (canJoinTimedParty)
                     {
                         timedParty.receive(player, message);
                     }
                     else
                     {
-                        String realm = playerToRealm.get(player);
-                        realmToParties.get(realm).receive(player, message);
+                        realmToParties.get(player.getRealm()).receive(player, message);
                     }
                 }
 
@@ -114,50 +118,45 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized private void connectToParty(Session player, String[] lines)
+    synchronized private void connectToParty(Client player)
     {
-        String realm = lines[1];
-        String nick = lines[2];
-
-        if (!playerToRealm.containsKey(player))
+        if (!sessionToPlayer.containsKey(player.getSession()))
         {
-            playerToRealm.put(player, realm);
+            sessionToPlayer.put(player.getSession(), player);
         }
 
-        if (realmToParties.containsKey(realm))
+        if (realmToParties.containsKey(player.getRealm()))
         {
-            Party party = realmToParties.get(realm);
-            party.connectPlayer(player, nick);
+            Party party = realmToParties.get(player.getRealm());
+            party.connectPlayer(player);
         }
         else
         {
             Party party = new Party();
             party.loadCategory();
-            party.connectPlayer(player, nick);
+            party.connectPlayer(player);
 
-            realmToParties.put(realm, party);
+            realmToParties.put(player.getRealm(), party);
         }
     }
 
-    synchronized private void joinParty(Session player)
+    synchronized private void joinParty(Session session)
     {
-        if (playerToRealm.containsKey(player))
+        if (sessionToPlayer.containsKey(session))
         {
-            String realm = playerToRealm.get(player);
-            Party party = realmToParties.get(realm);
+            Client player = sessionToPlayer.get(session);
+            Party party = realmToParties.get(player.getRealm());
 
             party.joinPlayer(player);
         }
     }
 
-    synchronized private void disconnectFromParty(Session player)
+    synchronized private void disconnectFromParty(Client player)
     {
-        String realm = playerToRealm.get(player);
-
-        if (realm != null)
+        if (player != null)
         {
-            playerToRealm.remove(player);
-            Party party = realmToParties.get(realm);
+            sessionToPlayer.remove(player.getSession());
+            Party party = realmToParties.get(player.getRealm());
 
             if (party != null)
             {
@@ -171,17 +170,17 @@ public class Controller implements IStopWatchCallback
                 if (party.isEmpty())
                 {
                     party.close();
-                    realmToParties.remove(realm);
+                    realmToParties.remove(player.getRealm());
                 }
             }
-        }
 
-        timedParty.disconnectPlayer(player);
+            timedParty.disconnectPlayer(player);
+        }
     }
 
-    synchronized public void disconnect(Session player)
+    synchronized public void disconnect(Session session)
     {
-        disconnectFromParty(player);
+        disconnectFromParty(sessionToPlayer.get(session));
 
         if (timedParty.isLocked() && timedParty.isPlayingEmpty())
         {
@@ -200,9 +199,9 @@ public class Controller implements IStopWatchCallback
                 continue;
             }
 
-            for (var player : party.idlePlayers.keySet())
+            for (var player : party.idlePlayers.values())
             {
-                timedParty.connectPlayer(player, party.idlePlayers.get(player));
+                timedParty.connectPlayer(player);
             }
         }
     }
@@ -215,12 +214,9 @@ public class Controller implements IStopWatchCallback
             party.clear();
         }
 
-        for (var player : timedParty.idlePlayers.keySet())
+        for (var player : timedParty.idlePlayers.values())
         {
-            String nick = timedParty.idlePlayers.get(player);
-            String realm = playerToRealm.get(player);
-
-            connectToParty(player, new String[]{"connect", realm, nick});
+            connectToParty(player);
         }
 
         timedParty.clear();

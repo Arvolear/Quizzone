@@ -1,8 +1,8 @@
 package party_related;
 
+import game.Client;
 import game.Controller;
 import game.StopWatch;
-import org.eclipse.jetty.websocket.api.Session;
 
 import java.util.*;
 
@@ -125,9 +125,9 @@ public class TimedParty extends Party
     }
 
     @Override
-    synchronized public void connectPlayer(Session player, String nick)
+    synchronized public void connectPlayer(Client player)
     {
-        super.connectPlayer(player, nick);
+        super.connectPlayer(player);
 
         TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
 
@@ -139,7 +139,7 @@ public class TimedParty extends Party
     }
 
     @Override
-    synchronized public void joinPlayer(Session player)
+    synchronized public void joinPlayer(Client player)
     {
         if (locked || started || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
         {
@@ -178,7 +178,7 @@ public class TimedParty extends Party
     }
 
     @Override
-    synchronized public void disconnectPlayer(Session player)
+    synchronized public void disconnectPlayer(Client player)
     {
         updateBestFor(player);
 

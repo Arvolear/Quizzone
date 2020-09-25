@@ -14,6 +14,7 @@ import { TimedQuizScreen } from "../entities/timed_quiz_screen"
 import { TimerSystem } from "../systems/timer_system"
 import { Beam } from "../entities/beam"
 import { UI } from "./ui"
+import { UISystem } from "../systems/ui_system"
 
 export class App
 {
@@ -43,8 +44,8 @@ export class App
         this.configureBeams()
         this.configureScreens()
         this.configureSocket()
-        this.configureSystems()
         this.configureUI()
+        this.configureSystems()        
     }
     
     private configureBeams(): void
@@ -105,6 +106,12 @@ export class App
         this.dappClientSocket = new DappClientSocket()
     }
 
+    private configureUI(): void
+    {
+        UI.setClientSocket(this.dappClientSocket);
+        this.ui = UI.getInstance()        
+    }
+
     private configureSystems(): void
     {
         engine.addSystem(new ButtonStandTrackerSystem())
@@ -112,12 +119,8 @@ export class App
         engine.addSystem(new ResultsSystem())
         engine.addSystem(new ScreenDistanceSystem(this.dappClientSocket))
         engine.addSystem(new TimerSystem())
-    }
-
-    private configureUI(): void
-    {
-        this.ui = new UI(this.dappClientSocket);
-    }
+        engine.addSystem(new UISystem())
+    }    
 
     startGame(): void
     {

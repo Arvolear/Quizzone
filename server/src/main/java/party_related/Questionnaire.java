@@ -75,4 +75,9 @@ public class Questionnaire
     {
         return totalNumber;
     }
+
+    public boolean isLast()
+    {
+        return currentQuestion == totalNumber - 1;
+    }
 }

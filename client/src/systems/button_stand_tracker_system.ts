@@ -34,7 +34,8 @@ export class ButtonStandTrackerSystem implements ISystem
         
         this.clearButtonsColor()
 
-        if (topBlockComp != null || centralBlockComp != null)
+        if ((topBlockComp != null || centralBlockComp != null) && 
+            this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton == -1)
         {
             return
         }
@@ -43,17 +44,21 @@ export class ButtonStandTrackerSystem implements ISystem
         {            
             let dist = this.distanceXYZ(button.getComponent(Transform).position, Camera.instance.position)      
 
-            if (dist < ButtonStandTrackerSystem.DISTANCE)
+            if (this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton != -1)
+            {
+                button.getComponent(Material).albedoColor = Color3.FromHexString("#80ffb0")
+
+                var index = button.getComponent(ButtonComponent).index                
+
+                this.displayText(index)
+                this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = 
+                    this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton
+            }
+            else if (dist < ButtonStandTrackerSystem.DISTANCE)
             {            
                 button.getComponent(Material).albedoColor = Color3.FromHexString("#80b0ff")               
 
                 var index = button.getComponent(ButtonComponent).index
-                var curIndex = this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton
-
-                if (index == curIndex)
-                {
-                    return
-                }
 
                 this.displayText(index)
                 this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = index                

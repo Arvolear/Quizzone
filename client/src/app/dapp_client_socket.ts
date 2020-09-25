@@ -8,6 +8,7 @@ import { Question } from "./question"
 import { TopPartyScreenComponent } from "../components/top_party_screen_component"
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
+import { UIPropertiesComponent } from "../components/ui_properties_component"
 
 export class DappClientSocket
 {
@@ -60,12 +61,16 @@ export class DappClientSocket
         let lifetimeBestScreenMain = engine.getComponentGroup(LifetimeBestScreenComponent).entities[0]
         let timedQuizScreenMain = engine.getComponentGroup(TimedQuizScreenComponent).entities[0]
 
+        let uiProperties = engine.getComponentGroup(UIPropertiesComponent).entities[0]
+
         var centralComp = centralScreenMain.getComponent(CentralScreenComponent)
         var leftComp = leftScreenMain.getComponent(LeftScreenComponent)
         var rightComp = rightScreenMain.getComponent(RightScreenComponent)
         var topComp = topPartyScreenMain.getComponent(TopPartyScreenComponent)
         var bestComp = lifetimeBestScreenMain.getComponent(LifetimeBestScreenComponent)
         var timedComp = timedQuizScreenMain.getComponent(TimedQuizScreenComponent)
+
+        var uiComp = uiProperties.getComponent(UIPropertiesComponent)
 
         var message = event.data
         var lines = message.split("\n")
@@ -92,19 +97,49 @@ export class DappClientSocket
 
                     break
                 }
-            case "start":
+            case "autocomplete":
                 {
-                    var totalQuestions = parseInt(lines[1])
+                    var action = lines[1]
+
+                    if (action == "show")
+                    {
+                        uiComp.autocompleteVisible = true
+                    }
+                    else if (action == "hide")
+                    {
+                        uiComp.autocompleteVisible = false
+                    }
+                    else if (action == "display")
+                    {
+                        topComp.mustSelectedButton = parseInt(lines[2])
+                    }
+
+                    break
+                }
+            case "autocut":
+                {
+                    // TODO
+
+                    break
+                }
+            case "start":
+                {                    
+                    var autocompletePrice = parseInt(lines[1])
+                    var autocutPrice = parseInt(lines[2])
+                    var totalQuestions = parseInt(lines[3])
 
                     let question = new Question(
-                        lines[3],
+                        lines[5],
                         [
-                            lines[4],
-                            lines[5],
                             lines[6],
-                            lines[7]
+                            lines[7],
+                            lines[8],
+                            lines[9]
                         ]
                     )
+
+                    uiComp.autocompletePrice = autocompletePrice
+                    uiComp.autocutPrice = autocutPrice
 
                     centralComp.question = question
                     leftComp.totalQuestions = totalQuestions
@@ -273,8 +308,9 @@ export class DappClientSocket
 
             let realmName = `${JSON.stringify(realm.displayName)}`
             let nick = data.displayName
+            let wallet = data.publicKey
 
-            response += realmName + "\n" + nick;
+            response += realmName + "\n" + wallet + "\n" + nick;
 
             return response
         })

@@ -1,9 +1,9 @@
 package party_related;
 
+import game.Client;
 import game.IStopWatchCallback;
 import game.StopWatch;
 import log.QuizLogger;
-import org.eclipse.jetty.websocket.api.Session;
 import sql.SQLAccess;
 
 import java.util.ArrayList;
@@ -19,14 +19,20 @@ public class Party implements IStopWatchCallback
     public final Questionnaire questionnaire;
     public final SQLAccess sqlAccess;
 
-    public final ConcurrentHashMap<Session, String> idlePlayers;
-    public final ConcurrentHashMap<Session, String> playingPlayers;
+    public final ConcurrentHashMap<Client, Client> idlePlayers;
+    public final ConcurrentHashMap<Client, Client> playingPlayers;
 
-    public final ConcurrentHashMap<Session, Integer> totalCorrect;
-    public final ConcurrentHashMap<Session, String> blackList;
+    public final ConcurrentHashMap<Client, Integer> totalCorrect;
+    public final ConcurrentHashMap<Client, Client> blackList;
 
     public static final int LIFETIME_BEST_LIMIT = 5;
     public static final int PARTY_TOP_LIMIT = 5;
+
+    public static final int AUTOCOMPLETE_PRICE = 1;
+    public static final int AUTOCUT_PRICE = 50;
+
+    private static final int AUTOCOMPLETE_LIMIT = 3;
+    private static final int AUTOCUT_LIMIT = 3;
 
     protected boolean ready;
 
@@ -96,21 +102,21 @@ public class Party implements IStopWatchCallback
         messagesHandler = new PartyMessagesHandler(this);
     }
 
-    protected void updateBestFor(Session player)
+    protected void updateBestFor(Client player)
     {
         if (playingPlayers.containsKey(player))
         {
-            sqlAccess.addToLifetimeBest(playingPlayers.get(player), totalCorrect.get(player));
+            sqlAccess.addToLifetimeBest(player.getNick(), totalCorrect.get(player));
         }
     }
 
-    synchronized public void connectPlayer(Session player, String nick)
+    synchronized public void connectPlayer(Client player)
     {
         if (!idlePlayers.containsKey(player))
         {
             String response;
 
-            idlePlayers.put(player, nick);
+            idlePlayers.put(player, player);
 
             if (locked)
             {
@@ -134,7 +140,7 @@ public class Party implements IStopWatchCallback
         }
     }
 
-    synchronized public void joinPlayer(Session player)
+    synchronized public void joinPlayer(Client player)
     {
         if (locked || started || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
         {
@@ -181,7 +187,7 @@ public class Party implements IStopWatchCallback
         }
     }
 
-    synchronized public void disconnectPlayer(Session player)
+    synchronized public void disconnectPlayer(Client player)
     {
         updateBestFor(player);
 
@@ -259,6 +265,9 @@ public class Party implements IStopWatchCallback
             broadcast(idlePlayers, messagesHandler.getLockedMessage());
             broadcast(playingPlayers, messagesHandler.getStartMessage());
 
+            broadcast(playingPlayers, messagesHandler.getShowMessage("autocomplete"));
+            broadcast(playingPlayers, messagesHandler.getShowMessage("autocut"));
+
             questionTimer.updateTime(questionDuration);
         }
         else if (nowQuestion)
@@ -267,6 +276,12 @@ public class Party implements IStopWatchCallback
             nowAnswer = true;
 
             broadcast(playingPlayers, messagesHandler.getGetMessage());
+
+            if (questionnaire.isLast())
+            {
+                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
+            }
 
             questionTimer.updateTime(answerDuration);
         }
@@ -286,6 +301,9 @@ public class Party implements IStopWatchCallback
                 broadcast(playingPlayers, messagesHandler::getFinishMessage);
                 broadcast(playingPlayers, topPartyResponse);
 
+                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
+
                 restart = true;
                 nowQuestion = false;
 
@@ -294,6 +312,11 @@ public class Party implements IStopWatchCallback
             else
             {
                 broadcast(playingPlayers, messagesHandler.getNextMessage());
+
+                for (var player: playingPlayers.values())
+                {
+                    sendAuto(player);
+                }
 
                 questionTimer.updateTime(questionDuration);
             }
@@ -304,11 +327,16 @@ public class Party implements IStopWatchCallback
         }
     }
 
-    synchronized public void receive(Session player, String message)
+    synchronized public void receive(Client player, String message)
     {
         String[] lines = message.split("\\n");
 
         String response;
+
+        if (lines[0].equals("buy_autocomplete") || lines[0].equals("buy_autocut"))
+        {
+            handleBuy(player, lines);
+        }
 
         if (!nowAnswer)
         {
@@ -337,41 +365,87 @@ public class Party implements IStopWatchCallback
         }
     }
 
+    synchronized private void handleBuy(Client player, String[] lines)
+    {
+        if (lines[1].equals(player.getWallet()))
+        {
+            if (lines[0].equals("buy_autocomplete"))
+            {
+                player.autocompleteReady = true;
+                player.incAutocomplete();
+
+                if (player.getAutocomplete() == AUTOCOMPLETE_LIMIT)
+                {
+                    send(player, messagesHandler.getHideMessage("autocomplete"));
+                }
+            }
+            else
+            {
+                player.autocutReady = true;
+                player.incAutocut();
+
+                if (player.getAutocut() == AUTOCUT_LIMIT)
+                {
+                    send(player, messagesHandler.getHideMessage("autocut"));
+                }
+            }
+
+            if (nowQuestion)
+            {
+                sendAuto(player);
+            }
+        }
+    }
+
+    synchronized public void sendAuto(Client player)
+    {
+        if (player.autocompleteReady)
+        {
+            send(player, messagesHandler.getDisplayMessage("autocomplete"));
+            player.autocompleteReady = false;
+        }
+        else if (player.autocutReady)
+        {
+            send(player, messagesHandler.getDisplayMessage("autocut"));
+            player.autocutReady = false;
+        }
+    }
+
     synchronized public void broadcastAll(String response)
     {
         broadcast(playingPlayers, response);
         broadcast(idlePlayers, response);
     }
 
-    synchronized public void broadcastAll(Function<Session, String> function)
+    synchronized public void broadcastAll(Function<Client, String> function)
     {
         broadcast(playingPlayers, function);
         broadcast(idlePlayers, function);
     }
 
-    synchronized public void broadcast(ConcurrentHashMap<Session, String> map, Function<Session, String> function)
+    synchronized public void broadcast(ConcurrentHashMap<Client, Client> map, Function<Client, String> function)
     {
-        for (var player : map.keySet())
+        for (var player : map.values())
         {
             send(player, function.apply(player));
         }
     }
 
-    synchronized public void broadcast(ConcurrentHashMap<Session, String> map, String response)
+    synchronized public void broadcast(ConcurrentHashMap<Client, Client> map, String response)
     {
-        for (var player : map.keySet())
+        for (var player : map.values())
         {
             send(player, response);
         }
     }
 
-    synchronized public void send(Session player, String message)
+    synchronized public void send(Client player, String message)
     {
         try
         {
-            if (player.isOpen())
+            if (player.getSession().isOpen())
             {
-                player.getRemote().sendString(message);
+                player.getSession().getRemote().sendString(message);
 
                 logger.log("SENT: " + message + " TO: " +
                         (idlePlayers.get(player) == null ? playingPlayers.get(player) : idlePlayers.get(player)));
@@ -404,7 +478,7 @@ public class Party implements IStopWatchCallback
             send(player, response);
 
             updateBestFor(player);
-            connectPlayer(player, playingPlayers.get(player));
+            connectPlayer(player);
 
             playingPlayers.remove(player);
             totalCorrect.remove(player);
@@ -412,11 +486,11 @@ public class Party implements IStopWatchCallback
 
         for (var player : idlePlayers.keySet())
         {
-            String nick = idlePlayers.get(player);
+            player.clear();
 
             send(player, response);
             idlePlayers.remove(player);
-            connectPlayer(player, nick);
+            connectPlayer(player);
         }
 
         started = false;
