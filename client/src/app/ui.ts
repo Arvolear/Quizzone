@@ -16,13 +16,14 @@ export class UI
     private static dappClientSocket: DappClientSocket
     
     private static autocompleter: ui.CustomPrompt
+    private static checkMetamask: ui.CustomPrompt
     private static fundsError: ui.CustomPrompt
 
     private static bottomRect: UIContainerRect
     private static autocompleteButton: UIImage
 
-    // private static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
-    private static myWallet = "0x0704675A283396508c4C989570BC4b63D6e331B0"
+    private static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
+    // private static myWallet = "0x0704675A283396508c4C989570BC4b63D6e331B0"
     private static network = "goerli"
 
     private constructor()
@@ -59,9 +60,10 @@ export class UI
 
     private configInitialDisplay(): void
     {        
-        this.configBottom()   
-        this.configAutocomplete()    
-        this.configError() 
+        this.configError()           
+        this.configCheckMetamask()      
+        this.configAutocomplete()               
+        this.configBottom()
     }    
 
     private configError(): void
@@ -86,18 +88,27 @@ export class UI
         UI.fundsError.close()
     }
 
-    public updateAutocompletePrice()
+    private configCheckMetamask(): void
     {
-        let valueText = UI.autocompleter.elements[2] as CustomPromptText
-        valueText.text.value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
+        UI.checkMetamask = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UI.checkMetamask.addText('Metamask', 0, 153, Color4.Black(), 30)
+        UI.checkMetamask.addText('Please check Metamask', 0, 30, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+
+        UI.checkMetamask.addButton(
+            'Close',
+            -0,
+            -120,
+            () =>
+            {
+                UI.closeConfirm()
+            },
+            ButtonStyles.F
+        )
+
+        UI.checkMetamask.close()
     }
 
-    public updateAutocutPrice()
-    {
-        // TODO
-    }
-
-    private configAutocomplete()
+    private configAutocomplete(): void
     {
         UI.autocompleter = new ui.CustomPrompt(PromptStyles.LIGHT)
         UI.autocompleter.addText('Autocompleter', 0, 153, Color4.Black(), 30)
@@ -154,6 +165,19 @@ export class UI
         UI.autocompleteButton.onClick = new OnClick(this.showConfirmAutocomplete)
     }
 
+    public updateAutocompletePrice(): void
+    {
+        let valueText = UI.autocompleter.elements[2] as CustomPromptText
+        let value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
+
+        valueText.text.value = value == "infinity" ? "inf" : value
+    }
+
+    public updateAutocutPrice(): void
+    {
+        // TODO
+    }
+
     private showConfirmAutocomplete(): void
     {
         UI.canvas.isPointerBlocker = true         
@@ -167,10 +191,21 @@ export class UI
 
         UI.autocompleter.close()
         UI.fundsError.close()
+        UI.checkMetamask.close()
+    }
+
+    private static displayCheckMetamask(): void
+    {
+        UI.canvas.isPointerBlocker = true
+
+        UI.autocompleter.close()
+        UI.checkMetamask.reopen()
     }
 
     private static displayNotEnoughFunds(): void
     {
+        UI.canvas.isPointerBlocker = true       
+
         UI.autocompleter.close()
         UI.fundsError.reopen()
     }
@@ -179,11 +214,16 @@ export class UI
     {
         const sendAutocomplete = executeTask(async () =>
         {
-            await matic.sendMana(this.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, UI.network).then(() => 
-            {
-                var toSend = "buy_autocomlete\n" + wallet
+            UI.properties.getComponent(UIPropertiesComponent).autocompleteVisible = false
 
-                this.dappClientSocket.send(toSend)
+            await matic.sendMana(UI.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, UI.network).then(() => 
+            {
+                var toSend = "buy_autocomplete\n" + wallet
+
+                UI.dappClientSocket.send(toSend)                  
+            }).catch((e) => 
+            {                   
+                UI.properties.getComponent(UIPropertiesComponent).autocompleteVisible = true
             })
         })
 
@@ -214,8 +254,9 @@ export class UI
                     UI.displayNotEnoughFunds()
                 }
                 else
-                {
+                {                    
                     UI.buyAutocomplete(wallet)
+                    UI.displayCheckMetamask()
                 }
             });
         })
@@ -227,11 +268,7 @@ export class UI
     }
 
     public hideAutocomplete(): void
-    {
-        UI.canvas.isPointerBlocker = false
-
-        UI.autocompleter.close()
-        UI.fundsError.close()
+    {        
         UI.autocompleteButton.visible = false
     }
 

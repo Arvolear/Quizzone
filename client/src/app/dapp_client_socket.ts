@@ -269,8 +269,10 @@ export class DappClientSocket
                     break
                 }
             case "clear":
-                {
+                {                    
                     centralScreenMain.addComponentOrReplace(new BlockComponent)
+
+                    uiProperties.getComponent(UIPropertiesComponent).clear()
 
                     centralScreenMain.getComponent(CentralScreenComponent).clear()
                     leftScreenMain.getComponent(LeftScreenComponent).clear()
@@ -335,7 +337,11 @@ export class DappClientSocket
         let lifetimeBestScreenMain = engine.getComponentGroup(LifetimeBestScreenComponent).entities[0]
         let timedQuizScreenMain = engine.getComponentGroup(TimedQuizScreenComponent).entities[0]
 
+        let uiProperties = engine.getComponentGroup(UIPropertiesComponent).entities[0]
+
         centralScreenMain.addComponentOrReplace(new BlockComponent)
+
+        uiProperties.getComponent(UIPropertiesComponent).clear()
 
         centralScreenMain.getComponent(CentralScreenComponent).clear()
         leftScreenMain.getComponent(LeftScreenComponent).clear()

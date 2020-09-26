@@ -9,6 +9,11 @@ export class UIPropertiesComponent
 
     constructor()
     {
+        this.clear()
+    }
+
+    public clear(): void
+    {
         this.autocompleteVisible = false
         this.autocutVisible = false
         this.autocompletePrice = Number.POSITIVE_INFINITY

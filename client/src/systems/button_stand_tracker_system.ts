@@ -32,33 +32,33 @@ export class ButtonStandTrackerSystem implements ISystem
         let topBlockComp = this.topPartyScreenMain.getComponentOrNull(BlockComponent)
         let centralBlockComp = this.centralScreenMain.getComponentOrNull(BlockComponent)    
         
+        let mustIndex = this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton
+
         this.clearButtonsColor()
 
-        if ((topBlockComp != null || centralBlockComp != null) && 
-            this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton == -1)
+        if ((topBlockComp != null || centralBlockComp != null) && mustIndex == -1)
         {
             return
         }
 
         for (let button of this.buttonsGroup.entities)
         {            
-            let dist = this.distanceXYZ(button.getComponent(Transform).position, Camera.instance.position)      
+            let dist = this.distanceXYZ(button.getComponent(Transform).position, Camera.instance.position)
+            var index = button.getComponent(ButtonComponent).index
 
-            if (this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton != -1)
-            {
-                button.getComponent(Material).albedoColor = Color3.FromHexString("#80ffb0")
+            if (mustIndex != -1)
+            {        
+                this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = mustIndex - 1
 
-                var index = button.getComponent(ButtonComponent).index                
-
-                this.displayText(index)
-                this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = 
-                    this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton
+                if (mustIndex - 1 == index)
+                {                
+                    button.getComponent(Material).albedoColor = Color3.FromHexString("#80ffb0")
+                    this.displayText(index)                    
+                }                    
             }
             else if (dist < ButtonStandTrackerSystem.DISTANCE)
             {            
                 button.getComponent(Material).albedoColor = Color3.FromHexString("#80b0ff")               
-
-                var index = button.getComponent(ButtonComponent).index
 
                 this.displayText(index)
                 this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = index                

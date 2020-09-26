@@ -28,7 +28,7 @@ public class Party implements IStopWatchCallback
     public static final int LIFETIME_BEST_LIMIT = 5;
     public static final int PARTY_TOP_LIMIT = 5;
 
-    public static final int AUTOCOMPLETE_PRICE = 1;
+    public static final int AUTOCOMPLETE_PRICE = 0;
     public static final int AUTOCUT_PRICE = 50;
 
     private static final int AUTOCOMPLETE_LIMIT = 3;
@@ -336,6 +336,7 @@ public class Party implements IStopWatchCallback
         if (lines[0].equals("buy_autocomplete") || lines[0].equals("buy_autocut"))
         {
             handleBuy(player, lines);
+            return;
         }
 
         if (!nowAnswer)
@@ -371,6 +372,11 @@ public class Party implements IStopWatchCallback
         {
             if (lines[0].equals("buy_autocomplete"))
             {
+                if (player.getAutocomplete() >= AUTOCOMPLETE_LIMIT)
+                {
+                    return;
+                }
+
                 player.autocompleteReady = true;
                 player.incAutocomplete();
 
@@ -378,15 +384,28 @@ public class Party implements IStopWatchCallback
                 {
                     send(player, messagesHandler.getHideMessage("autocomplete"));
                 }
+                else
+                {
+                    send(player, messagesHandler.getShowMessage("autocomplete"));
+                }
             }
             else
             {
+                if (player.getAutocut() >= AUTOCUT_LIMIT)
+                {
+                    return;
+                }
+
                 player.autocutReady = true;
                 player.incAutocut();
 
                 if (player.getAutocut() == AUTOCUT_LIMIT)
                 {
                     send(player, messagesHandler.getHideMessage("autocut"));
+                }
+                else
+                {
+                    send(player, messagesHandler.getShowMessage("autocut"));
                 }
             }
 
@@ -448,7 +467,7 @@ public class Party implements IStopWatchCallback
                 player.getSession().getRemote().sendString(message);
 
                 logger.log("SENT: " + message + " TO: " +
-                        (idlePlayers.get(player) == null ? playingPlayers.get(player) : idlePlayers.get(player)));
+                        (idlePlayers.get(player) == null ? playingPlayers.get(player).getNick() : idlePlayers.get(player).getNick()));
             }
         }
         catch (Exception ex)
