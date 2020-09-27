@@ -102,7 +102,8 @@ export class QuestionsSystem implements ISystem
 
     private displayFinish(): void
     {
-        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = -1;        
+        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = -1; 
+        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton = -1;        
 
         this.leftScreenMain.getComponent(LeftScreenComponent).clear()
         this.leftScreenMain.getComponent(TextShape).value = ""    
