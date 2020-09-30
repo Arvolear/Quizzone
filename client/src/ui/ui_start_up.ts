@@ -1,0 +1,207 @@
+import * as ui from '../../node_modules/@dcl/ui-utils/index'
+import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
+import { UIPropertiesComponent } from "../components/ui_properties_component";
+import { DappClientSocket } from "../app/dapp_client_socket";
+import { UI } from './ui';
+import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
+import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
+
+export class UIStartUp
+{    
+    private static dappClientSocket: DappClientSocket
+
+    private static startUp: ui.CustomPrompt            
+    private static fundsError: ui.CustomPrompt    
+
+     private static uiCallback: UI
+
+    constructor(ui: UI)
+    {
+        UIStartUp.uiCallback = ui
+
+        this.configError()
+        this.configStartUp()
+    }
+
+
+    public static setClientSocket(dappClientSocket: DappClientSocket): void
+    {
+        UIStartUp.dappClientSocket = dappClientSocket;
+    }
+
+    private configError(): void
+    {
+        UIStartUp.fundsError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIStartUp.fundsError.addText('Error', 0, 153, Color4.Black(), 30)
+        UIStartUp.fundsError.addText('Not enough funds', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UIStartUp.fundsError.addText('Please consider topping up', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UIStartUp.fundsError.addText('matic MANA', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+
+        UIStartUp.fundsError.addButton(
+            'Close',
+            -0,
+            -120,
+            () =>
+            {
+                UIStartUp.uiCallback.hideStartUp()
+            },
+            ButtonStyles.F
+        )
+
+        UIStartUp.fundsError.close()
+    }
+
+    private configStartUp(): void
+    {
+        UIStartUp.startUp = new ui.CustomPrompt(PromptStyles.LIGHT, 600, 500)
+        UIStartUp.startUp.addText('Let\'s start!', 0, 225, Color4.Black(), 35)
+
+        UIStartUp.startUp.addText('Maximum 3 boosters per quiz are allowed', 0, 190, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addText('The unused ones will be burned', 0, 170, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+
+        UIStartUp.startUp.addText('Autocomplete question booster', 0, 130, Color4.Black(), 25)
+        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 105, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText('MANA each', 25, 105, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addIcon("images/minus.png", -100, 45, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        {
+            let autocompleteText = UIStartUp.startUp.elements[7] as CustomPromptText
+            let value = parseInt(autocompleteText.text.value)
+
+            if (value > 0)
+            {
+                value--;
+                autocompleteText.text.value = value.toString()
+            }
+        })
+
+        UIStartUp.startUp.addText('0', 0, 55, Color4.Black(), 30)
+        UIStartUp.startUp.addIcon("images/plus.png", 100, 45, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        {
+            let autocompleteText = UIStartUp.startUp.elements[7] as CustomPromptText
+            let value = parseInt(autocompleteText.text.value)
+
+            if (value < 3)
+            {
+                value++;
+                autocompleteText.text.value = value.toString()
+            }
+        })
+
+        UIStartUp.startUp.addText('50/50 booster', 0, -10, Color4.Black(), 25)
+        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString(), -65, -35, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText('MANA each', 25, -35, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addIcon("images/minus.png", -100, -95, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        {
+            let autocompleteText = UIStartUp.startUp.elements[13] as CustomPromptText
+            let value = parseInt(autocompleteText.text.value)
+
+            if (value > 0)
+            {
+                value--;
+                autocompleteText.text.value = value.toString()
+            }
+        })
+
+        UIStartUp.startUp.addText('0', 0, -85, Color4.Black(), 30)
+        UIStartUp.startUp.addIcon("images/plus.png", 100, -95, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        {
+            let autocompleteText = UIStartUp.startUp.elements[13] as CustomPromptText
+            let value = parseInt(autocompleteText.text.value)
+
+            if (value < 3)
+            {
+                value++;
+                autocompleteText.text.value = value.toString()
+            }
+        })
+
+        UIStartUp.startUp.addButton("", 0, -200,
+            () =>
+            {
+                // TODO
+            }, ButtonStyles.CUSTOM, new Texture("images/button_back.png"), 450, 120, 1450, 400, true)
+
+        UIStartUp.startUp.addIcon("images/e.png", -155, -185, 40, 40, { sourceWidth: 400, sourceHeight: 400 })
+        UIStartUp.startUp.addText('Join without boosters', 35, -175, Color4.White(), 25)
+
+        UIStartUp.startUp.close()
+    }
+
+    private static buyBoosters(): void
+    {
+        const sendAutocomplete = executeTask(async () =>
+        {
+            UI.properties.getComponent(UIPropertiesComponent).autocompleteVisible = false
+            UIStartUp.uiCallback.showHourglass()
+
+            await matic.sendMana(DappClientSocket.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, DappClientSocket.network).then(() => 
+            {
+                var toSend = "TODO" // "buy_autocomplete\n" + App.playerWallet
+                UIStartUp.dappClientSocket.send(toSend)
+
+                UIStartUp.uiCallback.hideStartUp()
+                UIStartUp.uiCallback.showTick(8)
+            }).catch((e) => 
+            {
+                UI.properties.getComponent(UIPropertiesComponent).autocompleteVisible = true
+                UIStartUp.uiCallback.hideStartUp()
+            })
+        })
+
+        sendAutocomplete.then()
+    }
+
+    private static checkBuyBoosters(): void
+    {
+        const balancePromise = executeTask(async () =>
+        {
+            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
+        })
+
+        balancePromise.then((balance) => 
+        {
+            if (balance.l2 < UI.properties.getComponent(UIPropertiesComponent).autocompletePrice)
+            {
+                UIStartUp.uiCallback.showNotEnoughFundsError()
+            }
+            else
+            {
+                // UIStartUp.buyBoosters()
+                UIStartUp.uiCallback.showCheckMetamask()
+            }
+        });
+    }
+
+    public updateAutocompletePrice(): void
+    {
+        let valueText = UIStartUp.startUp.elements[4] as CustomPromptText
+        let value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
+
+        valueText.text.value = value == "Infinity" ? "Inf" : value
+    }
+
+    public updateAutocutPrice(): void
+    {    
+        let valueText = UIStartUp.startUp.elements[10] as CustomPromptText
+        let value = UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString()
+
+        valueText.text.value = value == "Infinity" ? "Inf" : value
+    }
+
+    public reopen(): void
+    {
+        UIStartUp.startUp.reopen()        
+    }
+
+    public close(): void
+    {
+        UIStartUp.startUp.close()
+        UIStartUp.fundsError.close()
+    }
+
+    public showNotEnoughFundsError(): void
+    {
+        UIStartUp.startUp.close()
+        UIStartUp.fundsError.reopen()
+    }
+}

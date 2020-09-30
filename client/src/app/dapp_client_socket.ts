@@ -12,6 +12,10 @@ import { UIPropertiesComponent } from "../components/ui_properties_component"
 
 export class DappClientSocket
 {
+    public static playerWallet;
+    public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
+    public static network = "goerli"
+
     private socket: WebSocket
 
     private centralScreenMain: IEntity    
@@ -20,7 +24,20 @@ export class DappClientSocket
 
     constructor()
     {
-        this.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]        
+        this.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]   
+        
+        this.configurePlayerData()
+    }
+
+    private configurePlayerData(): void
+    {
+        const playerDataPromise = executeTask(async () =>
+        {
+            let data = await getUserData()
+            DappClientSocket.playerWallet = data.publicKey;
+        })
+
+        playerDataPromise.then()
     }
 
     static getDistanceCode(): number

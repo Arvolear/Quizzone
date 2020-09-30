@@ -13,7 +13,7 @@ import { LifetimeBestScreen } from "../entities/lifetime_best_screen"
 import { TimedQuizScreen } from "../entities/timed_quiz_screen"
 import { TimerSystem } from "../systems/timer_system"
 import { Beam } from "../entities/beam"
-import { UI } from "./ui"
+import { UI } from "../ui/ui"
 import { UISystem } from "../systems/ui_system"
 
 export class App
@@ -124,6 +124,7 @@ export class App
 
     startGame(): void
     {
-        this.dappClientSocket.join()
+        this.ui.showStartUp()
+        //this.dappClientSocket.join()
     }
 }
