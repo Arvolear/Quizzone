@@ -121,10 +121,11 @@ export class UITopUp
         let valueTextBox = UITopUp.topUpMatic.elements[5] as CustomPromptTextBox
 
         let firstSpace = valueText.text.value.indexOf(' ')
+        let secondSpace = valueText.text.value.indexOf(' ', firstSpace + 1)
         let lastSpace = valueText.text.value.lastIndexOf(' ')
 
         let amount = parseFloat(valueTextBox.currentText)
-        let balance = parseFloat(valueText.text.value.substr(firstSpace + 1, lastSpace - firstSpace - 1))
+        let balance = parseFloat(valueText.text.value.substr(secondSpace + 1, lastSpace - secondSpace - 1))
 
         if (isNaN(amount) || amount <= 0)
         {

@@ -87,6 +87,11 @@ export class UIBottom
         UIBottom.hourglassImage.visible = true
     }
 
+    public hideHourglass(): void
+    {
+        UIBottom.hourglassImage.visible = false
+    }
+
     public showTick(duration: number): void
     {
         UIBottom.hourglassImage.visible = false
@@ -100,11 +105,6 @@ export class UIBottom
             UIBottom.tickImage.visible = false
             engine.removeEntity(dummyEntity)
         }))
-    }
-
-    public hideHourglass(): void
-    {
-        UIBottom.hourglassImage.visible = false
     }
 
     public hideTick(): void

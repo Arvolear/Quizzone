@@ -16,7 +16,7 @@ public class PartyMessagesHandler
 
     public String getLockedMessage()
     {
-        return "connected\n" +
+        return "bad_connected\n" +
                 "The session has already started\n" +
                 "Please wait for the next quiz";
     }
@@ -24,6 +24,8 @@ public class PartyMessagesHandler
     public String getJoinableMessage()
     {
         return "connected\n" +
+                Party.AUTOCOMPLETE_PRICE + "\n" +
+                Party.AUTOCUT_PRICE + "\n" +
                 "Click the button to join the quiz!\n" +
                 "-------------------------------->";
     }
@@ -31,6 +33,8 @@ public class PartyMessagesHandler
     public String getHostMessage()
     {
         return "connected\n" +
+                Party.AUTOCOMPLETE_PRICE + "\n" +
+                Party.AUTOCUT_PRICE + "\n" +
                 "Click the button to start the quiz!\n" +
                 "-------------------------------->";
     }
@@ -59,11 +63,19 @@ public class PartyMessagesHandler
                 timeLeft;
     }
 
-    public String getShowMessage(String type)
+    public String getShowMessage(Client player, String type)
     {
-        if (type.equals("autocomplete") || type.equals("autocut"))
+        if (type.equals("autocomplete"))
         {
-            return type + "\n" + "show";
+            return type + "\n" +
+                    "show\n" +
+                    player.getAutocompleteLeft();
+        }
+        else if (type.equals("autocut"))
+        {
+            return type + "\n" +
+                    "show\n" +
+                    player.getAutocutLeft();
         }
 
         return "";
@@ -98,8 +110,6 @@ public class PartyMessagesHandler
         Question question = party.questionnaire.getCurrentQuestion();
 
         return "start\n" +
-                Party.AUTOCOMPLETE_PRICE + "\n" +
-                Party.AUTOCUT_PRICE + "\n" +
                 party.questionnaire.getTotalNumber() + "\n" +
                 question.toString();
     }

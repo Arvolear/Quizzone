@@ -1,4 +1,5 @@
 import { App } from "../app/app"
+import { StartButtonComponent } from "../components/start_button_component"
 
 export class StartButton
 {
@@ -27,9 +28,14 @@ export class StartButton
 
         this.button.addComponent(material)
 
+        this.button.addComponent(new StartButtonComponent())
+
         this.button.addComponent(new OnPointerDown(
             (event) => {
-                this.app.startGame()
+                if (this.button.getComponent(StartButtonComponent).canJoin)
+                {
+                    this.app.startGame()
+                }
             }))
     }
 

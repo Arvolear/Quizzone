@@ -13,16 +13,22 @@ export class UIStartUp
     private static startUp: ui.CustomPrompt            
     private static fundsError: ui.CustomPrompt    
 
-     private static uiCallback: UI
+    private static uiCallback: UI
+
+    private static autocompleteNum: number
+    private static autocutNum: number
+    private static boostersToBuyValue: number
 
     constructor(ui: UI)
     {
         UIStartUp.uiCallback = ui
+        UIStartUp.autocompleteNum = 0
+        UIStartUp.autocutNum = 0
+        UIStartUp.boostersToBuyValue = 0
 
         this.configError()
         this.configStartUp()
     }
-
 
     public static setClientSocket(dappClientSocket: DappClientSocket): void
     {
@@ -65,12 +71,13 @@ export class UIStartUp
         UIStartUp.startUp.addIcon("images/minus.png", -100, 45, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
             let autocompleteText = UIStartUp.startUp.elements[7] as CustomPromptText
-            let value = parseInt(autocompleteText.text.value)
+            UIStartUp.autocompleteNum = parseInt(autocompleteText.text.value)
 
-            if (value > 0)
+            if (UIStartUp.autocompleteNum > 0)
             {
-                value--;
-                autocompleteText.text.value = value.toString()
+                UIStartUp.autocompleteNum--;
+                autocompleteText.text.value = UIStartUp.autocompleteNum.toString()
+                this.updateButtonText()
             }
         })
 
@@ -78,12 +85,13 @@ export class UIStartUp
         UIStartUp.startUp.addIcon("images/plus.png", 100, 45, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
             let autocompleteText = UIStartUp.startUp.elements[7] as CustomPromptText
-            let value = parseInt(autocompleteText.text.value)
+            UIStartUp.autocompleteNum = parseInt(autocompleteText.text.value)
 
-            if (value < 3)
+            if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
             {
-                value++;
-                autocompleteText.text.value = value.toString()
+                UIStartUp.autocompleteNum++;
+                autocompleteText.text.value = UIStartUp.autocompleteNum.toString()
+                this.updateButtonText()
             }
         })
 
@@ -93,12 +101,13 @@ export class UIStartUp
         UIStartUp.startUp.addIcon("images/minus.png", -100, -95, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
             let autocompleteText = UIStartUp.startUp.elements[13] as CustomPromptText
-            let value = parseInt(autocompleteText.text.value)
+            UIStartUp.autocutNum = parseInt(autocompleteText.text.value)
 
-            if (value > 0)
+            if (UIStartUp.autocutNum > 0)
             {
-                value--;
-                autocompleteText.text.value = value.toString()
+                UIStartUp.autocutNum--;
+                autocompleteText.text.value = UIStartUp.autocutNum.toString()
+                this.updateButtonText()
             }
         })
 
@@ -106,19 +115,20 @@ export class UIStartUp
         UIStartUp.startUp.addIcon("images/plus.png", 100, -95, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
             let autocompleteText = UIStartUp.startUp.elements[13] as CustomPromptText
-            let value = parseInt(autocompleteText.text.value)
+            UIStartUp.autocutNum = parseInt(autocompleteText.text.value)
 
-            if (value < 3)
+            if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
             {
-                value++;
-                autocompleteText.text.value = value.toString()
+                UIStartUp.autocutNum++;
+                autocompleteText.text.value = UIStartUp.autocutNum.toString()
+                this.updateButtonText()
             }
         })
 
         UIStartUp.startUp.addButton("", 0, -200,
             () =>
             {
-                // TODO
+                this.joinTheQuiz()
             }, ButtonStyles.CUSTOM, new Texture("images/button_back.png"), 450, 120, 1450, 400, true)
 
         UIStartUp.startUp.addIcon("images/e.png", -155, -185, 40, 40, { sourceWidth: 400, sourceHeight: 400 })
@@ -127,23 +137,57 @@ export class UIStartUp
         UIStartUp.startUp.close()
     }
 
+    private updateButtonText(): void
+    {
+        let buttonText = UIStartUp.startUp.elements[17] as CustomPromptText
+
+        UIStartUp.boostersToBuyValue = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice * UIStartUp.autocompleteNum +
+                    UI.properties.getComponent(UIPropertiesComponent).autocutPrice * UIStartUp.autocutNum           
+
+        if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
+        {
+            buttonText.text.value = "Spend " + UIStartUp.boostersToBuyValue.toString() + " MANA and join"
+        }
+        else
+        {
+            buttonText.text.value = "Join without boosters"
+        }
+    }
+
+    private joinTheQuiz(): void
+    {
+        if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
+        {
+            UIStartUp.uiCallback.showCheckMetamask()
+            UIStartUp.checkBuyBoosters()
+        }
+        else
+        {            
+            UIStartUp.uiCallback.hideAllWindows()
+            UIStartUp.dappClientSocket.join()
+        }
+    }
+
     private static buyBoosters(): void
     {
         const sendAutocomplete = executeTask(async () =>
-        {
-            UI.properties.getComponent(UIPropertiesComponent).autocompleteVisible = false
+        {            
             UIStartUp.uiCallback.showHourglass()
 
             await matic.sendMana(DappClientSocket.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, DappClientSocket.network).then(() => 
             {
-                var toSend = "TODO" // "buy_autocomplete\n" + App.playerWallet
+                var toSend = "buy_boosters\n" + 
+                    UIStartUp.autocompleteNum + "\n" + 
+                    UIStartUp.autocutNum + "\n" +
+                    DappClientSocket.playerWallet
+
                 UIStartUp.dappClientSocket.send(toSend)
+                UIStartUp.dappClientSocket.join()
 
                 UIStartUp.uiCallback.hideStartUp()
                 UIStartUp.uiCallback.showTick(8)
             }).catch((e) => 
-            {
-                UI.properties.getComponent(UIPropertiesComponent).autocompleteVisible = true
+            {                
                 UIStartUp.uiCallback.hideStartUp()
             })
         })
@@ -166,7 +210,7 @@ export class UIStartUp
             }
             else
             {
-                // UIStartUp.buyBoosters()
+                UIStartUp.buyBoosters()
                 UIStartUp.uiCallback.showCheckMetamask()
             }
         });

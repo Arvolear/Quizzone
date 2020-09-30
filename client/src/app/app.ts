@@ -124,7 +124,6 @@ export class App
 
     startGame(): void
     {
-        this.ui.showStartUp()
-        //this.dappClientSocket.join()
+        this.ui.showStartUp()        
     }
 }

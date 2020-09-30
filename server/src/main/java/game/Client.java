@@ -12,8 +12,8 @@ public class Client
     private String wallet;
     private String nick;
 
-    private int currAutocomplete;
-    private int currAutocut;
+    private int autocompleteLeft;
+    private int autocutLeft;
 
     public boolean autocompleteReady;
     public boolean autocutReady;
@@ -51,20 +51,36 @@ public class Client
         return session.hashCode();
     }
 
-    public void incAutocomplete()
+    public void setAutocompleteLeft(int left)
     {
-        currAutocomplete++;
+        this.autocompleteLeft = left;
     }
 
-    public void incAutocut()
+    public void setAutocutLeft(int left)
     {
-        currAutocut++;
+        this.autocutLeft = left;
+    }
+
+    public void decAutocomplete()
+    {
+        if (autocompleteLeft > 0)
+        {
+            autocompleteLeft--;
+        }
+    }
+
+    public void decAutocut()
+    {
+        if (autocutLeft > 0)
+        {
+            autocutLeft--;
+        }
     }
 
     public void clear()
     {
-        currAutocomplete = 0;
-        currAutocut = 0;
+        autocompleteLeft = 0;
+        autocutLeft = 0;
         autocompleteReady = false;
         autocutReady = false;
     }
@@ -89,13 +105,13 @@ public class Client
         return nick;
     }
 
-    public int getAutocomplete()
+    public int getAutocompleteLeft()
     {
-        return currAutocomplete;
+        return autocompleteLeft;
     }
 
-    public int getAutocut()
+    public int getAutocutLeft()
     {
-        return currAutocut;
+        return autocutLeft;
     }
 }

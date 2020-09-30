@@ -69,12 +69,16 @@ export class UI
 
     public hideTopUp(): void
     {
+        UI.uiBottom.hideHourglass()
+        UI.uiCheckMetamask.close()
         UI.uiTopUp.close()
     }
 
     public showCheckMetamask(): void
     {
         UI.uiCheckMetamask.reopen()
+        UI.uiStartUp.close()
+        UI.uiTopUp.close()
     }
 
     public hideCheckMetamask(): void
@@ -96,6 +100,11 @@ export class UI
     {                
         UI.uiBottom.showAutocompleteButton()
         UI.uiAutocomplete.reopen() 
+    }
+
+    public hideAutocompleteWindow(): void
+    {
+        UI.uiAutocomplete.close()
     }
 
     public hideAutocomplete(): void
@@ -128,7 +137,7 @@ export class UI
     }
 
     public showNotEnoughFundsError(): void
-    {
+    {        
         UI.uiStartUp.showNotEnoughFundsError()
     }
 
@@ -140,6 +149,11 @@ export class UI
     public updateAutocutPrice(): void
     {
         UI.uiStartUp.updateAutocutPrice()
+    }
+
+    public updateAutocompleteLeft(): void
+    {
+        UI.uiAutocomplete.updateAutocompleteLeft()
     }
 
     public getProperties(): Entity

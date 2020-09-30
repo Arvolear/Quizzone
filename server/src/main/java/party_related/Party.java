@@ -31,9 +31,6 @@ public class Party implements IStopWatchCallback
     public static final int AUTOCOMPLETE_PRICE = 0;
     public static final int AUTOCUT_PRICE = 50;
 
-    private static final int AUTOCOMPLETE_LIMIT = 3;
-    private static final int AUTOCUT_LIMIT = 3;
-
     protected boolean ready;
 
     public RandomCategory category;
@@ -265,9 +262,6 @@ public class Party implements IStopWatchCallback
             broadcast(idlePlayers, messagesHandler.getLockedMessage());
             broadcast(playingPlayers, messagesHandler.getStartMessage());
 
-            broadcast(playingPlayers, messagesHandler.getShowMessage("autocomplete"));
-            broadcast(playingPlayers, messagesHandler.getShowMessage("autocut"));
-
             questionTimer.updateTime(questionDuration);
         }
         else if (nowQuestion)
@@ -276,12 +270,8 @@ public class Party implements IStopWatchCallback
             nowAnswer = true;
 
             broadcast(playingPlayers, messagesHandler.getGetMessage());
-
-            if (questionnaire.isLast())
-            {
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
-            }
+            broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+            broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
 
             questionTimer.updateTime(answerDuration);
         }
@@ -301,9 +291,6 @@ public class Party implements IStopWatchCallback
                 broadcast(playingPlayers, messagesHandler::getFinishMessage);
                 broadcast(playingPlayers, topPartyResponse);
 
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
-
                 restart = true;
                 nowQuestion = false;
 
@@ -313,8 +300,18 @@ public class Party implements IStopWatchCallback
             {
                 broadcast(playingPlayers, messagesHandler.getNextMessage());
 
-                for (var player: playingPlayers.values())
+                for (var player : playingPlayers.values())
                 {
+                    if (player.getAutocompleteLeft() > 0)
+                    {
+                        send(player, messagesHandler.getShowMessage(player, "autocomplete"));
+                    }
+
+                    if (player.getAutocutLeft() > 0)
+                    {
+                        send(player, messagesHandler.getShowMessage(player, "autocut"));
+                    }
+
                     sendAuto(player);
                 }
 
@@ -333,9 +330,15 @@ public class Party implements IStopWatchCallback
 
         String response;
 
-        if (lines[0].equals("buy_autocomplete") || lines[0].equals("buy_autocut"))
+        if (lines[0].equals("buy_boosters"))
         {
             handleBuy(player, lines);
+            return;
+        }
+
+        if (lines[0].equals("use_autocomplete") || lines[0].equals("use_autocut"))
+        {
+            handleUse(player, lines);
             return;
         }
 
@@ -366,53 +369,59 @@ public class Party implements IStopWatchCallback
         }
     }
 
-    synchronized private void handleBuy(Client player, String[] lines)
+    synchronized private void handleUse(Client player, String[] lines)
     {
         if (lines[1].equals(player.getWallet()))
         {
-            if (lines[0].equals("buy_autocomplete"))
+            if (lines[0].equals("use_autocomplete"))
             {
-                if (player.getAutocomplete() >= AUTOCOMPLETE_LIMIT)
+                if (player.getAutocompleteLeft() > 0)
                 {
-                    return;
-                }
+                    player.decAutocomplete();
+                    player.autocompleteReady = true;
 
-                player.autocompleteReady = true;
-                player.incAutocomplete();
-
-                if (player.getAutocomplete() == AUTOCOMPLETE_LIMIT)
-                {
-                    send(player, messagesHandler.getHideMessage("autocomplete"));
-                }
-                else
-                {
-                    send(player, messagesHandler.getShowMessage("autocomplete"));
+                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
                 }
             }
             else
             {
-                if (player.getAutocut() >= AUTOCUT_LIMIT)
+                if (player.getAutocutLeft() > 0)
+                {
+                    player.decAutocut();
+                    player.autocutReady = true;
+
+                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
+                }
+            }
+        }
+    }
+
+    synchronized private void handleBuy(Client player, String[] lines)
+    {
+        if (lines[3].equals(player.getWallet()))
+        {
+            int autocompleteNum = 0;
+            int autocutNum = 0;
+
+            try
+            {
+                autocompleteNum = Integer.parseInt(lines[1]);
+                autocutNum = Integer.parseInt(lines[2]);
+
+                if (autocompleteNum + autocompleteNum > 3)
                 {
                     return;
                 }
-
-                player.autocutReady = true;
-                player.incAutocut();
-
-                if (player.getAutocut() == AUTOCUT_LIMIT)
-                {
-                    send(player, messagesHandler.getHideMessage("autocut"));
-                }
-                else
-                {
-                    send(player, messagesHandler.getShowMessage("autocut"));
-                }
             }
-
-            if (nowQuestion)
+            catch (Exception ex)
             {
-                sendAuto(player);
+                ex.printStackTrace();
             }
+
+            player.setAutocompleteLeft(autocompleteNum);
+            player.setAutocutLeft(autocutNum);
         }
     }
 
