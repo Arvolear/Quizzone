@@ -18,8 +18,11 @@ export class UICheckMetamask
     private configCheckMetamask(): void
     {
         UICheckMetamask.checkMetamask = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UICheckMetamask.checkMetamask.background.isPointerBlocker = true
+
         UICheckMetamask.checkMetamask.addText('Metamask', 0, 153, Color4.Black(), 30)
-        UICheckMetamask.checkMetamask.addText('Please check Metamask', 0, 30, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UICheckMetamask.checkMetamask.addText('Please check', 0, 50, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UICheckMetamask.checkMetamask.addText('your Metamask', 0, 10, new Color4(0.24, 0.22, 0.25, 1.0), 30)
 
         UICheckMetamask.checkMetamask.addButton(
             'Close',

@@ -261,6 +261,7 @@ public class Party implements IStopWatchCallback
 
             broadcast(idlePlayers, messagesHandler.getLockedMessage());
             broadcast(playingPlayers, messagesHandler.getStartMessage());
+            handleBoostersMessages();
 
             questionTimer.updateTime(questionDuration);
         }
@@ -299,21 +300,7 @@ public class Party implements IStopWatchCallback
             else
             {
                 broadcast(playingPlayers, messagesHandler.getNextMessage());
-
-                for (var player : playingPlayers.values())
-                {
-                    if (player.getAutocompleteLeft() > 0)
-                    {
-                        send(player, messagesHandler.getShowMessage(player, "autocomplete"));
-                    }
-
-                    if (player.getAutocutLeft() > 0)
-                    {
-                        send(player, messagesHandler.getShowMessage(player, "autocut"));
-                    }
-
-                    sendAuto(player);
-                }
+                handleBoostersMessages();
 
                 questionTimer.updateTime(questionDuration);
             }
@@ -369,6 +356,38 @@ public class Party implements IStopWatchCallback
         }
     }
 
+    synchronized private void handleBoostersMessages()
+    {
+        for (var player : playingPlayers.values())
+        {
+            sendShowBooster(player);
+
+            if (player.getAutocompleteLeft() > 0)
+            {
+                send(player, messagesHandler.getShowMessage(player, "autocomplete"));
+            }
+
+            if (player.getAutocutLeft() > 0)
+            {
+                send(player, messagesHandler.getShowMessage(player, "autocut"));
+            }
+        }
+    }
+
+    synchronized private void sendShowBooster(Client player)
+    {
+        if (player.autocompleteReady)
+        {
+            send(player, messagesHandler.getDisplayMessage("autocomplete"));
+            player.autocompleteReady = false;
+        }
+        else if (player.autocutReady)
+        {
+            send(player, messagesHandler.getDisplayMessage("autocut"));
+            player.autocutReady = false;
+        }
+    }
+
     synchronized private void handleUse(Client player, String[] lines)
     {
         if (lines[1].equals(player.getWallet()))
@@ -395,6 +414,8 @@ public class Party implements IStopWatchCallback
                     broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
                 }
             }
+
+            sendShowBooster(player);
         }
     }
 
@@ -422,20 +443,6 @@ public class Party implements IStopWatchCallback
 
             player.setAutocompleteLeft(autocompleteNum);
             player.setAutocutLeft(autocutNum);
-        }
-    }
-
-    synchronized public void sendAuto(Client player)
-    {
-        if (player.autocompleteReady)
-        {
-            send(player, messagesHandler.getDisplayMessage("autocomplete"));
-            player.autocompleteReady = false;
-        }
-        else if (player.autocutReady)
-        {
-            send(player, messagesHandler.getDisplayMessage("autocut"));
-            player.autocutReady = false;
         }
     }
 

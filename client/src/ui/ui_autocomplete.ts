@@ -28,6 +28,8 @@ export class UIAutocomplete
     private configAutocomplete(): void
     {
         UIAutocomplete.autocompleter = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIAutocomplete.autocompleter.background.isPointerBlocker = true
+
         UIAutocomplete.autocompleter.addText('Autocompleter', 0, 153, Color4.Black(), 30)
         UIAutocomplete.autocompleter.addText('Boosters left:', -30, 70, new Color4(0.24, 0.22, 0.25, 1.0), 30)
         UIAutocomplete.autocompleter.addText(UI.properties.getComponent(UIPropertiesComponent).autocompleteLeft.toString(), 115, 70, new Color4(1.0, 0.15, 0.3, 1.0), 30)
@@ -63,6 +65,8 @@ export class UIAutocomplete
     {
         var toSend = "use_autocomplete\n" +            
             DappClientSocket.playerWallet
+
+        UIAutocomplete.dappClientSocket.send(toSend)    
     }
 
     public updateAutocompleteLeft(): void

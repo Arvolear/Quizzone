@@ -7,14 +7,15 @@ import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/uti
 import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
 
 export class UIStartUp
-{    
+{
     private static dappClientSocket: DappClientSocket
 
-    private static startUp: ui.CustomPrompt            
-    private static fundsError: ui.CustomPrompt    
+    private static startUp: ui.CustomPrompt
+    private static fundsError: ui.CustomPrompt
 
     private static uiCallback: UI
 
+    private static maticBalance: number
     private static autocompleteNum: number
     private static autocutNum: number
     private static boostersToBuyValue: number
@@ -24,6 +25,7 @@ export class UIStartUp
         UIStartUp.uiCallback = ui
         UIStartUp.autocompleteNum = 0
         UIStartUp.autocutNum = 0
+        UIStartUp.maticBalance = 0
         UIStartUp.boostersToBuyValue = 0
 
         this.configError()
@@ -38,6 +40,8 @@ export class UIStartUp
     private configError(): void
     {
         UIStartUp.fundsError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIStartUp.fundsError.background.isPointerBlocker = true
+
         UIStartUp.fundsError.addText('Error', 0, 153, Color4.Black(), 30)
         UIStartUp.fundsError.addText('Not enough funds', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
         UIStartUp.fundsError.addText('Please consider topping up', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
@@ -60,17 +64,21 @@ export class UIStartUp
     private configStartUp(): void
     {
         UIStartUp.startUp = new ui.CustomPrompt(PromptStyles.LIGHT, 600, 500)
+        UIStartUp.startUp.background.isPointerBlocker = true
+
         UIStartUp.startUp.addText('Let\'s start!', 0, 225, Color4.Black(), 35)
 
-        UIStartUp.startUp.addText('Maximum 3 boosters per quiz are allowed', 0, 190, new Color4(0.24, 0.22, 0.25, 1.0), 20)
-        UIStartUp.startUp.addText('The unused ones will be burned', 0, 170, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addText('Maximum 3 boosters per quiz are allowed', 0, 195, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addText('The unused ones will be burned', 0, 175, new Color4(0.24, 0.22, 0.25, 1.0), 20)
 
-        UIStartUp.startUp.addText('Autocomplete question booster', 0, 130, Color4.Black(), 25)
-        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 105, new Color4(1.0, 0.15, 0.3, 1.0), 20)
-        UIStartUp.startUp.addText('MANA each', 25, 105, new Color4(0.24, 0.22, 0.25, 1.0), 20)
-        UIStartUp.startUp.addIcon("images/minus.png", -100, 45, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        UIStartUp.startUp.addText('Your balance: ... MANA', 0, 145, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+
+        UIStartUp.startUp.addText('Autocomplete question booster', 0, 110, Color4.Black(), 25)
+        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 83, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText('MANA each', 25, 83, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addIcon("images/minus.png", -100, 25, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[7] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[8] as CustomPromptText
             UIStartUp.autocompleteNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocompleteNum > 0)
@@ -81,10 +89,10 @@ export class UIStartUp
             }
         })
 
-        UIStartUp.startUp.addText('0', 0, 55, Color4.Black(), 30)
-        UIStartUp.startUp.addIcon("images/plus.png", 100, 45, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        UIStartUp.startUp.addText('0', 0, 35, Color4.Black(), 30)
+        UIStartUp.startUp.addIcon("images/plus.png", 100, 25, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[7] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[8] as CustomPromptText
             UIStartUp.autocompleteNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
@@ -95,12 +103,12 @@ export class UIStartUp
             }
         })
 
-        UIStartUp.startUp.addText('50/50 booster', 0, -10, Color4.Black(), 25)
-        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString(), -65, -35, new Color4(1.0, 0.15, 0.3, 1.0), 20)
-        UIStartUp.startUp.addText('MANA each', 25, -35, new Color4(0.24, 0.22, 0.25, 1.0), 20)
-        UIStartUp.startUp.addIcon("images/minus.png", -100, -95, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        UIStartUp.startUp.addText('50/50 booster', 0, -25, Color4.Black(), 25)
+        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString(), -65, -52, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText('MANA each', 25, -52, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIStartUp.startUp.addIcon("images/minus.png", -100, -110, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[13] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[14] as CustomPromptText
             UIStartUp.autocutNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocutNum > 0)
@@ -111,10 +119,10 @@ export class UIStartUp
             }
         })
 
-        UIStartUp.startUp.addText('0', 0, -85, Color4.Black(), 30)
-        UIStartUp.startUp.addIcon("images/plus.png", 100, -95, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
+        UIStartUp.startUp.addText('0', 0, -100, Color4.Black(), 30)
+        UIStartUp.startUp.addIcon("images/plus.png", 100, -110, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[13] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[14] as CustomPromptText
             UIStartUp.autocutNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
@@ -125,24 +133,40 @@ export class UIStartUp
             }
         })
 
-        UIStartUp.startUp.addButton("", 0, -200,
+        UIStartUp.startUp.addButton("", 0, -210,
             () =>
             {
                 this.joinTheQuiz()
             }, ButtonStyles.CUSTOM, new Texture("images/button_back.png"), 450, 120, 1450, 400, true)
 
-        UIStartUp.startUp.addIcon("images/e.png", -155, -185, 40, 40, { sourceWidth: 400, sourceHeight: 400 })
-        UIStartUp.startUp.addText('Join without boosters', 35, -175, Color4.White(), 25)
+        UIStartUp.startUp.addIcon("images/e.png", -155, -195, 40, 40, { sourceWidth: 400, sourceHeight: 400 })
+        UIStartUp.startUp.addText('Join without boosters', 35, -185, Color4.White(), 25).text.isPointerBlocker = false
+
+        const balancePromise = executeTask(async () =>
+        {
+            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
+        })
+
+        balancePromise.then((balance) => 
+        {
+            let valueMaticText = UIStartUp.startUp.elements[3] as CustomPromptText
+
+            let balanceMaticStr = balance.l2.toString()
+            let dotMaticIndex = balanceMaticStr.indexOf(".")
+
+            UIStartUp.maticBalance = balance.l2
+            valueMaticText.text.value = "Your balance: " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + " MANA"
+        })
 
         UIStartUp.startUp.close()
     }
 
     private updateButtonText(): void
     {
-        let buttonText = UIStartUp.startUp.elements[17] as CustomPromptText
+        let buttonText = UIStartUp.startUp.elements[18] as CustomPromptText
 
         UIStartUp.boostersToBuyValue = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice * UIStartUp.autocompleteNum +
-                    UI.properties.getComponent(UIPropertiesComponent).autocutPrice * UIStartUp.autocutNum           
+            UI.properties.getComponent(UIPropertiesComponent).autocutPrice * UIStartUp.autocutNum
 
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {
@@ -162,7 +186,7 @@ export class UIStartUp
             UIStartUp.checkBuyBoosters()
         }
         else
-        {            
+        {
             UIStartUp.uiCallback.hideAllWindows()
             UIStartUp.dappClientSocket.join()
         }
@@ -171,24 +195,30 @@ export class UIStartUp
     private static buyBoosters(): void
     {
         const sendAutocomplete = executeTask(async () =>
-        {            
+        {
+            UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = false
+
             UIStartUp.uiCallback.showHourglass()
 
             await matic.sendMana(DappClientSocket.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, DappClientSocket.network).then(() => 
             {
-                var toSend = "buy_boosters\n" + 
-                    UIStartUp.autocompleteNum + "\n" + 
+                UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = true
+
+                var toSend = "buy_boosters\n" +
+                    UIStartUp.autocompleteNum + "\n" +
                     UIStartUp.autocutNum + "\n" +
                     DappClientSocket.playerWallet
 
                 UIStartUp.dappClientSocket.send(toSend)
                 UIStartUp.dappClientSocket.join()
 
-                UIStartUp.uiCallback.hideStartUp()
+                UIStartUp.uiCallback.hideAllWindows()
                 UIStartUp.uiCallback.showTick(8)
             }).catch((e) => 
-            {                
-                UIStartUp.uiCallback.hideStartUp()
+            {
+                UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = true
+                
+                UIStartUp.uiCallback.hideAllWindows()
             })
         })
 
@@ -197,36 +227,28 @@ export class UIStartUp
 
     private static checkBuyBoosters(): void
     {
-        const balancePromise = executeTask(async () =>
+        if (UIStartUp.maticBalance < this.boostersToBuyValue)
         {
-            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
-        })
-
-        balancePromise.then((balance) => 
+            UIStartUp.uiCallback.showNotEnoughFundsError()
+        }
+        else
         {
-            if (balance.l2 < UI.properties.getComponent(UIPropertiesComponent).autocompletePrice)
-            {
-                UIStartUp.uiCallback.showNotEnoughFundsError()
-            }
-            else
-            {
-                UIStartUp.buyBoosters()
-                UIStartUp.uiCallback.showCheckMetamask()
-            }
-        });
+            UIStartUp.buyBoosters()
+            UIStartUp.uiCallback.showCheckMetamask()
+        }
     }
 
     public updateAutocompletePrice(): void
     {
-        let valueText = UIStartUp.startUp.elements[4] as CustomPromptText
+        let valueText = UIStartUp.startUp.elements[5] as CustomPromptText
         let value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
 
         valueText.text.value = value == "Infinity" ? "Inf" : value
     }
 
     public updateAutocutPrice(): void
-    {    
-        let valueText = UIStartUp.startUp.elements[10] as CustomPromptText
+    {
+        let valueText = UIStartUp.startUp.elements[11] as CustomPromptText
         let value = UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString()
 
         valueText.text.value = value == "Infinity" ? "Inf" : value
@@ -234,7 +256,8 @@ export class UIStartUp
 
     public reopen(): void
     {
-        UIStartUp.startUp.reopen()        
+        UI.canvas.isPointerBlocker = true
+        UIStartUp.startUp.reopen()
     }
 
     public close(): void

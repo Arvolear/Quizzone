@@ -20,7 +20,7 @@ export class UIBottom
 
     private configBottom(): void
     {
-        UIBottom.bottomRect = new UIContainerRect(UI.canvas)
+        UIBottom.bottomRect = new UIContainerRect(UI.canvas)        
         UIBottom.bottomRect.adaptHeight = true
         UIBottom.bottomRect.adaptWidth = true
         UIBottom.bottomRect.width = "100%"
@@ -30,6 +30,7 @@ export class UIBottom
         let topUpTexture = new Texture(topUpPath);
 
         UIBottom.topUpButton = new UIImage(UIBottom.bottomRect, topUpTexture);
+        UIBottom.topUpButton.isPointerBlocker = true
         UIBottom.topUpButton.hAlign = "left"
         UIBottom.topUpButton.sourceWidth = 2400
         UIBottom.topUpButton.sourceHeight = 400
@@ -43,13 +44,14 @@ export class UIBottom
         let autocompleteTexture = new Texture(autocompletePath);
 
         UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, autocompleteTexture);
+        UIBottom.autocompleteButton.isPointerBlocker = true
         UIBottom.autocompleteButton.hAlign = "center"
         UIBottom.autocompleteButton.sourceWidth = 2800
         UIBottom.autocompleteButton.sourceHeight = 400
         UIBottom.autocompleteButton.positionY = "-5px"
         UIBottom.autocompleteButton.width = 280
         UIBottom.autocompleteButton.height = 40
-        UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocomplete)
+        UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
 
         let hourglassPath = "images/hourglass.png"
@@ -100,7 +102,7 @@ export class UIBottom
         let dummyEntity = new Entity()
         engine.addEntity(dummyEntity)
 
-        dummyEntity.addComponentOrReplace(new Delay(duration > 0 ? duration * 1000 : 5000, () =>
+        dummyEntity.addComponentOrReplace(new Delay(duration > 0 ? duration : 5, () =>
         {
             UIBottom.tickImage.visible = false
             engine.removeEntity(dummyEntity)

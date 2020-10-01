@@ -12,7 +12,7 @@ export class UI
     private static ui: UI
 
     public static properties: Entity
-    public static canvas: UICanvas      
+    public static canvas: UICanvas
 
     private static uiCheckMetamask: UICheckMetamask
     private static uiStartUp: UIStartUp
@@ -24,11 +24,11 @@ export class UI
     {
         UI.canvas = new UICanvas()
 
-        this.configureProperties()        
+        this.configureProperties()
     }
 
     public static setClientSocket(dappClientSocket: DappClientSocket): void
-    {        
+    {
         UIStartUp.setClientSocket(dappClientSocket)
         UIAutocomplete.setClientSocket(dappClientSocket)
     }
@@ -60,7 +60,7 @@ export class UI
         UI.properties.addComponent(new UIPropertiesComponent())
 
         engine.addEntity(UI.properties)
-    }    
+    }
 
     public showTopUp(): void
     {
@@ -76,14 +76,17 @@ export class UI
 
     public showCheckMetamask(): void
     {
+        UI.uiBottom.showHourglass()
         UI.uiCheckMetamask.reopen()
         UI.uiStartUp.close()
         UI.uiTopUp.close()
     }
 
     public hideCheckMetamask(): void
-    {
-       UI.uiCheckMetamask.close()
+    {        
+        UI.uiCheckMetamask.close()
+        UI.uiStartUp.close()
+        UI.uiTopUp.close()
     }
 
     public showStartUp(): void
@@ -93,13 +96,18 @@ export class UI
 
     public hideStartUp(): void
     {
-        UI.uiAutocomplete.close()
+        UI.uiBottom.hideHourglass()
+        UI.uiStartUp.close()
     }
 
-    public showAutocomplete(): void
-    {                
+    public showAutocompleteButton(): void
+    {
         UI.uiBottom.showAutocompleteButton()
-        UI.uiAutocomplete.reopen() 
+    }
+
+    public showAutocompleteWindow(): void
+    {
+        UI.uiAutocomplete.reopen()
     }
 
     public hideAutocompleteWindow(): void
@@ -125,19 +133,22 @@ export class UI
 
     public hideAllWindows(): void
     {
+        UI.uiBottom.hideHourglass()
         UI.uiCheckMetamask.close()
-        UI.uiStartUp.close()        
+        UI.uiStartUp.close()
         UI.uiTopUp.close()
         UI.uiAutocomplete.close()
     }
 
     public showUniversalError(message: string): void
     {
+        UI.uiCheckMetamask.close()
         UI.uiTopUp.showUniversalError(message)
     }
 
     public showNotEnoughFundsError(): void
-    {        
+    {
+        UI.uiCheckMetamask.close()
         UI.uiStartUp.showNotEnoughFundsError()
     }
 

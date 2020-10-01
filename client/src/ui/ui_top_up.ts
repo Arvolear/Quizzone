@@ -23,6 +23,8 @@ export class UITopUp
     private configError(): void
     {
         UITopUp.universalError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UITopUp.universalError.background.isPointerBlocker = true
+
         UITopUp.universalError.addText('Error', 0, 153, Color4.Black(), 30)
         UITopUp.universalError.addText('', 0, 30, new Color4(1.0, 0.15, 0.3, 1.0), 35)
 
@@ -42,24 +44,26 @@ export class UITopUp
 
     private configTopUp(): void
     {
-        UITopUp.topUpMatic = new ui.CustomPrompt(PromptStyles.LIGHT)
-        UITopUp.topUpMatic.addText('Top up matic MANA', 0, 153, Color4.Black(), 30)
-        UITopUp.topUpMatic.addText('(takes 5-10 minutes)', 0, 135, Color4.Black(), 18)
-        UITopUp.topUpMatic.addText('Main balance:', 0, 90, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UITopUp.topUpMatic.addText('Matic balance:', 0, 60, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic = new ui.CustomPrompt(PromptStyles.LIGHT, 500, 400)
+        UITopUp.topUpMatic.background.isPointerBlocker = true
 
-        UITopUp.topUpMatic.addText('Amount:', -104, 13, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Top up matic MANA', 0, 180, Color4.Black(), 30)
+        UITopUp.topUpMatic.addText('(takes 5-10 minutes)', 0, 145, Color4.Black(), 20)
+        UITopUp.topUpMatic.addText('Main balance:', 0, 95, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Matic balance:', 0, 65, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+
+        UITopUp.topUpMatic.addText('Amount:', -104, 10, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
         UITopUp.topUpMatic.addTextBox(
             0,
-            -37,
+            -40,
             "Enter MANA"
         )
 
         UITopUp.topUpMatic.addButton(
             'Top up',
-            -95,
-            -120,
+            -100,
+            -140,
             () =>
             {
                 UITopUp.transferToMatic()
@@ -69,8 +73,8 @@ export class UITopUp
 
         UITopUp.topUpMatic.addButton(
             'Cancel',
-            95,
-            -120,
+            100,
+            -140,
             () =>
             {
                 UITopUp.uiCallback.hideTopUp()
@@ -82,9 +86,7 @@ export class UITopUp
     }
 
     public reopen(): void
-    {
-        UI.canvas.isPointerBlocker = true
-
+    {        
         const balancePromise = executeTask(async () =>
         {
             return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
@@ -104,8 +106,8 @@ export class UITopUp
             valueMainText.text.value = 'Main balance: ' + balanceMainStr.substr(0, dotMainIndex > 0 ? dotMainIndex : balanceMainStr.length) + ' MANA'
             valueMaticText.text.value = 'Matic balance: ' + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + ' MANA'
         })
-
-        UITopUp.uiCallback.hideAllWindows()
+        
+        UITopUp.uiCallback.hideAllWindows()        
         UITopUp.topUpMatic.reopen()
     }
 

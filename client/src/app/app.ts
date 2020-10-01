@@ -15,6 +15,7 @@ import { TimerSystem } from "../systems/timer_system"
 import { Beam } from "../entities/beam"
 import { UI } from "../ui/ui"
 import { UISystem } from "../systems/ui_system"
+import { UIPropertiesComponent } from "../components/ui_properties_component"
 
 export class App
 {
@@ -45,7 +46,7 @@ export class App
         this.configureScreens()
         this.configureSocket()
         this.configureUI()
-        this.configureSystems()        
+        this.configureSystems() 
     }
     
     private configureBeams(): void
@@ -124,6 +125,13 @@ export class App
 
     startGame(): void
     {
-        this.ui.showStartUp()        
+        if (UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin)
+        {
+            this.ui.showStartUp()
+        }
+        else
+        {
+            this.ui.showCheckMetamask()
+        }
     }
 }

@@ -1,6 +1,8 @@
 @Component("uiPropertiesComponent")
 export class UIPropertiesComponent
 {
+    startButtonShowJoin: boolean
+
     autocompleteVisible: boolean
     autocutVisible: boolean
 
@@ -17,6 +19,7 @@ export class UIPropertiesComponent
 
     public clear(): void
     {
+        this.startButtonShowJoin = true
         this.autocompleteVisible = false
         this.autocutVisible = false
         this.autocompleteLeft = 0
