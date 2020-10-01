@@ -187,6 +187,7 @@ public class Party implements IStopWatchCallback
     synchronized public void disconnectPlayer(Client player)
     {
         updateBestFor(player);
+        player.clear();
 
         playingPlayers.remove(player);
         totalCorrect.remove(player);
@@ -360,7 +361,7 @@ public class Party implements IStopWatchCallback
     {
         for (var player : playingPlayers.values())
         {
-            sendShowBooster(player);
+            sendDisplayBooster(player);
 
             if (player.getAutocompleteLeft() > 0)
             {
@@ -374,7 +375,7 @@ public class Party implements IStopWatchCallback
         }
     }
 
-    synchronized private void sendShowBooster(Client player)
+    synchronized private void sendDisplayBooster(Client player)
     {
         if (player.autocompleteReady)
         {
@@ -415,7 +416,10 @@ public class Party implements IStopWatchCallback
                 }
             }
 
-            sendShowBooster(player);
+            if (nowQuestion)
+            {
+                sendDisplayBooster(player);
+            }
         }
     }
 
@@ -431,7 +435,7 @@ public class Party implements IStopWatchCallback
                 autocompleteNum = Integer.parseInt(lines[1]);
                 autocutNum = Integer.parseInt(lines[2]);
 
-                if (autocompleteNum + autocompleteNum > 3)
+                if (autocompleteNum + autocutNum > 3)
                 {
                     return;
                 }
@@ -443,6 +447,11 @@ public class Party implements IStopWatchCallback
 
             player.setAutocompleteLeft(autocompleteNum);
             player.setAutocutLeft(autocutNum);
+
+            if (nowQuestion)
+            {
+                handleBoostersMessages();
+            }
         }
     }
 

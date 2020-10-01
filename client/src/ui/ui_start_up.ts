@@ -181,9 +181,8 @@ export class UIStartUp
     private joinTheQuiz(): void
     {
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
-        {
-            UIStartUp.uiCallback.showCheckMetamask()
-            UIStartUp.checkBuyBoosters()
+        {            
+            UIStartUp.checkBuyBoosters()            
         }
         else
         {
@@ -199,6 +198,7 @@ export class UIStartUp
             UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = false
 
             UIStartUp.uiCallback.showHourglass()
+            UIStartUp.dappClientSocket.join()
 
             await matic.sendMana(DappClientSocket.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, DappClientSocket.network).then(() => 
             {
@@ -209,8 +209,7 @@ export class UIStartUp
                     UIStartUp.autocutNum + "\n" +
                     DappClientSocket.playerWallet
 
-                UIStartUp.dappClientSocket.send(toSend)
-                UIStartUp.dappClientSocket.join()
+                UIStartUp.dappClientSocket.send(toSend)                
 
                 UIStartUp.uiCallback.hideAllWindows()
                 UIStartUp.uiCallback.showTick(8)
@@ -255,8 +254,7 @@ export class UIStartUp
     }
 
     public reopen(): void
-    {
-        UI.canvas.isPointerBlocker = true
+    {        
         UIStartUp.startUp.reopen()
     }
 
