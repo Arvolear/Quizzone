@@ -6,6 +6,7 @@ export class UIBottom
     private static bottomRect: UIContainerRect
     private static topUpButton: UIImage
     private static autocompleteButton: UIImage
+    private static autocutButton: UIImage
     private static hourglassImage: UIImage
     private static tickImage: UIImage
 
@@ -48,11 +49,27 @@ export class UIBottom
         UIBottom.autocompleteButton.hAlign = "center"
         UIBottom.autocompleteButton.sourceWidth = 2800
         UIBottom.autocompleteButton.sourceHeight = 400
+        UIBottom.autocompleteButton.positionX = "-145px"
         UIBottom.autocompleteButton.positionY = "-5px"
         UIBottom.autocompleteButton.width = 280
         UIBottom.autocompleteButton.height = 40
         UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
+
+        let autocutPath = "images/50_50.png"
+        let autocutTexture = new Texture(autocutPath);
+
+        UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, autocutTexture);
+        UIBottom.autocutButton.isPointerBlocker = true
+        UIBottom.autocutButton.hAlign = "center"        
+        UIBottom.autocutButton.sourceWidth = 2800
+        UIBottom.autocutButton.sourceHeight = 400
+        UIBottom.autocutButton.positionX = "145px"
+        UIBottom.autocutButton.positionY = "-5px"
+        UIBottom.autocutButton.width = 280
+        UIBottom.autocutButton.height = 40
+        UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
+        UIBottom.autocutButton.opacity = 0.9
 
         let hourglassPath = "images/hourglass.png"
         let hourglassTexture = new Texture(hourglassPath);
@@ -122,5 +139,15 @@ export class UIBottom
     public hideAutocompleteButton(): void
     {
         UIBottom.autocompleteButton.visible = false
+    }
+
+    public showAutocutButton(): void
+    {
+        UIBottom.autocutButton.visible = true
+    }
+
+    public hideAutocutButton(): void
+    {
+        UIBottom.autocutButton.visible = false
     }
 }

@@ -15,7 +15,7 @@ export class DappClientSocket
 {
     public static playerWallet;
     public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
-    public static network = "goerli"
+    public static network = "mainnet"
 
     private socket: WebSocket
 
@@ -53,8 +53,8 @@ export class DappClientSocket
             return;
         }
 
-        //this.socket = new WebSocket("wss://quiz-service.dapp-craft.com:8444")
-        this.socket = new WebSocket("ws://localhost:8080")
+        this.socket = new WebSocket("wss://quiz-service.dapp-craft.com:8444")
+        // this.socket = new WebSocket("ws://localhost:8080")
 
         this.socket.onopen = this.onOpen
         this.socket.onclose = this.onClose
@@ -150,11 +150,12 @@ export class DappClientSocket
                 }
             case "autocomplete":
                 {
-                    var action = lines[1]
-                    var autocompleteLeft = parseInt(lines[2])
+                    var action = lines[1]                    
 
                     if (action == "show")
                     {
+                        var autocompleteLeft = parseInt(lines[2])
+
                         uiComp.autocompleteVisible = true
                         uiComp.autocompleteLeft = autocompleteLeft
                     }
@@ -171,7 +172,35 @@ export class DappClientSocket
                 }
             case "autocut":
                 {
-                    // TODO
+                    var action = lines[1]                    
+
+                    if (action == "show")
+                    {
+                        var autocutLeft = parseInt(lines[2])
+
+                        uiComp.autocutVisible = true
+                        uiComp.autocutLeft = autocutLeft
+                    }
+                    else if (action == "hide")
+                    {
+                        uiComp.autocutVisible = false
+                    }
+                    else if (action == "display")
+                    {
+                        let question = new Question(
+                            lines[3],
+                            [
+                                lines[4],
+                                lines[5],
+                                lines[6],
+                                lines[7]
+                            ]
+                        )
+
+                        centralComp.question = question                        
+
+                        centralComp.nextQuestionLoaded = true
+                    }
 
                     break
                 }

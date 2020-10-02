@@ -23,9 +23,9 @@ export class UIStartUp
     constructor(ui: UI)
     {
         UIStartUp.uiCallback = ui
-        UIStartUp.autocompleteNum = 0
-        UIStartUp.autocutNum = 0
         UIStartUp.maticBalance = 0
+        UIStartUp.autocompleteNum = 0
+        UIStartUp.autocutNum = 0        
         UIStartUp.boostersToBuyValue = 0
 
         this.configError()
@@ -140,23 +140,7 @@ export class UIStartUp
             }, ButtonStyles.CUSTOM, new Texture("images/button_back.png"), 450, 120, 1450, 400, true)
 
         UIStartUp.startUp.addIcon("images/e.png", -155, -195, 40, 40, { sourceWidth: 400, sourceHeight: 400 })
-        UIStartUp.startUp.addText('Join without boosters', 35, -185, Color4.White(), 25).text.isPointerBlocker = false
-
-        const balancePromise = executeTask(async () =>
-        {
-            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
-        })
-
-        balancePromise.then((balance) => 
-        {
-            let valueMaticText = UIStartUp.startUp.elements[3] as CustomPromptText
-
-            let balanceMaticStr = balance.l2.toString()
-            let dotMaticIndex = balanceMaticStr.indexOf(".")
-
-            UIStartUp.maticBalance = balance.l2
-            valueMaticText.text.value = "Your balance: " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + " MANA"
-        })
+        UIStartUp.startUp.addText('Join without boosters', 35, -185, Color4.White(), 25).text.isPointerBlocker = false        
 
         UIStartUp.startUp.close()
     }
@@ -170,7 +154,7 @@ export class UIStartUp
 
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {
-            buttonText.text.value = "Spend " + UIStartUp.boostersToBuyValue.toString() + " MANA and join"
+            buttonText.text.value = "Join and spend " + UIStartUp.boostersToBuyValue.toString() + " MANA"
         }
         else
         {
@@ -217,6 +201,7 @@ export class UIStartUp
             {
                 UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = true
                 
+                UIStartUp.uiCallback.hideHourglass()
                 UIStartUp.uiCallback.hideAllWindows()
             })
         })
@@ -255,6 +240,32 @@ export class UIStartUp
 
     public reopen(): void
     {        
+        UIStartUp.autocompleteNum = 0
+        UIStartUp.autocutNum = 0
+        UIStartUp.boostersToBuyValue = 0
+
+        let autocompleteText = UIStartUp.startUp.elements[8] as CustomPromptText
+        let autocutText = UIStartUp.startUp.elements[14] as CustomPromptText
+
+        autocompleteText.text.value = "0"
+        autocutText.text.value = "0"
+
+        const balancePromise = executeTask(async () =>
+        {
+            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
+        })
+
+        balancePromise.then((balance) => 
+        {
+            let valueMaticText = UIStartUp.startUp.elements[3] as CustomPromptText
+
+            let balanceMaticStr = balance.l2.toString()
+            let dotMaticIndex = balanceMaticStr.indexOf(".")
+
+            UIStartUp.maticBalance = balance.l2
+            valueMaticText.text.value = "Your balance: " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + " MANA"
+        })
+
         UIStartUp.startUp.reopen()
     }
 

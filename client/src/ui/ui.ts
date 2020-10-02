@@ -6,6 +6,7 @@ import { UICheckMetamask } from "./ui_check_metamask"
 import { UITopUp } from "./ui_top_up"
 import { UIBottom } from "./ui_bottom"
 import { UIAutocomplete } from "./ui_autocomplete"
+import { UIAutocut } from './ui_autocut'
 
 export class UI 
 {
@@ -19,6 +20,7 @@ export class UI
     private static uiBottom: UIBottom
     private static uiTopUp: UITopUp
     private static uiAutocomplete: UIAutocomplete
+    private static uiAutocut: UIAutocut
 
     private constructor()
     {
@@ -31,6 +33,7 @@ export class UI
     {
         UIStartUp.setClientSocket(dappClientSocket)
         UIAutocomplete.setClientSocket(dappClientSocket)
+        UIAutocut.setClientSocket(dappClientSocket)
     }
 
     private static configInitialDisplay(): void
@@ -40,6 +43,7 @@ export class UI
         UI.uiBottom = new UIBottom(UI.ui)
         UI.uiTopUp = new UITopUp(UI.ui)
         UI.uiAutocomplete = new UIAutocomplete(UI.ui)
+        UI.uiAutocut = new UIAutocut(UI.ui)
     }
 
     public static getInstance(): UI
@@ -64,6 +68,7 @@ export class UI
 
     public showTopUp(): void
     {
+        UI.ui.hideAllWindows()
         UI.uiTopUp.reopen()
     }
 
@@ -76,10 +81,9 @@ export class UI
 
     public showCheckMetamask(): void
     {
+        UI.ui.hideAllWindows()
         UI.uiBottom.showHourglass()
         UI.uiCheckMetamask.reopen()
-        UI.uiStartUp.close()
-        UI.uiTopUp.close()
     }
 
     public hideCheckMetamask(): void
@@ -91,6 +95,7 @@ export class UI
 
     public showStartUp(): void
     {
+        UI.ui.hideAllWindows()
         UI.uiStartUp.reopen()
     }
 
@@ -107,6 +112,7 @@ export class UI
 
     public showAutocompleteWindow(): void
     {
+        UI.ui.hideAllWindows()
         UI.uiAutocomplete.reopen()
     }
 
@@ -121,9 +127,36 @@ export class UI
         UI.uiAutocomplete.close()
     }
 
+    public showAutocutButton(): void
+    {
+        UI.uiBottom.showAutocutButton()
+    }
+
+    public showAutocutWindow(): void
+    {
+        UI.ui.hideAllWindows()
+        UI.uiAutocut.reopen()
+    }
+
+    public hideAutocutWindow(): void
+    {
+        UI.uiAutocut.close()
+    }
+
+    public hideAutocut(): void
+    {
+        UI.uiBottom.hideAutocutButton()
+        UI.uiAutocut.close()
+    }
+
     public showHourglass(): void
     {
         UI.uiBottom.showHourglass()
+    }
+
+    public hideHourglass(): void
+    {
+        UI.uiBottom.hideHourglass()
     }
 
     public showTick(time: number): void
@@ -132,23 +165,23 @@ export class UI
     }
 
     public hideAllWindows(): void
-    {
-        UI.uiBottom.hideHourglass()
+    {            
         UI.uiCheckMetamask.close()
         UI.uiStartUp.close()
         UI.uiTopUp.close()
         UI.uiAutocomplete.close()
+        UI.uiAutocut.close()
     }
 
     public showUniversalError(message: string): void
     {
-        UI.uiCheckMetamask.close()
+        UI.ui.hideAllWindows()
         UI.uiTopUp.showUniversalError(message)
     }
 
     public showNotEnoughFundsError(): void
     {
-        UI.uiCheckMetamask.close()
+        UI.ui.hideAllWindows()
         UI.uiStartUp.showNotEnoughFundsError()
     }
 
@@ -165,6 +198,11 @@ export class UI
     public updateAutocompleteLeft(): void
     {
         UI.uiAutocomplete.updateAutocompleteLeft()
+    }
+
+    public updateAutocutLeft(): void
+    {
+        UI.uiAutocut.updateAutocutLeft()
     }
 
     public getProperties(): Entity

@@ -27,18 +27,18 @@ export class UIAutocomplete
 
     private configAutocomplete(): void
     {
-        UIAutocomplete.autocompleter = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIAutocomplete.autocompleter = new ui.CustomPrompt(PromptStyles.LIGHT, 400, 300)
         UIAutocomplete.autocompleter.background.isPointerBlocker = true
 
-        UIAutocomplete.autocompleter.addText('Autocompleter', 0, 153, Color4.Black(), 30)
-        UIAutocomplete.autocompleter.addText('Boosters left:', -30, 70, new Color4(0.24, 0.22, 0.25, 1.0), 30)
-        UIAutocomplete.autocompleter.addText(UI.properties.getComponent(UIPropertiesComponent).autocompleteLeft.toString(), 115, 70, new Color4(1.0, 0.15, 0.3, 1.0), 30)
-        UIAutocomplete.autocompleter.addText('Autocomplete the question?', 0, -9, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UIAutocomplete.autocompleter.addText('Autocompleter', 0, 130, Color4.Black(), 30)
+        UIAutocomplete.autocompleter.addText('Boosters left:', -30, 60, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UIAutocomplete.autocompleter.addText(UI.properties.getComponent(UIPropertiesComponent).autocompleteLeft.toString(), 115, 60, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UIAutocomplete.autocompleter.addText('Use autocomplete booster?', 0, -10, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
         UIAutocomplete.autocompleter.addButton(
             'Yeah',
             -95,
-            -120,
+            -100,
             () =>
             {
                 UIAutocomplete.activateAutocomplete()
@@ -50,7 +50,7 @@ export class UIAutocomplete
         UIAutocomplete.autocompleter.addButton(
             'Nope',
             95,
-            -120,
+            -100,
             () =>
             {
                 UIAutocomplete.uiCallback.hideAutocompleteWindow()                                   

@@ -15,9 +15,10 @@ export class UISystem implements ISystem
         let UIPropertiesComp = ui.getProperties().getComponent(UIPropertiesComponent)
 
         UIPropertiesComp.autocompleteVisible ? ui.showAutocompleteButton() : ui.hideAutocomplete()
-        // UIPropertiesComp.autocutVisible ? ui.showAutocut() : ui.hideAutocut()     
+        UIPropertiesComp.autocutVisible ? ui.showAutocutButton() : ui.hideAutocut()     
         
         ui.updateAutocompleteLeft()
+        ui.updateAutocutLeft()
         
         ui.updateAutocompletePrice()
         ui.updateAutocutPrice()

@@ -28,8 +28,8 @@ public class Party implements IStopWatchCallback
     public static final int LIFETIME_BEST_LIMIT = 5;
     public static final int PARTY_TOP_LIMIT = 5;
 
-    public static final int AUTOCOMPLETE_PRICE = 0;
-    public static final int AUTOCUT_PRICE = 50;
+    public static final int AUTOCOMPLETE_PRICE = 1;
+    public static final int AUTOCUT_PRICE = 0;
 
     protected boolean ready;
 
@@ -400,8 +400,8 @@ public class Party implements IStopWatchCallback
                     player.decAutocomplete();
                     player.autocompleteReady = true;
 
-                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
-                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
+                    send(player, messagesHandler.getHideMessage("autocomplete"));
+                    send(player, messagesHandler.getHideMessage("autocut"));
                 }
             }
             else
@@ -411,8 +411,8 @@ public class Party implements IStopWatchCallback
                     player.decAutocut();
                     player.autocutReady = true;
 
-                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
-                    broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
+                    send(player, messagesHandler.getHideMessage("autocomplete"));
+                    send(player, messagesHandler.getHideMessage("autocut"));
                 }
             }
 

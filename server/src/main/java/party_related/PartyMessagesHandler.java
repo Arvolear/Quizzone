@@ -4,6 +4,7 @@ import game.Client;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 public class PartyMessagesHandler
 {
@@ -89,7 +90,42 @@ public class PartyMessagesHandler
         }
         else if (type.equals("autocut"))
         {
-            // TODO
+            Question question = party.questionnaire.getCurrentQuestion();
+            ArrayList<String> variants = new ArrayList<>(question.getVariants());
+            int answer = question.getAnswer() - 1;
+
+            Random random = new Random();
+
+            int ok = 0;
+            while (ok < 2)
+            {
+                int randIndex = random.nextInt(variants.size());
+
+                if (randIndex != variants.size() - answer - 1 && !variants.get(randIndex).equals(""))
+                {
+                    variants.set(randIndex, "");
+                    ok++;
+                }
+            }
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.append("question\n");
+            builder.append(question.getQuestion()).append("\n");
+
+            for (int i = 0; i < variants.size(); i++)
+            {
+                if (variants.get(i).equals(""))
+                {
+                    builder.append(variants.size() - i).append(") ---").append("\n");
+                }
+                else
+                {
+                    builder.append(variants.get(i)).append("\n");
+                }
+            }
+
+            return type + "\n" + "display" + "\n" + builder.toString();
         }
 
         return "";
