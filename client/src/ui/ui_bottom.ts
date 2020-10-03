@@ -4,9 +4,12 @@ import { UI } from "./ui"
 export class UIBottom
 {
     private static bottomRect: UIContainerRect
+    
     private static topUpButton: UIImage
+    private static memberButton: UIImage
     private static autocompleteButton: UIImage
     private static autocutButton: UIImage
+
     private static hourglassImage: UIImage
     private static tickImage: UIImage
 
@@ -40,6 +43,20 @@ export class UIBottom
         UIBottom.topUpButton.height = 30
         UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
         UIBottom.topUpButton.opacity = 0.9
+
+        let memberPath = "images/member.png"
+        let memberTexture = new Texture(memberPath);
+
+        UIBottom.memberButton = new UIImage(UIBottom.bottomRect, memberTexture);
+        UIBottom.memberButton.isPointerBlocker = true
+        UIBottom.memberButton.hAlign = "left"
+        UIBottom.memberButton.sourceWidth = 2400
+        UIBottom.memberButton.sourceHeight = 400
+        UIBottom.memberButton.positionY = "20px"
+        UIBottom.memberButton.width = 180
+        UIBottom.memberButton.height = 30
+        UIBottom.memberButton.onClick = new OnClick(UIBottom.uiCallback.showMember)
+        UIBottom.memberButton.opacity = 0.9
 
         let autocompletePath = "images/autocomplete.png"
         let autocompleteTexture = new Texture(autocompletePath);

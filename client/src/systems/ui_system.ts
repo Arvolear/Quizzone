@@ -22,5 +22,7 @@ export class UISystem implements ISystem
         
         ui.updateAutocompletePrice()
         ui.updateAutocutPrice()
+
+        ui.updateCanJoinTimer()
     }
 }

@@ -67,18 +67,19 @@ export class UIStartUp
         UIStartUp.startUp.background.isPointerBlocker = true
 
         UIStartUp.startUp.addText('Let\'s start!', 0, 225, Color4.Black(), 35)
+        UIStartUp.startUp.addText('', 180, 228, Color4.Black(), 30)
 
         UIStartUp.startUp.addText('Maximum 3 boosters per quiz are allowed', 0, 195, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIStartUp.startUp.addText('The unused ones will be burned', 0, 175, new Color4(0.24, 0.22, 0.25, 1.0), 20)
 
-        UIStartUp.startUp.addText('Your balance: ... MANA', 0, 145, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText('Your balance:  ...  MANA', 0, 145, new Color4(1.0, 0.15, 0.3, 1.0), 20)
 
         UIStartUp.startUp.addText('Autocomplete question booster', 0, 110, Color4.Black(), 25)
         UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 83, new Color4(1.0, 0.15, 0.3, 1.0), 20)
         UIStartUp.startUp.addText('MANA each', 25, 83, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIStartUp.startUp.addIcon("images/minus.png", -100, 25, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[8] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[9] as CustomPromptText
             UIStartUp.autocompleteNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocompleteNum > 0)
@@ -92,7 +93,7 @@ export class UIStartUp
         UIStartUp.startUp.addText('0', 0, 35, Color4.Black(), 30)
         UIStartUp.startUp.addIcon("images/plus.png", 100, 25, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[8] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[9] as CustomPromptText
             UIStartUp.autocompleteNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
@@ -108,7 +109,7 @@ export class UIStartUp
         UIStartUp.startUp.addText('MANA each', 25, -52, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIStartUp.startUp.addIcon("images/minus.png", -100, -110, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[14] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[15] as CustomPromptText
             UIStartUp.autocutNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocutNum > 0)
@@ -122,7 +123,7 @@ export class UIStartUp
         UIStartUp.startUp.addText('0', 0, -100, Color4.Black(), 30)
         UIStartUp.startUp.addIcon("images/plus.png", 100, -110, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
-            let autocompleteText = UIStartUp.startUp.elements[14] as CustomPromptText
+            let autocompleteText = UIStartUp.startUp.elements[15] as CustomPromptText
             UIStartUp.autocutNum = parseInt(autocompleteText.text.value)
 
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
@@ -147,7 +148,7 @@ export class UIStartUp
 
     private updateButtonText(): void
     {
-        let buttonText = UIStartUp.startUp.elements[18] as CustomPromptText
+        let buttonText = UIStartUp.startUp.elements[19] as CustomPromptText
 
         UIStartUp.boostersToBuyValue = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice * UIStartUp.autocompleteNum +
             UI.properties.getComponent(UIPropertiesComponent).autocutPrice * UIStartUp.autocutNum
@@ -170,7 +171,8 @@ export class UIStartUp
         }
         else
         {
-            UIStartUp.uiCallback.hideAllWindows()
+            UI.properties.getComponent(UIPropertiesComponent).canJoin = false
+            UIStartUp.uiCallback.hideAllWindows()        
             UIStartUp.dappClientSocket.join()
         }
     }
@@ -178,16 +180,12 @@ export class UIStartUp
     private static buyBoosters(): void
     {
         const sendAutocomplete = executeTask(async () =>
-        {
-            UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = false
-
+        {            
             UIStartUp.uiCallback.showHourglass()
             UIStartUp.dappClientSocket.join()
 
             await matic.sendMana(DappClientSocket.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, DappClientSocket.network).then(() => 
-            {
-                UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = true
-
+            {                            
                 var toSend = "buy_boosters\n" +
                     UIStartUp.autocompleteNum + "\n" +
                     UIStartUp.autocutNum + "\n" +
@@ -198,9 +196,7 @@ export class UIStartUp
                 UIStartUp.uiCallback.hideAllWindows()
                 UIStartUp.uiCallback.showTick(8)
             }).catch((e) => 
-            {
-                UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin = true
-                
+            {                                                              
                 UIStartUp.uiCallback.hideHourglass()
                 UIStartUp.uiCallback.hideAllWindows()
             })
@@ -217,14 +213,15 @@ export class UIStartUp
         }
         else
         {
-            UIStartUp.buyBoosters()
+            UI.properties.getComponent(UIPropertiesComponent).canJoin = false
+            UIStartUp.buyBoosters()            
             UIStartUp.uiCallback.showCheckMetamask()
         }
     }
 
     public updateAutocompletePrice(): void
     {
-        let valueText = UIStartUp.startUp.elements[5] as CustomPromptText
+        let valueText = UIStartUp.startUp.elements[6] as CustomPromptText
         let value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
 
         valueText.text.value = value == "Infinity" ? "Inf" : value
@@ -232,10 +229,18 @@ export class UIStartUp
 
     public updateAutocutPrice(): void
     {
-        let valueText = UIStartUp.startUp.elements[11] as CustomPromptText
+        let valueText = UIStartUp.startUp.elements[12] as CustomPromptText
         let value = UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString()
 
         valueText.text.value = value == "Infinity" ? "Inf" : value
+    }
+
+    public updateTimer(): void
+    {
+        let valueText = UIStartUp.startUp.elements[1] as CustomPromptText
+        let value = UI.properties.getComponent(UIPropertiesComponent).timeToQuizStart
+
+        valueText.text.value = value
     }
 
     public reopen(): void
@@ -244,8 +249,8 @@ export class UIStartUp
         UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0
 
-        let autocompleteText = UIStartUp.startUp.elements[8] as CustomPromptText
-        let autocutText = UIStartUp.startUp.elements[14] as CustomPromptText
+        let autocompleteText = UIStartUp.startUp.elements[9] as CustomPromptText
+        let autocutText = UIStartUp.startUp.elements[15] as CustomPromptText
 
         autocompleteText.text.value = "0"
         autocutText.text.value = "0"
@@ -257,13 +262,13 @@ export class UIStartUp
 
         balancePromise.then((balance) => 
         {
-            let valueMaticText = UIStartUp.startUp.elements[3] as CustomPromptText
+            let valueMaticText = UIStartUp.startUp.elements[4] as CustomPromptText
 
             let balanceMaticStr = balance.l2.toString()
             let dotMaticIndex = balanceMaticStr.indexOf(".")
 
             UIStartUp.maticBalance = balance.l2
-            valueMaticText.text.value = "Your balance: " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + " MANA"
+            valueMaticText.text.value = "Your balance:  " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + "  MANA"
         })
 
         UIStartUp.startUp.reopen()

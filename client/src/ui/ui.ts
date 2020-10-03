@@ -7,6 +7,7 @@ import { UITopUp } from "./ui_top_up"
 import { UIBottom } from "./ui_bottom"
 import { UIAutocomplete } from "./ui_autocomplete"
 import { UIAutocut } from './ui_autocut'
+import { UIMember } from './ui_member'
 
 export class UI 
 {
@@ -19,6 +20,7 @@ export class UI
     private static uiStartUp: UIStartUp
     private static uiBottom: UIBottom
     private static uiTopUp: UITopUp
+    private static uiMember: UIMember
     private static uiAutocomplete: UIAutocomplete
     private static uiAutocut: UIAutocut
 
@@ -42,6 +44,7 @@ export class UI
         UI.uiStartUp = new UIStartUp(UI.ui)
         UI.uiBottom = new UIBottom(UI.ui)
         UI.uiTopUp = new UITopUp(UI.ui)
+        UI.uiMember = new UIMember(UI.ui)
         UI.uiAutocomplete = new UIAutocomplete(UI.ui)
         UI.uiAutocut = new UIAutocut(UI.ui)
     }
@@ -79,6 +82,19 @@ export class UI
         UI.uiTopUp.close()
     }
 
+    public showMember(): void
+    {
+        UI.ui.hideAllWindows()
+        UI.uiMember.reopen()
+    }
+
+    public hideMember(): void
+    {
+        UI.uiBottom.hideHourglass()
+        UI.uiCheckMetamask.close()
+        UI.uiMember.close()
+    }
+
     public showCheckMetamask(): void
     {
         UI.ui.hideAllWindows()
@@ -87,7 +103,7 @@ export class UI
     }
 
     public hideCheckMetamask(): void
-    {        
+    {
         UI.uiCheckMetamask.close()
         UI.uiStartUp.close()
         UI.uiTopUp.close()
@@ -165,10 +181,11 @@ export class UI
     }
 
     public hideAllWindows(): void
-    {            
+    {
         UI.uiCheckMetamask.close()
         UI.uiStartUp.close()
         UI.uiTopUp.close()
+        UI.uiMember.close()
         UI.uiAutocomplete.close()
         UI.uiAutocut.close()
     }
@@ -203,6 +220,16 @@ export class UI
     public updateAutocutLeft(): void
     {
         UI.uiAutocut.updateAutocutLeft()
+    }
+
+    public updateCanJoinTimer(): void
+    {
+        if (!UI.properties.getComponent(UIPropertiesComponent).canJoin)
+        {
+            UI.ui.hideStartUp()
+        }
+        
+        UI.uiStartUp.updateTimer()
     }
 
     public getProperties(): Entity

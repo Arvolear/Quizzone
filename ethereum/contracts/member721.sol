@@ -3,13 +3,16 @@ pragma solidity ^0.6.2;
 import "../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 
-contract Booster is ERC721 {
+// import "https://github.com/openzeppelin/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
+// import "https://github.com/openzeppelin/openzeppelin-contracts/contracts/utils/Counters.sol";
+
+contract Membership is ERC721 {
     address payable private _creator;
     uint256 private _price;
 
     Counters.Counter private _curTokenId;
 
-    constructor(uint256 price) public ERC721("Quizzone Booster", "BSTR") {
+    constructor(uint256 price) public ERC721("Quizzone Membership", "QZONE") {
         _creator = msg.sender;
         _price = price;
     }
@@ -20,7 +23,7 @@ contract Booster is ERC721 {
         _creator.transfer(address(this).balance);
     }
 
-    function getPrice() public view returns(uint256) {
+    function getPrice() public view returns (uint256) {
         return _price;
     }
 
@@ -31,19 +34,19 @@ contract Booster is ERC721 {
         _price = price;
     }
 
-    function buy(address player, uint256 quantity) public payable {
-        require(msg.value == SafeMath.mul(_price, quantity));
-        require(quantity > 0);
+    function buy(address player) public payable {
+        require(msg.value == _price);
+        require(balanceOf(player) == 0);
 
-        for (uint256 i = 0; i < quantity; i = SafeMath.add(i, 1)) {
-            Counters.increment(_curTokenId);
+        Counters.increment(_curTokenId);
 
-            uint256 newTokenId = Counters.current(_curTokenId);
-            _safeMint(player, newTokenId);
-        }
+        uint256 newTokenId = Counters.current(_curTokenId);
+        _safeMint(player, newTokenId);
     }
 
     function burn(address player, uint256[] memory tokens) public {
+        require(tokens.length <= balanceOf(player));
+
         for (uint256 i = 0; i < tokens.length; i = SafeMath.add(i, 1)) {
             require(_isApprovedOrOwner(player, tokens[i]));
 
@@ -51,7 +54,7 @@ contract Booster is ERC721 {
         }
     }
 
-    function getOwnedTokens(address player) public view returns (uint256[] memory) {        
+    function getOwnedTokens(address player) public view returns (uint256[] memory) {
         uint256 playerBalance = balanceOf(player);
 
         uint256[] memory tokens = new uint256[](playerBalance);

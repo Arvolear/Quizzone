@@ -9,23 +9,22 @@ import { TopPartyScreenComponent } from "../components/top_party_screen_componen
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { StartButtonComponent } from "../components/start_button_component"
 
 export class DappClientSocket
 {
     public static playerWallet;
     public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
-    public static network = "mainnet"
+    public static network = "goerli"
 
     private socket: WebSocket
 
-    private centralScreenMain: IEntity
+    private static centralScreenMain: IEntity
 
     private static DISTANCE_CODE: number = 3001;    
 
     constructor()
     {
-        this.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]   
+        DappClientSocket.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]   
         
         this.configurePlayerData()
     }
@@ -53,8 +52,8 @@ export class DappClientSocket
             return;
         }
 
-        this.socket = new WebSocket("wss://quiz-service.dapp-craft.com:8444")
-        // this.socket = new WebSocket("ws://localhost:8080")
+        // this.socket = new WebSocket("wss://quiz-service.dapp-craft.com:8444")
+        this.socket = new WebSocket("ws://localhost:8080")
 
         this.socket.onopen = this.onOpen
         this.socket.onclose = this.onClose
@@ -72,8 +71,6 @@ export class DappClientSocket
     {
         log("RECEIVED: " + event.data)
 
-        let startButtonMain = engine.getComponentGroup(StartButtonComponent).entities[0]
-
         let centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
         let leftScreenMain = engine.getComponentGroup(LeftScreenComponent).entities[0]
         let rightScreenMain = engine.getComponentGroup(RightScreenComponent).entities[0]
@@ -82,8 +79,6 @@ export class DappClientSocket
         let timedQuizScreenMain = engine.getComponentGroup(TimedQuizScreenComponent).entities[0]
 
         let uiProperties = engine.getComponentGroup(UIPropertiesComponent).entities[0]
-
-        var startComp = startButtonMain.getComponent(StartButtonComponent)
 
         var centralComp = centralScreenMain.getComponent(CentralScreenComponent)
         var leftComp = leftScreenMain.getComponent(LeftScreenComponent)
@@ -116,7 +111,7 @@ export class DappClientSocket
                         }
                     }
 
-                    startComp.canJoin = true
+                    uiComp.canJoin = true
 
                     uiComp.autocompletePrice = autocompletePrice
                     uiComp.autocutPrice = autocutPrice
@@ -127,6 +122,10 @@ export class DappClientSocket
                     break
                 }
             case "bad_connected":
+                {
+                    uiComp.canJoin = false // no break - intentional
+                    uiComp.timeToQuizStart = ""
+                }
             case "countdown":
                 {
                     var actualMessage = ""
@@ -139,9 +138,7 @@ export class DappClientSocket
                         {
                             actualMessage += "\n"
                         }
-                    }
-
-                    startComp.canJoin = false
+                    }                    
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true                    
@@ -218,7 +215,8 @@ export class DappClientSocket
                         ]
                     )
 
-                    startComp.canJoin = false
+                    uiComp.canJoin = false
+                    uiComp.timeToQuizStart = ""
 
                     centralComp.question = question
                     leftComp.totalQuestions = totalQuestions
@@ -232,6 +230,11 @@ export class DappClientSocket
             case "timer":
                 {
                     rightComp.timeLeft = lines[1]
+
+                    if (uiComp.canJoin)
+                    {
+                        uiComp.timeToQuizStart = lines[1]
+                    }
 
                     break
                 }
@@ -293,8 +296,6 @@ export class DappClientSocket
                 {
                     var finish = lines[1] + "\n\n" + lines[2]
 
-                    startComp.canJoin = false
-
                     centralComp.finish = finish
                     centralComp.finishLoaded = true
 
@@ -348,9 +349,7 @@ export class DappClientSocket
                 }
             case "clear":
                 {                    
-                    centralScreenMain.addComponentOrReplace(new BlockComponent)
-
-                    startButtonMain.getComponent(StartButtonComponent).clear()
+                    centralScreenMain.addComponentOrReplace(new BlockComponent)                
 
                     uiProperties.getComponent(UIPropertiesComponent).clear()
 
@@ -410,8 +409,6 @@ export class DappClientSocket
         log("CLOSED!")
         log("REMOTE CLOSE")
 
-        let startButtonMain = engine.getComponentGroup(StartButtonComponent).entities[0]
-
         let centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
         let rightScreenMain = engine.getComponentGroup(RightScreenComponent).entities[0]
         let leftScreenMain = engine.getComponentGroup(LeftScreenComponent).entities[0]
@@ -422,8 +419,6 @@ export class DappClientSocket
         let uiProperties = engine.getComponentGroup(UIPropertiesComponent).entities[0]
 
         centralScreenMain.addComponentOrReplace(new BlockComponent)
-
-        startButtonMain.getComponent(StartButtonComponent).clear()
 
         uiProperties.getComponent(UIPropertiesComponent).clear()
 
@@ -436,7 +431,7 @@ export class DappClientSocket
 
         if (event.code != DappClientSocket.DISTANCE_CODE)
         {
-            centralScreenMain.getComponent(TextShape).value = "Disconnected remotely"
+            centralScreenMain.getComponent(TextShape).value = "Disconnected remotely\n\nPlease consider reconnecting"
             centralScreenMain.getComponent(TextShape).fontSize = 1
         }
         else
@@ -455,7 +450,7 @@ export class DappClientSocket
     {
         log("SENT: " + message)
 
-        this.centralScreenMain.addComponentOrReplace(new BlockComponent())
+        DappClientSocket.centralScreenMain.addComponentOrReplace(new BlockComponent())
 
         this.socket.send(message)
     }

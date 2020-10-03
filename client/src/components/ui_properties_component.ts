@@ -1,7 +1,9 @@
 @Component("uiPropertiesComponent")
 export class UIPropertiesComponent
 {
-    startButtonShowJoin: boolean
+    canJoin: boolean    
+
+    timeToQuizStart: string
 
     autocompleteVisible: boolean
     autocutVisible: boolean
@@ -9,6 +11,7 @@ export class UIPropertiesComponent
     autocompleteLeft: number
     autocutLeft: number
 
+    membershipPrice: float
     autocompletePrice: number
     autocutPrice: number
 
@@ -19,9 +22,11 @@ export class UIPropertiesComponent
 
     public clear(): void
     {
-        this.startButtonShowJoin = true
+        this.canJoin = false        
         this.autocompleteVisible = false
         this.autocutVisible = false
+        this.timeToQuizStart = ""
+        this.membershipPrice = 0.0
         this.autocompleteLeft = 0
         this.autocutLeft = 0
         this.autocompletePrice = Number.POSITIVE_INFINITY

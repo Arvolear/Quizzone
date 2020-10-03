@@ -49,8 +49,8 @@ export class UITopUp
 
         UITopUp.topUpMatic.addText('Top up matic MANA', 0, 180, Color4.Black(), 30)
         UITopUp.topUpMatic.addText('(takes 5-10 minutes)', 0, 145, Color4.Black(), 20)
-        UITopUp.topUpMatic.addText('Main balance: ... MANA', 0, 95, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UITopUp.topUpMatic.addText('Matic balance: ... MANA', 0, 65, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Main balance:  ...  MANA', 0, 95, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Matic balance:  ...  MANA', 0, 65, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
         UITopUp.topUpMatic.addText('Amount:', -104, 10, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
@@ -103,8 +103,8 @@ export class UITopUp
             let balanceMaticStr = balance.l2.toString()
             let dotMaticIndex = balanceMaticStr.indexOf(".")
 
-            valueMainText.text.value = 'Main balance: ' + balanceMainStr.substr(0, dotMainIndex > 0 ? dotMainIndex : balanceMainStr.length) + ' MANA'
-            valueMaticText.text.value = 'Matic balance: ' + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + ' MANA'
+            valueMainText.text.value = 'Main balance:  ' + balanceMainStr.substr(0, dotMainIndex > 0 ? dotMainIndex : balanceMainStr.length) + '  MANA'
+            valueMaticText.text.value = 'Matic balance:  ' + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + '  MANA'
         })
                 
         UITopUp.topUpMatic.reopen()
@@ -142,8 +142,7 @@ export class UITopUp
 
         const topUp = executeTask(async () =>
         {
-            UITopUp.uiCallback.showCheckMetamask()
-            UITopUp.uiCallback.showHourglass()
+            UITopUp.uiCallback.showCheckMetamask()            
 
             await matic.depositMana(amount, DappClientSocket.network).then(() => 
             {

@@ -40,15 +40,15 @@ export class App
     private static SCALE_OFFSET = 0.1
 
     constructor()
-    {        
+    {
         this.configureButtons()
         this.configureBeams()
         this.configureScreens()
         this.configureSocket()
         this.configureUI()
-        this.configureSystems() 
+        this.configureSystems()
     }
-    
+
     private configureBeams(): void
     {
         let beam1 = new Beam(
@@ -110,7 +110,7 @@ export class App
     private configureUI(): void
     {
         UI.setClientSocket(this.dappClientSocket);
-        this.ui = UI.getInstance()        
+        this.ui = UI.getInstance()
     }
 
     private configureSystems(): void
@@ -121,17 +121,10 @@ export class App
         engine.addSystem(new ScreenDistanceSystem(this.dappClientSocket))
         engine.addSystem(new TimerSystem())
         engine.addSystem(new UISystem())
-    }    
+    }
 
     startGame(): void
     {
-        if (UI.properties.getComponent(UIPropertiesComponent).startButtonShowJoin)
-        {
-            this.ui.showStartUp()
-        }
-        else
-        {
-            this.ui.showCheckMetamask()
-        }
+        this.ui.showStartUp()
     }
 }
