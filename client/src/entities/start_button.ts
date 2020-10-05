@@ -1,4 +1,6 @@
 import { App } from "../app/app"
+import { UIPropertiesComponent } from "../components/ui_properties_component"
+import { UI } from "../ui/ui"
 
 export class StartButton
 {
@@ -25,11 +27,14 @@ export class StartButton
         material.metallic = 0.1
         material.roughness = 0.9
 
-        this.button.addComponent(material)
+        this.button.addComponent(material)        
 
         this.button.addComponent(new OnPointerDown(
-            (event) => {
-                this.app.startGame()
+            () => {
+                if (UI.properties.getComponent(UIPropertiesComponent).canJoin)
+                {
+                    this.app.startGame()
+                }
             }))
     }
 

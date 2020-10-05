@@ -28,11 +28,8 @@ public class Party implements IStopWatchCallback
     public static final int LIFETIME_BEST_LIMIT = 5;
     public static final int PARTY_TOP_LIMIT = 5;
 
-    public static final int AUTOCOMPLETE_PRICE = 0;
-    public static final int AUTOCUT_PRICE = 50;
-
-    private static final int AUTOCOMPLETE_LIMIT = 3;
-    private static final int AUTOCUT_LIMIT = 3;
+    public static final int AUTOCOMPLETE_PRICE = 1;
+    public static final int AUTOCUT_PRICE = 0;
 
     protected boolean ready;
 
@@ -190,6 +187,7 @@ public class Party implements IStopWatchCallback
     synchronized public void disconnectPlayer(Client player)
     {
         updateBestFor(player);
+        player.clear();
 
         playingPlayers.remove(player);
         totalCorrect.remove(player);
@@ -264,9 +262,7 @@ public class Party implements IStopWatchCallback
 
             broadcast(idlePlayers, messagesHandler.getLockedMessage());
             broadcast(playingPlayers, messagesHandler.getStartMessage());
-
-            broadcast(playingPlayers, messagesHandler.getShowMessage("autocomplete"));
-            broadcast(playingPlayers, messagesHandler.getShowMessage("autocut"));
+            handleBoostersMessages();
 
             questionTimer.updateTime(questionDuration);
         }
@@ -276,12 +272,8 @@ public class Party implements IStopWatchCallback
             nowAnswer = true;
 
             broadcast(playingPlayers, messagesHandler.getGetMessage());
-
-            if (questionnaire.isLast())
-            {
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
-            }
+            broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+            broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
 
             questionTimer.updateTime(answerDuration);
         }
@@ -301,9 +293,6 @@ public class Party implements IStopWatchCallback
                 broadcast(playingPlayers, messagesHandler::getFinishMessage);
                 broadcast(playingPlayers, topPartyResponse);
 
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
-                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
-
                 restart = true;
                 nowQuestion = false;
 
@@ -312,11 +301,7 @@ public class Party implements IStopWatchCallback
             else
             {
                 broadcast(playingPlayers, messagesHandler.getNextMessage());
-
-                for (var player: playingPlayers.values())
-                {
-                    sendAuto(player);
-                }
+                handleBoostersMessages();
 
                 questionTimer.updateTime(questionDuration);
             }
@@ -333,9 +318,15 @@ public class Party implements IStopWatchCallback
 
         String response;
 
-        if (lines[0].equals("buy_autocomplete") || lines[0].equals("buy_autocut"))
+        if (lines[0].equals("buy_boosters"))
         {
             handleBuy(player, lines);
+            return;
+        }
+
+        if (lines[0].equals("use_autocomplete") || lines[0].equals("use_autocut"))
+        {
+            handleUse(player, lines);
             return;
         }
 
@@ -366,57 +357,25 @@ public class Party implements IStopWatchCallback
         }
     }
 
-    synchronized private void handleBuy(Client player, String[] lines)
+    synchronized private void handleBoostersMessages()
     {
-        if (lines[1].equals(player.getWallet()))
+        for (var player : playingPlayers.values())
         {
-            if (lines[0].equals("buy_autocomplete"))
+            sendDisplayBooster(player);
+
+            if (player.getAutocompleteLeft() > 0)
             {
-                if (player.getAutocomplete() >= AUTOCOMPLETE_LIMIT)
-                {
-                    return;
-                }
-
-                player.autocompleteReady = true;
-                player.incAutocomplete();
-
-                if (player.getAutocomplete() == AUTOCOMPLETE_LIMIT)
-                {
-                    send(player, messagesHandler.getHideMessage("autocomplete"));
-                }
-                else
-                {
-                    send(player, messagesHandler.getShowMessage("autocomplete"));
-                }
-            }
-            else
-            {
-                if (player.getAutocut() >= AUTOCUT_LIMIT)
-                {
-                    return;
-                }
-
-                player.autocutReady = true;
-                player.incAutocut();
-
-                if (player.getAutocut() == AUTOCUT_LIMIT)
-                {
-                    send(player, messagesHandler.getHideMessage("autocut"));
-                }
-                else
-                {
-                    send(player, messagesHandler.getShowMessage("autocut"));
-                }
+                send(player, messagesHandler.getShowMessage(player, "autocomplete"));
             }
 
-            if (nowQuestion)
+            if (player.getAutocutLeft() > 0)
             {
-                sendAuto(player);
+                send(player, messagesHandler.getShowMessage(player, "autocut"));
             }
         }
     }
 
-    synchronized public void sendAuto(Client player)
+    synchronized private void sendDisplayBooster(Client player)
     {
         if (player.autocompleteReady)
         {
@@ -427,6 +386,72 @@ public class Party implements IStopWatchCallback
         {
             send(player, messagesHandler.getDisplayMessage("autocut"));
             player.autocutReady = false;
+        }
+    }
+
+    synchronized private void handleUse(Client player, String[] lines)
+    {
+        if (lines[1].equals(player.getWallet()))
+        {
+            if (lines[0].equals("use_autocomplete"))
+            {
+                if (player.getAutocompleteLeft() > 0)
+                {
+                    player.decAutocomplete();
+                    player.autocompleteReady = true;
+
+                    send(player, messagesHandler.getHideMessage("autocomplete"));
+                    send(player, messagesHandler.getHideMessage("autocut"));
+                }
+            }
+            else
+            {
+                if (player.getAutocutLeft() > 0)
+                {
+                    player.decAutocut();
+                    player.autocutReady = true;
+
+                    send(player, messagesHandler.getHideMessage("autocomplete"));
+                    send(player, messagesHandler.getHideMessage("autocut"));
+                }
+            }
+
+            if (nowQuestion)
+            {
+                sendDisplayBooster(player);
+            }
+        }
+    }
+
+    synchronized private void handleBuy(Client player, String[] lines)
+    {
+        if (lines[3].equals(player.getWallet()))
+        {
+            int autocompleteNum = 0;
+            int autocutNum = 0;
+
+            try
+            {
+                autocompleteNum = Integer.parseInt(lines[1]);
+                autocutNum = Integer.parseInt(lines[2]);
+
+                if (autocompleteNum + autocutNum > 3)
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+
+            player.setAutocompleteLeft(autocompleteNum);
+            player.setAutocutLeft(autocutNum);
+
+            if (nowQuestion)
+            {
+                handleBoostersMessages();
+            }
         }
     }
 

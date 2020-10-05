@@ -15,9 +15,19 @@ public class Question
         this.answer = answer;
     }
 
+    public String getQuestion()
+    {
+        return question;
+    }
+
     public int getAnswer()
     {
         return answer;
+    }
+
+    public ArrayList<String> getVariants()
+    {
+        return variants;
     }
 
     @Override

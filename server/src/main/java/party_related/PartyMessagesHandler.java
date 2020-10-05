@@ -4,6 +4,7 @@ import game.Client;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 public class PartyMessagesHandler
 {
@@ -16,7 +17,7 @@ public class PartyMessagesHandler
 
     public String getLockedMessage()
     {
-        return "connected\n" +
+        return "bad_connected\n" +
                 "The session has already started\n" +
                 "Please wait for the next quiz";
     }
@@ -24,6 +25,8 @@ public class PartyMessagesHandler
     public String getJoinableMessage()
     {
         return "connected\n" +
+                Party.AUTOCOMPLETE_PRICE + "\n" +
+                Party.AUTOCUT_PRICE + "\n" +
                 "Click the button to join the quiz!\n" +
                 "-------------------------------->";
     }
@@ -31,6 +34,8 @@ public class PartyMessagesHandler
     public String getHostMessage()
     {
         return "connected\n" +
+                Party.AUTOCOMPLETE_PRICE + "\n" +
+                Party.AUTOCUT_PRICE + "\n" +
                 "Click the button to start the quiz!\n" +
                 "-------------------------------->";
     }
@@ -59,11 +64,19 @@ public class PartyMessagesHandler
                 timeLeft;
     }
 
-    public String getShowMessage(String type)
+    public String getShowMessage(Client player, String type)
     {
-        if (type.equals("autocomplete") || type.equals("autocut"))
+        if (type.equals("autocomplete"))
         {
-            return type + "\n" + "show";
+            return type + "\n" +
+                    "show\n" +
+                    player.getAutocompleteLeft();
+        }
+        else if (type.equals("autocut"))
+        {
+            return type + "\n" +
+                    "show\n" +
+                    player.getAutocutLeft();
         }
 
         return "";
@@ -77,7 +90,42 @@ public class PartyMessagesHandler
         }
         else if (type.equals("autocut"))
         {
-            // TODO
+            Question question = party.questionnaire.getCurrentQuestion();
+            ArrayList<String> variants = new ArrayList<>(question.getVariants());
+            int answer = question.getAnswer() - 1;
+
+            Random random = new Random();
+
+            int ok = 0;
+            while (ok < 2)
+            {
+                int randIndex = random.nextInt(variants.size());
+
+                if (randIndex != variants.size() - answer - 1 && !variants.get(randIndex).equals(""))
+                {
+                    variants.set(randIndex, "");
+                    ok++;
+                }
+            }
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.append("question\n");
+            builder.append(question.getQuestion()).append("\n");
+
+            for (int i = 0; i < variants.size(); i++)
+            {
+                if (variants.get(i).equals(""))
+                {
+                    builder.append(variants.size() - i).append(") ---").append("\n");
+                }
+                else
+                {
+                    builder.append(variants.get(i)).append("\n");
+                }
+            }
+
+            return type + "\n" + "display" + "\n" + builder.toString();
         }
 
         return "";
@@ -98,8 +146,6 @@ public class PartyMessagesHandler
         Question question = party.questionnaire.getCurrentQuestion();
 
         return "start\n" +
-                Party.AUTOCOMPLETE_PRICE + "\n" +
-                Party.AUTOCUT_PRICE + "\n" +
                 party.questionnaire.getTotalNumber() + "\n" +
                 question.toString();
     }

@@ -1,4 +1,4 @@
-import { UI } from "../app/ui"
+import { UI } from "../ui/ui"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 
 export class UISystem implements ISystem
@@ -12,12 +12,19 @@ export class UISystem implements ISystem
     {
         let ui = UI.getInstance()
 
-        let UIPropertiesComp = ui.getProperties().getComponent(UIPropertiesComponent)
+        let uiPropertiesComp = ui.getProperties().getComponent(UIPropertiesComponent)
 
-        UIPropertiesComp.autocompleteVisible ? ui.showAutocomplete() : ui.hideAutocomplete()
-        UIPropertiesComp.autocutVisible ? ui.showAutocut() : ui.hideAutocut()     
+        uiPropertiesComp.autocompleteVisible ? ui.showAutocompleteButton() : ui.hideAutocomplete()
+        uiPropertiesComp.autocutVisible ? ui.showAutocutButton() : ui.hideAutocut()     
+        
+        ui.setMember(uiPropertiesComp.member)
+
+        ui.updateAutocompleteLeft()
+        ui.updateAutocutLeft()
         
         ui.updateAutocompletePrice()
         ui.updateAutocutPrice()
+
+        ui.updateCanJoinTimer()
     }
 }
