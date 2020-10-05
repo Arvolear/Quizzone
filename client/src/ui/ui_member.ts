@@ -108,7 +108,7 @@ export class UIMember
 
                 while (receipt == null)
                 {
-                    await delay(2000)
+                    await delay(3000)
                     receipt = await requestManager.eth_getTransactionReceipt(res.toString())
                 }
 

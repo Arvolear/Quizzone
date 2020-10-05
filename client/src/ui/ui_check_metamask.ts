@@ -21,13 +21,13 @@ export class UICheckMetamask
         UICheckMetamask.checkMetamask.background.isPointerBlocker = true
 
         UICheckMetamask.checkMetamask.addText('Metamask', 0, 130, Color4.Black(), 30)
-        UICheckMetamask.checkMetamask.addText('Please check', 0, 50, new Color4(0.24, 0.22, 0.25, 1.0), 30)
-        UICheckMetamask.checkMetamask.addText('your Metamask', 0, 10, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UICheckMetamask.checkMetamask.addText('Please check', 0, 45, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UICheckMetamask.checkMetamask.addText('your Metamask', 0, 0, new Color4(0.24, 0.22, 0.25, 1.0), 30)
 
         UICheckMetamask.checkMetamask.addButton(
             'Close',
             -0,
-            -100,
+            -110,
             () =>
             {
                 UICheckMetamask.uiCallback.hideCheckMetamask()
