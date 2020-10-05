@@ -180,6 +180,11 @@ export class UI
         UI.uiBottom.showTick(time)
     }
 
+    public setMember(member: boolean): void
+    {
+        UI.uiBottom.setMember(member)
+    }
+
     public hideAllWindows(): void
     {
         UI.uiCheckMetamask.close()
@@ -230,7 +235,7 @@ export class UI
         }
         
         UI.uiStartUp.updateTimer()
-    }
+    }    
 
     public getProperties(): Entity
     {

@@ -12,11 +12,13 @@ export class UISystem implements ISystem
     {
         let ui = UI.getInstance()
 
-        let UIPropertiesComp = ui.getProperties().getComponent(UIPropertiesComponent)
+        let uiPropertiesComp = ui.getProperties().getComponent(UIPropertiesComponent)
 
-        UIPropertiesComp.autocompleteVisible ? ui.showAutocompleteButton() : ui.hideAutocomplete()
-        UIPropertiesComp.autocutVisible ? ui.showAutocutButton() : ui.hideAutocut()     
+        uiPropertiesComp.autocompleteVisible ? ui.showAutocompleteButton() : ui.hideAutocomplete()
+        uiPropertiesComp.autocutVisible ? ui.showAutocutButton() : ui.hideAutocut()     
         
+        ui.setMember(uiPropertiesComp.member)
+
         ui.updateAutocompleteLeft()
         ui.updateAutocutLeft()
         

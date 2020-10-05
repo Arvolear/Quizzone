@@ -65,4 +65,10 @@ contract Membership is ERC721 {
 
         return tokens;
     }
+
+    function isMember(address player) public view returns (bool) {
+        uint256 playerBalance = balanceOf(player);
+
+        return playerBalance > 0;
+    }
 }

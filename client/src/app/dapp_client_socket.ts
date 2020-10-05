@@ -9,6 +9,7 @@ import { TopPartyScreenComponent } from "../components/top_party_screen_componen
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
+import { UIMember } from "../ui/ui_member"
 
 export class DappClientSocket
 {
@@ -37,7 +38,10 @@ export class DappClientSocket
             DappClientSocket.playerWallet = data.publicKey;
         })
 
-        playerDataPromise.then()
+        playerDataPromise.then(() => 
+        {
+            UIMember.checkMembership()
+        })
     }
 
     static getDistanceCode(): number

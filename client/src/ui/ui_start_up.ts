@@ -5,6 +5,7 @@ import { DappClientSocket } from "../app/dapp_client_socket";
 import { UI } from './ui';
 import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
 import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
+import { UIMember } from './ui_member';
 
 export class UIStartUp
 {
@@ -149,10 +150,15 @@ export class UIStartUp
     private updateButtonText(): void
     {
         let buttonText = UIStartUp.startUp.elements[19] as CustomPromptText
+        let uiPropertiesComp = UI.properties.getComponent(UIPropertiesComponent)
 
-        UIStartUp.boostersToBuyValue = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice * UIStartUp.autocompleteNum +
-            UI.properties.getComponent(UIPropertiesComponent).autocutPrice * UIStartUp.autocutNum
+        UIStartUp.boostersToBuyValue = uiPropertiesComp.autocompletePrice * UIStartUp.autocompleteNum + uiPropertiesComp.autocutPrice * UIStartUp.autocutNum
 
+        if (uiPropertiesComp.member)
+        {
+            UIStartUp.boostersToBuyValue /= 2;
+        }
+        
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {
             buttonText.text.value = "Join and spend " + UIStartUp.boostersToBuyValue.toString() + " MANA"
@@ -184,7 +190,7 @@ export class UIStartUp
             UIStartUp.uiCallback.showHourglass()
             UIStartUp.dappClientSocket.join()
 
-            await matic.sendMana(DappClientSocket.myWallet, UI.properties.getComponent(UIPropertiesComponent).autocompletePrice, true, DappClientSocket.network).then(() => 
+            await matic.sendMana(DappClientSocket.myWallet, UIStartUp.boostersToBuyValue, true, DappClientSocket.network).then(() => 
             {                            
                 var toSend = "buy_boosters\n" +
                     UIStartUp.autocompleteNum + "\n" +
@@ -207,7 +213,7 @@ export class UIStartUp
 
     private static checkBuyBoosters(): void
     {
-        if (UIStartUp.maticBalance < this.boostersToBuyValue)
+        if (UIStartUp.maticBalance < UIStartUp.boostersToBuyValue)
         {
             UIStartUp.uiCallback.showNotEnoughFundsError()
         }
@@ -222,17 +228,33 @@ export class UIStartUp
     public updateAutocompletePrice(): void
     {
         let valueText = UIStartUp.startUp.elements[6] as CustomPromptText
-        let value = UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString()
+        let uiPropertiesComp = UI.properties.getComponent(UIPropertiesComponent)
+        let value = uiPropertiesComp.autocompletePrice
 
-        valueText.text.value = value == "Infinity" ? "Inf" : value
+        if (uiPropertiesComp.member)
+        {
+            value /= 2;
+        }
+
+        let valueStr = value.toString()
+
+        valueText.text.value = valueStr == "Infinity" ? "Inf" : valueStr
     }
 
     public updateAutocutPrice(): void
     {
         let valueText = UIStartUp.startUp.elements[12] as CustomPromptText
-        let value = UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString()
+        let uiPropertiesComp = UI.properties.getComponent(UIPropertiesComponent)
+        let value = uiPropertiesComp.autocutPrice
 
-        valueText.text.value = value == "Infinity" ? "Inf" : value
+        if (uiPropertiesComp.member)
+        {
+            value /= 2;
+        }
+
+        let valueStr = value.toString()
+
+        valueText.text.value = valueStr == "Infinity" ? "Inf" : valueStr
     }
 
     public updateTimer(): void
@@ -254,6 +276,8 @@ export class UIStartUp
 
         autocompleteText.text.value = "0"
         autocutText.text.value = "0"
+
+        UIMember.checkMembership()
 
         const balancePromise = executeTask(async () =>
         {

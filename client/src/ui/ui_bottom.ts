@@ -4,9 +4,10 @@ import { UI } from "./ui"
 export class UIBottom
 {
     private static bottomRect: UIContainerRect
-    
+
     private static topUpButton: UIImage
     private static memberButton: UIImage
+    private static alreadyMemberButton: UIImage
     private static autocompleteButton: UIImage
     private static autocutButton: UIImage
 
@@ -24,7 +25,7 @@ export class UIBottom
 
     private configBottom(): void
     {
-        UIBottom.bottomRect = new UIContainerRect(UI.canvas)        
+        UIBottom.bottomRect = new UIContainerRect(UI.canvas)
         UIBottom.bottomRect.adaptHeight = true
         UIBottom.bottomRect.adaptWidth = true
         UIBottom.bottomRect.width = "100%"
@@ -58,6 +59,21 @@ export class UIBottom
         UIBottom.memberButton.onClick = new OnClick(UIBottom.uiCallback.showMember)
         UIBottom.memberButton.opacity = 0.9
 
+        let alreadyMemberPath = "images/already_member.png"
+        let alreadyMemberTexture = new Texture(alreadyMemberPath);
+
+        UIBottom.alreadyMemberButton = new UIImage(UIBottom.bottomRect, alreadyMemberTexture);
+        UIBottom.alreadyMemberButton.isPointerBlocker = true
+        UIBottom.alreadyMemberButton.hAlign = "left"
+        UIBottom.alreadyMemberButton.sourceWidth = 2400
+        UIBottom.alreadyMemberButton.sourceHeight = 400
+        UIBottom.alreadyMemberButton.positionY = "20px"
+        UIBottom.alreadyMemberButton.width = 180
+        UIBottom.alreadyMemberButton.height = 30        
+        UIBottom.alreadyMemberButton.opacity = 0.9
+
+        UIBottom.alreadyMemberButton.visible = false
+
         let autocompletePath = "images/autocomplete.png"
         let autocompleteTexture = new Texture(autocompletePath);
 
@@ -78,7 +94,7 @@ export class UIBottom
 
         UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, autocutTexture);
         UIBottom.autocutButton.isPointerBlocker = true
-        UIBottom.autocutButton.hAlign = "center"        
+        UIBottom.autocutButton.hAlign = "center"
         UIBottom.autocutButton.sourceWidth = 2800
         UIBottom.autocutButton.sourceHeight = 400
         UIBottom.autocutButton.positionX = "145px"
@@ -147,7 +163,7 @@ export class UIBottom
     {
         UIBottom.tickImage.visible = false
     }
-    
+
     public showAutocompleteButton(): void
     {
         UIBottom.autocompleteButton.visible = true
@@ -166,5 +182,11 @@ export class UIBottom
     public hideAutocutButton(): void
     {
         UIBottom.autocutButton.visible = false
+    }
+
+    public setMember(member: boolean): void
+    {
+        UIBottom.memberButton.visible = !member
+        UIBottom.alreadyMemberButton.visible = member
     }
 }
