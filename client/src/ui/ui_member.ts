@@ -11,7 +11,9 @@ import { delay } from '../../node_modules/@dcl/l2-utils/utils/index'
 
 export class UIMember
 {
-    private static CONTRACT = "0xa4A8CE76b804d1e378bC86B55cDFd94c1645Db7b"
+    private static CONTRACT = "0xf11ABa09A09cB9DfEea2FE219Ba8394CB002d230" // mainnet
+    // private static CONTRACT = "0xa4A8CE76b804d1e378bC86B55cDFd94c1645Db7b" // ropsten
+    
     private static mainBalance: float
     private static price: float
 

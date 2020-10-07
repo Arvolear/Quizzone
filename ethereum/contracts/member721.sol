@@ -7,20 +7,36 @@ import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 // import "https://github.com/openzeppelin/openzeppelin-contracts/contracts/utils/Counters.sol";
 
 contract Membership is ERC721 {
-    address payable private _creator;
+    address private _creator;
     uint256 private _price;
+
+    mapping (address => bool) public _admins;
 
     Counters.Counter private _curTokenId;
 
     constructor(uint256 price) public ERC721("Quizzone Membership", "QZONE") {
         _creator = msg.sender;
         _price = price;
+
+        _admins[_creator] = true;
+    }
+
+    function addAdmin(address admin) public {
+        require(msg.sender == _creator);
+
+        _admins[admin] = true;
+    }
+
+    function removeAdmin(address admin) public {
+        require(msg.sender == _creator);
+
+        delete _admins[admin];
     }
 
     function withdrawAll() public {
-        require(msg.sender == _creator);
+        require(_admins[msg.sender] == true);
 
-        _creator.transfer(address(this).balance);
+        msg.sender.transfer(address(this).balance);
     }
 
     function getPrice() public view returns (uint256) {
@@ -28,7 +44,7 @@ contract Membership is ERC721 {
     }
 
     function changePrice(uint256 price) public {
-        require(msg.sender == _creator);
+        require(_admins[msg.sender] == true);
         require(price > 0);
 
         _price = price;
@@ -44,11 +60,11 @@ contract Membership is ERC721 {
         _safeMint(player, newTokenId);
     }
 
-    function burn(address player, uint256[] memory tokens) public {
-        require(tokens.length <= balanceOf(player));
+    function burn(uint256[] memory tokens) public {
+        require(tokens.length <= balanceOf(msg.sender));
 
         for (uint256 i = 0; i < tokens.length; i = SafeMath.add(i, 1)) {
-            require(_isApprovedOrOwner(player, tokens[i]));
+            require(_isApprovedOrOwner(msg.sender, tokens[i]));
 
             _burn(tokens[i]);
         }

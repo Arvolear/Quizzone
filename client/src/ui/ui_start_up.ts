@@ -73,7 +73,7 @@ export class UIStartUp
         UIStartUp.startUp.addText('Maximum 3 boosters per quiz are allowed', 0, 195, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIStartUp.startUp.addText('The unused ones will be burned', 0, 175, new Color4(0.24, 0.22, 0.25, 1.0), 20)
 
-        UIStartUp.startUp.addText('Your balance:  ...  MANA', 0, 145, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText('Your matic balance:  ...  MANA', 0, 145, new Color4(1.0, 0.15, 0.3, 1.0), 20)
 
         UIStartUp.startUp.addText('Autocomplete question booster', 0, 110, Color4.Black(), 25)
         UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 83, new Color4(1.0, 0.15, 0.3, 1.0), 20)
@@ -292,7 +292,7 @@ export class UIStartUp
             let dotMaticIndex = balanceMaticStr.indexOf(".")
 
             UIStartUp.maticBalance = balance.l2
-            valueMaticText.text.value = "Your balance:  " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + "  MANA"
+            valueMaticText.text.value = "Your matic balance:  " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + "  MANA"
         })
 
         UIStartUp.startUp.reopen()

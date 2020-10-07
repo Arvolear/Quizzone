@@ -15,7 +15,11 @@ export class DappClientSocket
 {
     public static playerWallet;
     public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
-    public static network = "goerli"
+    public static network = "mainnet"
+    // public static network = "goerli"
+
+    private static location = "wss://quiz-service.dapp-craft.com:8444"
+    // private static location = ws://localhost:8080"
 
     private socket: WebSocket
 
@@ -56,8 +60,7 @@ export class DappClientSocket
             return;
         }
 
-        // this.socket = new WebSocket("wss://quiz-service.dapp-craft.com:8444")
-        this.socket = new WebSocket("ws://localhost:8080")
+        this.socket = new WebSocket(DappClientSocket.location)
 
         this.socket.onopen = this.onOpen
         this.socket.onclose = this.onClose
