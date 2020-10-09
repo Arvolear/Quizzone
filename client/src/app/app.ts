@@ -15,14 +15,16 @@ import { TimerSystem } from "../systems/timer_system"
 import { Beam } from "../entities/beam"
 import { UI } from "../ui/ui"
 import { UISystem } from "../systems/ui_system"
-import { UIPropertiesComponent } from "../components/ui_properties_component"
+import { StartButton } from "../entities/start_button"
+import { Scene } from "../entities/scene"
 
 export class App
 {
     private ui: UI;
 
-    private buttons: Array<Button> = []
+    private scene: Scene
 
+    private buttons: Array<Button> = []
     private beams: Array<Beam> = []
 
     private centralScreen: Screen
@@ -32,40 +34,31 @@ export class App
     private lifetimeBestScreen: Screen
     private timedQuizScreen: Screen
 
+    private startButton: StartButton
+
     private dappClientSocket: DappClientSocket
 
-    private static INITIAL_X = 6
-    private static INITIAL_Z = 3.5
-    private static SCALE_FACTOR = 4
+    private static INITIAL_X = 16.2
+    private static INITIAL_Y = 0.15
+    private static INITIAL_Z = -19.79
+    private static SCALE_FACTOR = 7.42
     private static SCALE_OFFSET = 0.1
 
     constructor()
     {
+        this.configureScene()
         this.configureButtons()
         this.configureBeams()
         this.configureScreens()
         this.configureSocket()
         this.configureUI()
         this.configureSystems()
+        this.configureStartButton()
     }
 
-    private configureBeams(): void
+    private configureScene(): void
     {
-        let beam1 = new Beam(
-            new Vector3(App.INITIAL_Z + App.SCALE_FACTOR / 2, 0, App.INITIAL_X + App.SCALE_FACTOR / 2),
-            Quaternion.Euler(0, 0, 0),
-            new Vector3(App.SCALE_FACTOR * 2 - App.SCALE_OFFSET, 0.11, 0.1));
-
-        let beam2 = new Beam(
-            new Vector3(App.INITIAL_Z + App.SCALE_FACTOR / 2, 0, App.INITIAL_X + App.SCALE_FACTOR / 2),
-            Quaternion.Euler(0, 90, 0),
-            new Vector3(App.SCALE_FACTOR * 2 - App.SCALE_OFFSET, 0.11, 0.1));
-
-        beam1.addToEngine()
-        beam2.addToEngine()
-
-        this.beams.push(beam1)
-        this.beams.push(beam2)
+        this.scene = new Scene()
     }
 
     private configureButtons(): void
@@ -75,8 +68,8 @@ export class App
             for (var j = 0; j < 2; j++)
             {
                 let button = new Button(i * 2 + j,
-                    new Vector3(App.INITIAL_Z + i * App.SCALE_FACTOR, 0, App.INITIAL_X + j * App.SCALE_FACTOR),
-                    Quaternion.Euler(0, 0, 0),
+                    new Vector3(-(App.INITIAL_Z + j * App.SCALE_FACTOR), App.INITIAL_Y, App.INITIAL_X + i * App.SCALE_FACTOR),
+                    Quaternion.Euler(0, -90, 0),
                     new Vector3(App.SCALE_FACTOR - App.SCALE_OFFSET, 0.1, App.SCALE_FACTOR - App.SCALE_OFFSET))
 
                 button.addToEngine()
@@ -85,14 +78,40 @@ export class App
         }
     }
 
+    private configureBeams(): void
+    {
+        let beam1 = new Beam(
+            new Vector3(-(App.INITIAL_Z + App.SCALE_FACTOR / 2), App.INITIAL_Y, App.INITIAL_X + App.SCALE_FACTOR / 2),
+            Quaternion.Euler(0, -90, 0),
+            new Vector3(App.SCALE_FACTOR * 2 - App.SCALE_OFFSET, 0.11, 0.1));
+
+        let beam2 = new Beam(
+            new Vector3(-(App.INITIAL_Z + App.SCALE_FACTOR / 2), App.INITIAL_Y, App.INITIAL_X + App.SCALE_FACTOR / 2),
+            Quaternion.Euler(0, 0, 0),
+            new Vector3(App.SCALE_FACTOR * 2 - App.SCALE_OFFSET, 0.11, 0.1));
+
+        beam1.addToEngine()
+        beam2.addToEngine()
+
+        this.beams.push(beam1)
+        this.beams.push(beam2)
+    }
+
     private configureScreens(): void
     {
-        this.centralScreen = new CentralScreen(new Vector3(14, 2.2, 8), Quaternion.Euler(0, 0, 0), new Vector3(0.1, 4, 8))
-        this.leftScreen = new LeftScreen(new Vector3(13, 2.2, 13.7), Quaternion.Euler(0, -30, 0), new Vector3(0.1, 4, 4))
-        this.rightScreen = new RightScreen(new Vector3(13, 2.2, 2.3), Quaternion.Euler(0, 30, 0), new Vector3(0.1, 4, 4))
-        this.topPartyScreen = new TopPartyScreen(new Vector3(13.7, 7, 11.7), Quaternion.Euler(0, -15, 15), new Vector3(0.1, 3, 7))
-        this.lifetimeBestScreen = new LifetimeBestScreen(new Vector3(5.5, 1.65, 15.4), Quaternion.Euler(0, -90, 0), new Vector3(0.1, 3, 7))
-        this.timedQuizScreen = new TimedQuizScreen(new Vector3(13.7, 7, 4.3), Quaternion.Euler(0, 15, 15), new Vector3(0.1, 3, 7))
+        this.centralScreen = new CentralScreen()
+        this.leftScreen = new LeftScreen()
+        this.rightScreen = new RightScreen()
+        this.topPartyScreen = new TopPartyScreen()
+        this.lifetimeBestScreen = new LifetimeBestScreen()
+        this.timedQuizScreen = new TimedQuizScreen()
+
+        this.centralScreen.configMain(new Vector3(16, 2.8, 30.9), Quaternion.Euler(0, 0, 0), new Vector3(4, 4, 4))
+        this.leftScreen.configMain(new Vector3(16, 5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(4, 4, 4))
+        this.rightScreen.configMain(new Vector3(9.8, 8.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
+        this.topPartyScreen.configMain(new Vector3(9.8, 8.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(4, 4, 4))
+        this.lifetimeBestScreen.configMain(new Vector3(1.2, 5.3, 19.4), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
+        this.timedQuizScreen.configMain(new Vector3(22.2, 8.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(5, 5, 5))
 
         this.centralScreen.addToEngine()
         this.leftScreen.addToEngine()
@@ -122,6 +141,13 @@ export class App
         engine.addSystem(new TimerSystem())
         engine.addSystem(new UISystem())
     }
+
+    private configureStartButton(): void
+    {
+        this.startButton = new StartButton(this)
+        this.startButton.configMain(new Vector3(29.03, 0.76, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.1, 1.2, 0.9))
+        this.startButton.addToEngine()
+    }    
 
     startGame(): void
     {

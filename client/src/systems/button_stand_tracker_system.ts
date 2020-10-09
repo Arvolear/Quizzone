@@ -9,7 +9,7 @@ export class ButtonStandTrackerSystem implements ISystem
     private topPartyScreenMain: IEntity
     private centralScreenMain: IEntity
 
-    private static DISTANCE: number = 2.8
+    private static DISTANCE: number = 5.0
 
     constructor()
     {
@@ -52,15 +52,13 @@ export class ButtonStandTrackerSystem implements ISystem
 
                 if (mustIndex - 1 == index)
                 {                
-                    button.getComponent(Material).albedoColor = Color3.FromHexString("#80ffb0")
-                    this.displayText(index)                    
+                    button.getComponent(Material).albedoColor = Color3.FromHexString("#80ffb0")                                
                 }                    
             }
             else if (dist < ButtonStandTrackerSystem.DISTANCE)
             {            
                 button.getComponent(Material).albedoColor = Color3.FromHexString("#80b0ff")               
-
-                this.displayText(index)
+                
                 this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = index                
             }            
         }
@@ -81,37 +79,6 @@ export class ButtonStandTrackerSystem implements ISystem
             {
                 button.getComponent(Material).albedoColor = Color3.White()
             }
-        }
-    }
-
-    private displayText(index: number): void
-    {
-        let text = this.topPartyScreenMain.getComponent(TextShape)
-
-        text.fontSize = 2
-
-        switch(index)
-        {
-            case 0:
-                {
-                    text.value = "4\t3\n\n2    >1"
-                    break
-                }
-            case 1:
-                {
-                    text.value = "4\t3\n\n2<    1"                    
-                    break
-                }
-            case 2:
-                {
-                    text.value = "4    >3\n\n2\t1"                    
-                    break
-                }
-            case 3:
-                {
-                    text.value = "4<    3\n\n2\t1"                    
-                    break
-                }
         }
     }
 }

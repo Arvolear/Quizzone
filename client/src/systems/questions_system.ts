@@ -52,8 +52,7 @@ export class QuestionsSystem implements ISystem
         }        
         else if (centralComp.nextQuestionLoaded)
         {
-            this.displayQuestion()
-            this.clearButtonsScreen()
+            this.displayQuestion()            
             this.displayQuestionNumber()
 
             this.topPartyScreenMain.removeComponent(BlockComponent)
@@ -163,14 +162,5 @@ export class QuestionsSystem implements ISystem
 
         text.value = "Question\n" + current + "/" + total;
         text.fontSize = 1
-    }
-
-    private clearButtonsScreen(): void
-    {
-        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).clear()
-        let text = this.topPartyScreenMain.getComponent(TextShape)
-
-        text.value = "4\t3\n\n2\t1"
-        text.fontSize = 2
     }
 }
