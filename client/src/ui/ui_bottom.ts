@@ -1,4 +1,3 @@
-import { setSection } from "../../node_modules/@dcl/ui-utils/utils/resources"
 import { Delay } from "../../node_modules/@dcl/ui-utils/utils/timerComponents"
 import { UI } from "./ui"
 
@@ -32,165 +31,106 @@ export class UIBottom
         UIBottom.bottomRect.width = "100%"
         UIBottom.bottomRect.vAlign = "bottom"
 
-        let atlasPath = "images/atlas3.png"
-        let atlasTexture = new Texture(atlasPath);
+        let topUpPath = "images/top_up_matic.png"
+        let topUpTexture = new Texture(topUpPath);
 
-        UIBottom.topUpButton = new UIImage(UIBottom.bottomRect, atlasTexture);
+        UIBottom.topUpButton = new UIImage(UIBottom.bottomRect, topUpTexture);
         UIBottom.topUpButton.isPointerBlocker = true
         UIBottom.topUpButton.hAlign = "left"
-        setSection(UIBottom.topUpButton, { sourceLeft: 59, sourceTop: 475, sourceWidth: 774, sourceHeight: 170 })
+        UIBottom.topUpButton.sourceWidth = 2400
+        UIBottom.topUpButton.sourceHeight = 400
         UIBottom.topUpButton.positionY = "-10px"
-        UIBottom.topUpButton.width = 136
+        UIBottom.topUpButton.width = 180
         UIBottom.topUpButton.height = 30
         UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
-        UIBottom.topUpButton.opacity = 0.9 
+        UIBottom.topUpButton.opacity = 0.9        
 
-        UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, atlasTexture);
+        let memberPath = "images/member.png"
+        let memberTexture = new Texture(memberPath);
+
+        UIBottom.memberButton = new UIImage(UIBottom.bottomRect, memberTexture);
+        UIBottom.memberButton.isPointerBlocker = true
+        UIBottom.memberButton.hAlign = "left"
+        UIBottom.memberButton.sourceWidth = 2400
+        UIBottom.memberButton.sourceHeight = 400
+        UIBottom.memberButton.positionY = "20px"
+        UIBottom.memberButton.width = 180
+        UIBottom.memberButton.height = 30
+        UIBottom.memberButton.onClick = new OnClick(UIBottom.uiCallback.showMember)
+        UIBottom.memberButton.opacity = 0.9
+
+        let alreadyMemberPath = "images/already_member.png"
+        let alreadyMemberTexture = new Texture(alreadyMemberPath);
+
+        UIBottom.alreadyMemberButton = new UIImage(UIBottom.bottomRect, alreadyMemberTexture);
+        UIBottom.alreadyMemberButton.isPointerBlocker = true
+        UIBottom.alreadyMemberButton.hAlign = "left"
+        UIBottom.alreadyMemberButton.sourceWidth = 2400
+        UIBottom.alreadyMemberButton.sourceHeight = 400
+        UIBottom.alreadyMemberButton.positionY = "20px"
+        UIBottom.alreadyMemberButton.width = 180
+        UIBottom.alreadyMemberButton.height = 30        
+        UIBottom.alreadyMemberButton.opacity = 0.9
+
+        UIBottom.alreadyMemberButton.visible = false
+
+        let autocompletePath = "images/autocomplete.png"
+        let autocompleteTexture = new Texture(autocompletePath);
+
+        UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, autocompleteTexture);
         UIBottom.autocompleteButton.isPointerBlocker = true
         UIBottom.autocompleteButton.hAlign = "center"
-        setSection(UIBottom.autocompleteButton, { sourceLeft: 458, sourceTop: 78, sourceWidth: 410, sourceHeight: 234 })
-        UIBottom.autocompleteButton.positionX = "-100px"
-        UIBottom.autocompleteButton.positionY = "5px"
-        UIBottom.autocompleteButton.width = 118
-        UIBottom.autocompleteButton.height = 70
+        UIBottom.autocompleteButton.sourceWidth = 2800
+        UIBottom.autocompleteButton.sourceHeight = 400
+        UIBottom.autocompleteButton.positionX = "-145px"
+        UIBottom.autocompleteButton.positionY = "-5px"
+        UIBottom.autocompleteButton.width = 280
+        UIBottom.autocompleteButton.height = 40
         UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
 
-        UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, atlasTexture);
+        let autocutPath = "images/50_50.png"
+        let autocutTexture = new Texture(autocutPath);
+
+        UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, autocutTexture);
         UIBottom.autocutButton.isPointerBlocker = true
         UIBottom.autocutButton.hAlign = "center"
-        setSection(UIBottom.autocutButton, { sourceLeft: 58, sourceTop: 78, sourceWidth: 410, sourceHeight: 234 })
-        UIBottom.autocutButton.positionX = "100px"
-        UIBottom.autocutButton.positionY = "5px"
-        UIBottom.autocutButton.width = 118
-        UIBottom.autocutButton.height = 70
+        UIBottom.autocutButton.sourceWidth = 2800
+        UIBottom.autocutButton.sourceHeight = 400
+        UIBottom.autocutButton.positionX = "145px"
+        UIBottom.autocutButton.positionY = "-5px"
+        UIBottom.autocutButton.width = 280
+        UIBottom.autocutButton.height = 40
         UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
         UIBottom.autocutButton.opacity = 0.9
 
-        UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, atlasTexture);
+        let hourglassPath = "images/hourglass.png"
+        let hourglassTexture = new Texture(hourglassPath);
+
+        UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, hourglassTexture);
         UIBottom.hourglassImage.hAlign = "right"
-        setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 680, sourceWidth: 200, sourceHeight: 170 })
-        UIBottom.hourglassImage.positionY = "100px"
-        UIBottom.hourglassImage.width = 82
-        UIBottom.hourglassImage.height = 70
+        UIBottom.hourglassImage.sourceWidth = 350
+        UIBottom.hourglassImage.sourceHeight = 350
+        UIBottom.hourglassImage.positionY = "10px"
+        UIBottom.hourglassImage.width = 80
+        UIBottom.hourglassImage.height = 80
         UIBottom.hourglassImage.opacity = 0.95
 
-        UIBottom.tickImage = new UIImage(UIBottom.bottomRect, atlasTexture);
+        UIBottom.hourglassImage.visible = false
+
+        let tickPath = "images/tick.png"
+        let tickTexture = new Texture(tickPath);
+
+        UIBottom.tickImage = new UIImage(UIBottom.bottomRect, tickTexture);
         UIBottom.tickImage.hAlign = "right"
-        setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 680, sourceWidth: 200, sourceHeight: 170 })
+        UIBottom.tickImage.sourceWidth = 350
+        UIBottom.tickImage.sourceHeight = 350
         UIBottom.tickImage.positionY = "10px"
-        UIBottom.tickImage.width = 82
+        UIBottom.tickImage.width = 70
         UIBottom.tickImage.height = 70
         UIBottom.tickImage.opacity = 0.95
 
-        // UIBottom.tickImage.visible = false
-        // UIBottom.hourglassImage.visible = false
-
-
-        /******************************************/
-
-        // let topUpPath = "images/top_up_matic.png"
-        // let topUpTexture = new Texture(topUpPath);
-
-        // UIBottom.topUpButton = new UIImage(UIBottom.bottomRect, topUpTexture);
-        // UIBottom.topUpButton.isPointerBlocker = true
-        // UIBottom.topUpButton.hAlign = "left"
-        // UIBottom.topUpButton.sourceWidth = 2400
-        // UIBottom.topUpButton.sourceHeight = 400
-        // UIBottom.topUpButton.positionY = "-10px"
-        // UIBottom.topUpButton.width = 180
-        // UIBottom.topUpButton.height = 30
-        // UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
-        // UIBottom.topUpButton.opacity = 0.9        
-
-        // let memberPath = "images/member.png"
-        // let memberTexture = new Texture(memberPath);
-
-        // UIBottom.memberButton = new UIImage(UIBottom.bottomRect, memberTexture);
-        // UIBottom.memberButton.isPointerBlocker = true
-        // UIBottom.memberButton.hAlign = "left"
-        // UIBottom.memberButton.sourceWidth = 2400
-        // UIBottom.memberButton.sourceHeight = 400
-        // UIBottom.memberButton.positionY = "20px"
-        // UIBottom.memberButton.width = 180
-        // UIBottom.memberButton.height = 30
-        // UIBottom.memberButton.onClick = new OnClick(UIBottom.uiCallback.showMember)
-        // UIBottom.memberButton.opacity = 0.9
-
-        // let alreadyMemberPath = "images/already_member.png"
-        // let alreadyMemberTexture = new Texture(alreadyMemberPath);
-
-        // UIBottom.alreadyMemberButton = new UIImage(UIBottom.bottomRect, alreadyMemberTexture);
-        // UIBottom.alreadyMemberButton.isPointerBlocker = true
-        // UIBottom.alreadyMemberButton.hAlign = "left"
-        // UIBottom.alreadyMemberButton.sourceWidth = 2400
-        // UIBottom.alreadyMemberButton.sourceHeight = 400
-        // UIBottom.alreadyMemberButton.positionY = "20px"
-        // UIBottom.alreadyMemberButton.width = 180
-        // UIBottom.alreadyMemberButton.height = 30        
-        // UIBottom.alreadyMemberButton.opacity = 0.9
-
-        // UIBottom.alreadyMemberButton.visible = false
-
-        // let autocompletePath = "images/autocomplete.png"
-        // let autocompleteTexture = new Texture(autocompletePath);
-
-        // UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, autocompleteTexture);
-        // UIBottom.autocompleteButton.isPointerBlocker = true
-        // UIBottom.autocompleteButton.hAlign = "center"
-        // UIBottom.autocompleteButton.sourceWidth = 2800
-        // UIBottom.autocompleteButton.sourceHeight = 400
-        // UIBottom.autocompleteButton.positionX = "-145px"
-        // UIBottom.autocompleteButton.positionY = "-5px"
-        // UIBottom.autocompleteButton.width = 280
-        // UIBottom.autocompleteButton.height = 40
-        // UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
-        // UIBottom.autocompleteButton.opacity = 0.9
-
-        // let autocutPath = "images/50_50.png"
-        // let autocutTexture = new Texture(autocutPath);
-
-        // UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, autocutTexture);
-        // UIBottom.autocutButton.isPointerBlocker = true
-        // UIBottom.autocutButton.hAlign = "center"
-        // UIBottom.autocutButton.sourceWidth = 2800
-        // UIBottom.autocutButton.sourceHeight = 400
-        // UIBottom.autocutButton.positionX = "145px"
-        // UIBottom.autocutButton.positionY = "-5px"
-        // UIBottom.autocutButton.width = 280
-        // UIBottom.autocutButton.height = 40
-        // UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
-        // UIBottom.autocutButton.opacity = 0.9
-
-        // let hourglassPath = "images/hourglass.png"
-        // let hourglassTexture = new Texture(hourglassPath);
-
-        // UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, hourglassTexture);
-        // UIBottom.hourglassImage.hAlign = "right"
-        // UIBottom.hourglassImage.sourceWidth = 350
-        // UIBottom.hourglassImage.sourceHeight = 350
-        // UIBottom.hourglassImage.positionY = "10px"
-        // UIBottom.hourglassImage.width = 80
-        // UIBottom.hourglassImage.height = 80
-        // UIBottom.hourglassImage.opacity = 0.95
-
-        // UIBottom.hourglassImage.visible = false
-
-        // let tickPath = "images/tick.png"
-        // let tickTexture = new Texture(tickPath);
-
-        // UIBottom.tickImage = new UIImage(UIBottom.bottomRect, tickTexture);
-        // UIBottom.tickImage.hAlign = "right"
-        // UIBottom.tickImage.sourceWidth = 350
-        // UIBottom.tickImage.sourceHeight = 350
-        // UIBottom.tickImage.positionY = "10px"
-        // UIBottom.tickImage.width = 70
-        // UIBottom.tickImage.height = 70
-        // UIBottom.tickImage.opacity = 0.95
-
-        // UIBottom.tickImage.visible = false
-
-        /******************************************/
+        UIBottom.tickImage.visible = false
     }
 
     public showHourglass(): void
