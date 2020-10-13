@@ -1,23 +1,21 @@
 import { setSection } from "../../node_modules/@dcl/ui-utils/utils/resources"
 import { Delay } from "../../node_modules/@dcl/ui-utils/utils/timerComponents"
-import { UI } from "./ui"
+import { UICallback } from "./ui_callback"
 
 export class UIBottom
 {
     private static bottomRect: UIContainerRect
 
-    private static topUpButton: UIImage
-    private static memberButton: UIImage
-    private static alreadyMemberButton: UIImage
+    private static topUpButton: UIImage    
     private static autocompleteButton: UIImage
     private static autocutButton: UIImage
 
     private static hourglassImage: UIImage
     private static tickImage: UIImage
 
-    private static uiCallback: UI
+    private static uiCallback: UICallback
 
-    constructor(ui: UI)
+    constructor(ui: UICallback)
     {
         UIBottom.uiCallback = ui
 
@@ -26,40 +24,21 @@ export class UIBottom
 
     private configBottom(): void
     {
-        UIBottom.bottomRect = new UIContainerRect(UI.canvas)
+        UIBottom.bottomRect = new UIContainerRect(UICallback.canvas)
         UIBottom.bottomRect.adaptHeight = true
         UIBottom.bottomRect.adaptWidth = true
         UIBottom.bottomRect.width = "100%"
         UIBottom.bottomRect.vAlign = "bottom"
 
-        let atlasPath = "images/atlas3.png"
+        let atlasPath = "images/atlas.png"
         let atlasTexture = new Texture(atlasPath);
-
-        UIBottom.memberButton = new UIImage(UIBottom.bottomRect, atlasTexture);
-        UIBottom.memberButton.isPointerBlocker = true
-        UIBottom.memberButton.hAlign = "left"
-        setSection(UIBottom.memberButton, { sourceLeft: 59, sourceTop: 475, sourceWidth: 774, sourceHeight: 170 })
-        UIBottom.memberButton.positionY = "30px"
-        UIBottom.memberButton.width = 136
-        UIBottom.memberButton.height = 30
-        UIBottom.memberButton.onClick = new OnClick(UIBottom.uiCallback.showMember)
-        UIBottom.memberButton.opacity = 0.9 
-
-        UIBottom.alreadyMemberButton = new UIImage(UIBottom.bottomRect, atlasTexture);
-        UIBottom.alreadyMemberButton.isPointerBlocker = true
-        UIBottom.alreadyMemberButton.hAlign = "left"
-        setSection(UIBottom.alreadyMemberButton, { sourceLeft: 59, sourceTop: 475, sourceWidth: 774, sourceHeight: 170 })
-        UIBottom.alreadyMemberButton.positionY = "30px"
-        UIBottom.alreadyMemberButton.width = 136
-        UIBottom.alreadyMemberButton.height = 30        
-        UIBottom.alreadyMemberButton.opacity = 0.9 
 
         UIBottom.topUpButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.topUpButton.isPointerBlocker = true
         UIBottom.topUpButton.hAlign = "left"
-        setSection(UIBottom.topUpButton, { sourceLeft: 59, sourceTop: 475, sourceWidth: 774, sourceHeight: 170 })
+        setSection(UIBottom.topUpButton, { sourceLeft: 53, sourceTop: 547, sourceWidth: 790, sourceHeight: 190 })
         UIBottom.topUpButton.positionY = "-10px"
-        UIBottom.topUpButton.width = 136
+        UIBottom.topUpButton.width = 125
         UIBottom.topUpButton.height = 30
         UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
         UIBottom.topUpButton.opacity = 0.9 
@@ -67,10 +46,10 @@ export class UIBottom
         UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.autocompleteButton.isPointerBlocker = true
         UIBottom.autocompleteButton.hAlign = "center"
-        setSection(UIBottom.autocompleteButton, { sourceLeft: 458, sourceTop: 78, sourceWidth: 410, sourceHeight: 234 })
+        setSection(UIBottom.autocompleteButton, { sourceLeft: 566, sourceTop: 137, sourceWidth: 500, sourceHeight: 230 })
         UIBottom.autocompleteButton.positionX = "-100px"
         UIBottom.autocompleteButton.positionY = "5px"
-        UIBottom.autocompleteButton.width = 118
+        UIBottom.autocompleteButton.width = 152
         UIBottom.autocompleteButton.height = 70
         UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
@@ -78,27 +57,27 @@ export class UIBottom
         UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.autocutButton.isPointerBlocker = true
         UIBottom.autocutButton.hAlign = "center"
-        setSection(UIBottom.autocutButton, { sourceLeft: 58, sourceTop: 78, sourceWidth: 410, sourceHeight: 234 })
+        setSection(UIBottom.autocutButton, { sourceLeft: 51, sourceTop: 137, sourceWidth: 500, sourceHeight: 230 })
         UIBottom.autocutButton.positionX = "100px"
         UIBottom.autocutButton.positionY = "5px"
-        UIBottom.autocutButton.width = 118
+        UIBottom.autocutButton.width = 152
         UIBottom.autocutButton.height = 70
         UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
         UIBottom.autocutButton.opacity = 0.9
 
         UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.hourglassImage.hAlign = "right"
-        setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 680, sourceWidth: 200, sourceHeight: 170 })
+        setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
         UIBottom.hourglassImage.positionY = "100px"
-        UIBottom.hourglassImage.width = 82
+        UIBottom.hourglassImage.width = 78
         UIBottom.hourglassImage.height = 70
         UIBottom.hourglassImage.opacity = 0.95
 
         UIBottom.tickImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.tickImage.hAlign = "right"
-        setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 680, sourceWidth: 200, sourceHeight: 170 })
+        setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
         UIBottom.tickImage.positionY = "10px"
-        UIBottom.tickImage.width = 82
+        UIBottom.tickImage.width = 78
         UIBottom.tickImage.height = 70
         UIBottom.tickImage.opacity = 0.95
 
@@ -155,11 +134,5 @@ export class UIBottom
     public hideAutocutButton(): void
     {
         UIBottom.autocutButton.visible = false
-    }
-
-    public setMember(member: boolean): void
-    {
-        UIBottom.memberButton.visible = !member
-        UIBottom.alreadyMemberButton.visible = member
     }
 }

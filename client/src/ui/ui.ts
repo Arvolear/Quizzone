@@ -1,4 +1,5 @@
-import '../../node_modules/@dcl/l2-utils/matic/index'
+import { UICallback } from './ui_callback'
+import { SceneCallback } from '../app/scene_callback'
 import { DappClientSocket } from "../app/dapp_client_socket"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UIStartUp } from "./ui_start_up"
@@ -9,12 +10,11 @@ import { UIAutocomplete } from "./ui_autocomplete"
 import { UIAutocut } from './ui_autocut'
 import { UIMember } from './ui_member'
 
-export class UI 
+export class UI extends UICallback
 {
-    private static ui: UI
+    private static sceneCallback: SceneCallback
 
-    public static properties: Entity
-    public static canvas: UICanvas
+    private static ui: UI
 
     private static uiCheckMetamask: UICheckMetamask
     private static uiStartUp: UIStartUp
@@ -26,25 +26,30 @@ export class UI
 
     private constructor()
     {
-        UI.canvas = new UICanvas()
+        super()
+
+        UI.canvas = new UICanvas()        
 
         this.configureProperties()
     }
 
     public static setClientSocket(dappClientSocket: DappClientSocket): void
     {
-        UIStartUp.setClientSocket(dappClientSocket)
-        UIAutocomplete.setClientSocket(dappClientSocket)
-        UIAutocut.setClientSocket(dappClientSocket)
+        UICallback.dappClientSocket = dappClientSocket
+    }
+
+    public static setSceneCallback(sceneCallback: SceneCallback)
+    {
+        UI.sceneCallback = sceneCallback
     }
 
     private static configInitialDisplay(): void
     {
+        UI.uiMember = new UIMember(UI.ui)
         UI.uiCheckMetamask = new UICheckMetamask(UI.ui)
         UI.uiStartUp = new UIStartUp(UI.ui)
         UI.uiBottom = new UIBottom(UI.ui)
-        UI.uiTopUp = new UITopUp(UI.ui)
-        UI.uiMember = new UIMember(UI.ui)
+        UI.uiTopUp = new UITopUp(UI.ui)        
         UI.uiAutocomplete = new UIAutocomplete(UI.ui)
         UI.uiAutocut = new UIAutocut(UI.ui)
     }
@@ -62,11 +67,11 @@ export class UI
 
     private configureProperties(): void
     {
-        UI.properties = new Entity()
+        UICallback.properties = new Entity()
 
-        UI.properties.addComponent(new UIPropertiesComponent())
+        UICallback.properties.addComponent(new UIPropertiesComponent())
 
-        engine.addEntity(UI.properties)
+        engine.addEntity(UICallback.properties)
     }
 
     public showTopUp(): void
@@ -182,7 +187,7 @@ export class UI
 
     public setMember(member: boolean): void
     {
-        UI.uiBottom.setMember(member)
+        UI.sceneCallback.setMember(member)
     }
 
     public hideAllWindows(): void

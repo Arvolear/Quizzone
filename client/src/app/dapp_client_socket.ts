@@ -9,7 +9,6 @@ import { TopPartyScreenComponent } from "../components/top_party_screen_componen
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { UIMember } from "../ui/ui_member"
 
 export class DappClientSocket
 {
@@ -18,8 +17,8 @@ export class DappClientSocket
     public static network = "mainnet"
     // public static network = "goerli"
 
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private socket: WebSocket
 
@@ -29,24 +28,8 @@ export class DappClientSocket
 
     constructor()
     {
-        DappClientSocket.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]   
-        
-        this.configurePlayerData()
-    }
-
-    private configurePlayerData(): void
-    {
-        const playerDataPromise = executeTask(async () =>
-        {
-            let data = await getUserData()
-            DappClientSocket.playerWallet = data.publicKey;
-        })
-
-        playerDataPromise.then(() => 
-        {
-            UIMember.checkMembership()
-        })
-    }
+        DappClientSocket.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]           
+    }   
 
     static getDistanceCode(): number
     {
@@ -300,10 +283,7 @@ export class DappClientSocket
                     break
                 }
             case "finish":
-                {
-                    var finish = lines[1] + "\n\n" + lines[2]
-
-                    centralComp.finish = finish
+                {                    
                     centralComp.finishLoaded = true
 
                     break

@@ -1,7 +1,7 @@
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
-import { UI } from "./ui"
+import { UICallback } from "./ui_callback"
 import { CustomPromptText, CustomPromptTextBox } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { DappClientSocket } from "../app/dapp_client_socket"
 
@@ -10,9 +10,9 @@ export class UITopUp
     private static topUpMatic: ui.CustomPrompt
     private static universalError: ui.CustomPrompt
 
-    private static uiCallback: UI
+    private static uiCallback: UICallback
 
-    constructor(ui: UI)
+    constructor(ui: UICallback)
     {
         UITopUp.uiCallback = ui
 

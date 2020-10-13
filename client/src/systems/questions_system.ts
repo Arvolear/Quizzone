@@ -107,13 +107,7 @@ export class QuestionsSystem implements ISystem
         this.leftScreenMain.getComponent(LeftScreenComponent).clear()
         this.leftScreenMain.getComponent(TextShape).value = ""    
 
-        let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
-        var finish = centralComp.finish
-
-        let text = this.centralScreenMain.getComponent(TextShape)
-
-        text.value = finish
-        text.fontSize = 1
+        this.centralScreenMain.getComponent(TextShape).value = ""
     }
 
     private displayAnswer(): void
@@ -129,6 +123,9 @@ export class QuestionsSystem implements ISystem
 
     private displayQuestion(): void
     {
+        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = -1;
+        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton = -1;  
+        
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
         var question = centralComp.question
 

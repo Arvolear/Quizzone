@@ -1,14 +1,14 @@
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
-import { UI } from "./ui"
+import { UICallback } from "./ui_callback"
 
 export class UICheckMetamask
 {
     private static checkMetamask: ui.CustomPrompt    
 
-    private static uiCallback: UI
+    private static uiCallback: UICallback
 
-    constructor(ui: UI)
+    constructor(ui: UICallback)
     {
         UICheckMetamask.uiCallback = ui
 

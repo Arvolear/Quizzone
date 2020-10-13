@@ -5,8 +5,7 @@ export class CentralScreenComponent
 {
     connected: string    
     question: Question
-    answer: string
-    finish: string
+    answer: string    
 
     connectedLoaded: boolean    
     nextQuestionLoaded: boolean
@@ -23,8 +22,7 @@ export class CentralScreenComponent
     {
         this.connected = ""        
         this.question = null
-        this.answer = ""
-        this.finish = ""
+        this.answer = ""        
 
         this.connectedLoaded = false        
         this.nextQuestionLoaded = false

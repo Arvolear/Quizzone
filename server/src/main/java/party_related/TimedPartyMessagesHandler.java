@@ -41,9 +41,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     @Override
     public String getFinishMessage(Client player)
     {
-        return "finish\n" +
-                "Thanks for playing! See you in a week!\n" +
-                "Your score: " + party.totalCorrect.get(player) + "/" + party.questionnaire.getTotalNumber();
+        return "finish\n";
     }
 
     public String getTimedClearMessage()

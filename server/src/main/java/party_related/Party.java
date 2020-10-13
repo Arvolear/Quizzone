@@ -25,7 +25,7 @@ public class Party implements IStopWatchCallback
     public final ConcurrentHashMap<Client, Integer> totalCorrect;
     public final ConcurrentHashMap<Client, Client> blackList;
 
-    public static final int LIFETIME_BEST_LIMIT = 5;
+    public static final int LIFETIME_BEST_LIMIT = 8;
     public static final int PARTY_TOP_LIMIT = 5;
 
     public static final int AUTOCOMPLETE_PRICE = 0;

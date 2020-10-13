@@ -178,9 +178,7 @@ public class PartyMessagesHandler
 
     public String getFinishMessage(Client player)
     {
-        return "finish\n" +
-                "Thanks for playing!\n" +
-                "Your score - " + party.totalCorrect.get(player) + "/" + party.questionnaire.getTotalNumber();
+        return "finish\n";
     }
 
     public String getClearMessage()
@@ -193,6 +191,7 @@ public class PartyMessagesHandler
         StringBuilder builder = new StringBuilder();
 
         builder.append("top_party\n").
+                append("Thanks for playing!\n").
                 append("Party best\n");
 
         ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
@@ -238,8 +237,7 @@ public class PartyMessagesHandler
         StringBuilder builder = new StringBuilder();
         String lifetimeBest = party.sqlAccess.getLifetimeBest(player.getNick());
 
-        builder.append("lifetime_best\n").
-                append("Lifetime best\n");
+        builder.append("lifetime_best\n");
 
         for (int i = 0; i < allLifetimeBest.size() && i < Party.LIFETIME_BEST_LIMIT; i++)
         {

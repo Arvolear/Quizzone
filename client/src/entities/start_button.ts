@@ -1,15 +1,15 @@
-import { App } from "../app/app"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { UI } from "../ui/ui"
+import { UICallback } from "../ui/ui_callback"
+import { SceneCallback } from "../app/scene_callback"
 
 export class StartButton
 {
     private button: Entity
-    private app: App
+    private sceneCallback: SceneCallback
 
-    constructor(app: App)
+    constructor(sceneCallback: SceneCallback)
     {
-        this.app = app
+        this.sceneCallback = sceneCallback
     }
 
     public configMain(position: Vector3, rotation: Quaternion, scale: Vector3): void
@@ -34,9 +34,9 @@ export class StartButton
         this.button.addComponent(new OnPointerDown(
             () =>
             {
-                if (UI.properties.getComponent(UIPropertiesComponent).canJoin)
+                if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
                 {
-                    this.app.startGame()
+                    this.sceneCallback.startGame()
                 }
             }))
     }
