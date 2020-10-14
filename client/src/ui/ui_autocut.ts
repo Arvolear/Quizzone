@@ -1,6 +1,6 @@
 import { DappClientSocket } from "../app/dapp_client_socket"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
-import { UICallback } from './ui_callback'
+import { UICallback } from '../app/ui_callback'
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"

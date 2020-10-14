@@ -24,12 +24,14 @@ export class App
     private configureScene(): void
     {
         this.scene = new Scene()
+
         UI.setSceneCallback(this.scene)
     }
 
     private configureSocket(): void
     {
-        App.dappClientSocket = new DappClientSocket()
+        App.dappClientSocket = new DappClientSocket(this.scene)
+        
         UI.setClientSocket(App.dappClientSocket)
     }
 

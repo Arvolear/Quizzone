@@ -7,7 +7,7 @@ export class ScreenDistanceSystem
 
     private centralScreenMain: IEntity    
 
-    private static CONNECTION_DISTANCE: number = 40
+    private static CONNECTION_DISTANCE: number = 50
 
     constructor(dappClientSocket: DappClientSocket)
     {

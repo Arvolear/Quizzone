@@ -1,6 +1,5 @@
 import { SceneCallback } from '../app/scene_callback'
 import { UI } from '../ui/ui'
-import { Beam } from "./beam"
 import { Button } from "./button"
 import { CentralScreen } from "./central_screen"
 import { LeftScreen } from "./left_screen"
@@ -20,9 +19,15 @@ export class Scene extends SceneCallback
     private becomeAMember: Entity
     private alreadyAMember: Entity
     private memberButton: Entity
+    private memberButtonShape: BoxShape
+
+    private leaderBoard: Entity
+
+    private outCollider: Entity
+    private inCollider: Entity
+    private inColliderShape: GLTFShape
 
     private buttons: Array<Button> = []
-    private beams: Array<Beam> = []
 
     private centralScreen: Screen
     private leftScreen: Screen
@@ -37,7 +42,6 @@ export class Scene extends SceneCallback
     private static INITIAL_Y = 0.25
     private static INITIAL_Z = -19.79
     private static SCALE_FACTOR = 7.42
-    private static SCALE_OFFSET = 0.1
 
     constructor()
     {
@@ -45,12 +49,13 @@ export class Scene extends SceneCallback
 
         this.configScene()
         this.configBecomeAMember()
-        this.configAlreadyAMember()
+        this.configAlreadyAMember()        
         this.configGrass()
+        this.configLogo()
+        this.configColliders()        
 
         this.configureUI()
         this.configureButtons()
-        this.configureBeams()
         this.configureScreens()
         this.configureStartButton()
     }
@@ -67,19 +72,19 @@ export class Scene extends SceneCallback
         gltfShape2.isPointerBlocker = true
         gltfShape2.visible = true
 
-        const scene = new Entity('scene')
-        engine.addEntity(scene)
+        this.scene = new Entity('scene')
+        engine.addEntity(this.scene)
         const transform = new Transform(
             {
                 position: new Vector3(0, 0, 0),
                 rotation: new Quaternion(0, 0, 0, 1),
                 scale: new Vector3(1, 1, 1)
             })
-        scene.addComponentOrReplace(transform)
+        this.scene.addComponentOrReplace(transform)
 
         const quizzone = new Entity('quizzone')
         engine.addEntity(quizzone)
-        quizzone.setParent(scene)
+        quizzone.setParent(this.scene)
         quizzone.addComponentOrReplace(gltfShape2)
         const transform6 = new Transform(
             {
@@ -93,7 +98,7 @@ export class Scene extends SceneCallback
 
     private configBecomeAMember(): void
     {
-        const becomeAMemberShape = new GLTFShape("models/become_a_member.glb")
+        const becomeAMemberShape = new GLTFShape("models/member/become_a_member.glb")
         becomeAMemberShape.withCollisions = true
         becomeAMemberShape.isPointerBlocker = true
         becomeAMemberShape.visible = true
@@ -105,7 +110,7 @@ export class Scene extends SceneCallback
 
         const transform = new Transform(
             {
-                position: new Vector3(16, -0.5, 15.2),
+                position: new Vector3(16.5, -0.5, 15.2),
                 rotation: new Quaternion(0, 0, 0, 1),
                 scale: new Vector3(1, 1, 1)
             })
@@ -116,12 +121,13 @@ export class Scene extends SceneCallback
         this.memberButton.setParent(this.becomeAMember)
         this.memberButton.addComponent(new Transform(
             {
-                position: new Vector3(14.5, 3.6, 5.65),
+                position: new Vector3(15, 3.7, 5.65),
                 rotation: Quaternion.Euler(0, 0, 0),
-                scale: new Vector3(0.1, 1, 5)
+                scale: new Vector3(0.1, 1.2, 5.5)
             }
         ))
-        this.memberButton.addComponent(new BoxShape())
+        this.memberButtonShape = new BoxShape()
+        this.memberButton.addComponentOrReplace(this.memberButtonShape)
 
         let material = new Material()
         material.albedoColor = Color4.FromHexString("#00000000")
@@ -136,7 +142,7 @@ export class Scene extends SceneCallback
 
     private configAlreadyAMember(): void
     {
-        const alreadyAMemberShape = new GLTFShape("models/already_a_member.glb")
+        const alreadyAMemberShape = new GLTFShape("models/member/already_a_member.glb")
         alreadyAMemberShape.withCollisions = true
         alreadyAMemberShape.isPointerBlocker = true
         alreadyAMemberShape.visible = false
@@ -148,7 +154,7 @@ export class Scene extends SceneCallback
 
         const transform = new Transform(
             {
-                position: new Vector3(15, -0.5, 15.2),
+                position: new Vector3(15.5, -0.5, 15.2),
                 rotation: new Quaternion(0, 0, 0, 1),
                 scale: new Vector3(1, 1, 1)
             })
@@ -157,7 +163,7 @@ export class Scene extends SceneCallback
 
     private configGrass(): void
     {
-        const gltfShape = new GLTFShape("models/FloorBaseGrass_01/FloorBaseGrass_01.glb")
+        const gltfShape = new GLTFShape("models/grass/FloorBaseGrass_01.glb")
         gltfShape.withCollisions = true
         gltfShape.isPointerBlocker = true
         gltfShape.visible = true
@@ -166,7 +172,7 @@ export class Scene extends SceneCallback
         {
             for (var j = 0; j < 2; j++)
             {
-                const entity = new Entity('entity' + (i * 2 + j))
+                let entity = new Entity()
                 engine.addEntity(entity)
                 entity.setParent(this.scene)
                 entity.addComponentOrReplace(gltfShape)
@@ -179,6 +185,65 @@ export class Scene extends SceneCallback
                 entity.addComponentOrReplace(transform)
             }
         }
+    }
+
+    private configLogo(): void
+    {
+        const logoShape = new GLTFShape("models/logo/logo_animation.glb")        
+        logoShape.visible = true
+
+        let logo = new Entity('logo')
+        engine.addEntity(logo)
+        logo.setParent(this.scene)
+        logo.addComponentOrReplace(logoShape)
+
+        const transform = new Transform(
+            {
+                position: new Vector3(16, 17, 16),
+                rotation: new Quaternion(0, 0, 0, 1),
+                scale: new Vector3(1, 1, 1)
+            })
+        logo.addComponentOrReplace(transform)
+
+        let logoAnimator = new Animator()
+        logo.addComponent(logoAnimator)
+
+        const rotateClip = new AnimationState('Z Euler Rotation')
+        rotateClip.looping = true
+        logoAnimator.addClip(rotateClip)
+
+        rotateClip.play()
+    }
+
+    private configColliders(): void
+    {        
+        const transform = new Transform(
+            {
+                position: new Vector3(16.5, -0.5, 14.6),
+                rotation: new Quaternion(0, 0, 0, 1),
+                scale: new Vector3(1, 1, 1)
+            })
+
+        const outColliderShape = new GLTFShape("models/colliders/out_collider.glb")
+        outColliderShape.withCollisions = true
+        outColliderShape.isPointerBlocker = false
+        outColliderShape.visible = true
+
+        this.outCollider = new Entity('out_collider')
+        engine.addEntity(this.outCollider)
+        this.outCollider.setParent(this.scene)
+        this.outCollider.addComponentOrReplace(outColliderShape)
+        this.outCollider.addComponentOrReplace(transform)
+
+        this.inColliderShape = new GLTFShape("models/colliders/in_collider.glb")
+        this.inColliderShape.withCollisions = true
+        this.inColliderShape.isPointerBlocker = false
+        this.inColliderShape.visible = true
+
+        this.inCollider = new Entity('in_collider')
+        engine.addEntity(this.inCollider)
+        this.inCollider.setParent(this.scene)        
+        this.inCollider.addComponentOrReplace(transform)
     }
 
     private configureButtons(): void
@@ -198,25 +263,6 @@ export class Scene extends SceneCallback
         }
     }
 
-    private configureBeams(): void
-    {
-        let beam1 = new Beam(
-            new Vector3(-(Scene.INITIAL_Z + Scene.SCALE_FACTOR / 2), Scene.INITIAL_Y, Scene.INITIAL_X + Scene.SCALE_FACTOR / 2),
-            Quaternion.Euler(0, -90, 0),
-            new Vector3(Scene.SCALE_FACTOR * 2 - Scene.SCALE_OFFSET, 0.11, 0.1));
-
-        let beam2 = new Beam(
-            new Vector3(-(Scene.INITIAL_Z + Scene.SCALE_FACTOR / 2), Scene.INITIAL_Y, Scene.INITIAL_X + Scene.SCALE_FACTOR / 2),
-            Quaternion.Euler(0, 0, 0),
-            new Vector3(Scene.SCALE_FACTOR * 2 - Scene.SCALE_OFFSET, 0.11, 0.1));
-
-        beam1.addToEngine()
-        beam2.addToEngine()
-
-        this.beams.push(beam1)
-        this.beams.push(beam2)
-    }
-
     private configureScreens(): void
     {
         this.centralScreen = new CentralScreen()
@@ -230,7 +276,7 @@ export class Scene extends SceneCallback
         this.leftScreen.configMain(new Vector3(16, 6.2, 30.5), Quaternion.Euler(0, 0, 0), new Vector3(4.8, 4.8, 4.8))
         this.rightScreen.configMain(new Vector3(9.9, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
         this.topPartyScreen.configMain(new Vector3(16, 3.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
-        this.lifetimeBestScreen.configMain(new Vector3(0.9, 5.7, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
+        this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.2, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
         this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
 
         this.centralScreen.addToEngine()
@@ -259,22 +305,25 @@ export class Scene extends SceneCallback
         {
             this.alreadyAMember.getComponent(GLTFShape).visible = true
             this.becomeAMember.getComponent(GLTFShape).visible = false
-            
-            if (this.memberButton.isAddedToEngine())
-            {
-                engine.removeEntity(this.memberButton)
-            }
+            this.memberButton.removeComponent(this.memberButtonShape)
         }
         else
         {
             this.alreadyAMember.getComponent(GLTFShape).visible = false
             this.becomeAMember.getComponent(GLTFShape).visible = true
-
-            if (!this.memberButton.isAddedToEngine())
-            {
-                engine.addEntity(this.memberButton)
-            }
+            this.memberButton.addComponentOrReplace(this.memberButtonShape)
         }
+    }
+
+    public setCollider(): void
+    {
+        this.inCollider.addComponentOrReplace(this.inColliderShape)
+        movePlayerTo({ x: 16, y: 0, z: 16 })
+    }
+
+    public dropCollider(): void
+    {
+        this.inCollider.removeComponent(this.inColliderShape)
     }
 
     public getButtons(): Array<Button>

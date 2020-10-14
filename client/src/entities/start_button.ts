@@ -1,6 +1,6 @@
-import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { UICallback } from "../ui/ui_callback"
 import { SceneCallback } from "../app/scene_callback"
+import { UIPropertiesComponent } from "../components/ui_properties_component"
+import { UICallback } from "../app/ui_callback"
 
 export class StartButton
 {

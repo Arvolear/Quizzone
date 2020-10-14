@@ -25,10 +25,10 @@ export class UIPropertiesComponent
     {
         this.canJoin = false
         this.member = false    
-        // this.autocompleteVisible = false
-        // this.autocutVisible = false
-        this.autocompleteVisible = true
-        this.autocutVisible = true
+        this.autocompleteVisible = false
+        this.autocutVisible = false
+        // this.autocompleteVisible = true
+        // this.autocutVisible = true
         this.timeToQuizStart = ""
         this.membershipPrice = 0.0
         this.autocompleteLeft = 0

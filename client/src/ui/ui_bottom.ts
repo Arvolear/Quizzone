@@ -1,6 +1,6 @@
 import { setSection } from "../../node_modules/@dcl/ui-utils/utils/resources"
 import { Delay } from "../../node_modules/@dcl/ui-utils/utils/timerComponents"
-import { UICallback } from "./ui_callback"
+import { UICallback } from "../app/ui_callback"
 
 export class UIBottom
 {
@@ -38,8 +38,8 @@ export class UIBottom
         UIBottom.topUpButton.hAlign = "left"
         setSection(UIBottom.topUpButton, { sourceLeft: 53, sourceTop: 547, sourceWidth: 790, sourceHeight: 190 })
         UIBottom.topUpButton.positionY = "-10px"
-        UIBottom.topUpButton.width = 125
-        UIBottom.topUpButton.height = 30
+        UIBottom.topUpButton.width = 166
+        UIBottom.topUpButton.height = 40
         UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
         UIBottom.topUpButton.opacity = 0.9 
 
@@ -68,7 +68,7 @@ export class UIBottom
         UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.hourglassImage.hAlign = "right"
         setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.hourglassImage.positionY = "100px"
+        UIBottom.hourglassImage.positionY = "10px"
         UIBottom.hourglassImage.width = 78
         UIBottom.hourglassImage.height = 70
         UIBottom.hourglassImage.opacity = 0.95
@@ -81,8 +81,8 @@ export class UIBottom
         UIBottom.tickImage.height = 70
         UIBottom.tickImage.opacity = 0.95
 
-        // UIBottom.tickImage.visible = false
-        // UIBottom.hourglassImage.visible = false
+        UIBottom.tickImage.visible = false
+        UIBottom.hourglassImage.visible = false
     }
 
     public showHourglass(): void

@@ -1,15 +1,19 @@
-import { Question } from "../app/question"
+import { AnswerStatistics } from "../entities/answer_statistics"
+import { Question } from "../entities/question"
 
 @Component("centralScreenComponent")
 export class CentralScreenComponent
 {
     connected: string    
     question: Question
-    answer: string    
+    answer: string
+
+    answerStatistics: AnswerStatistics
 
     connectedLoaded: boolean    
     nextQuestionLoaded: boolean
     answerLoaded: boolean
+    answerStatisticsLoaded: boolean
     finishLoaded: boolean
     getLoaded: boolean    
 
@@ -27,6 +31,7 @@ export class CentralScreenComponent
         this.connectedLoaded = false        
         this.nextQuestionLoaded = false
         this.answerLoaded = false
+        this.answerStatisticsLoaded = false
         this.finishLoaded = false
         this.getLoaded = false        
     }

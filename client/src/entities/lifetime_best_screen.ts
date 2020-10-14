@@ -1,5 +1,6 @@
 import { Screen } from "./screen"
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
+import { BlockComponent } from "../components/block_component"
 
 export class LifetimeBestScreen extends Screen
 {
@@ -8,5 +9,6 @@ export class LifetimeBestScreen extends Screen
         super.configMain(position, rotation, scale)
         
         this.main.addComponent(new LifetimeBestScreenComponent())
+        this.main.addComponent(new BlockComponent())
     }
 }

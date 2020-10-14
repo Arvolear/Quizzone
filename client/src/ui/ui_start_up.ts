@@ -1,4 +1,4 @@
-import { UICallback } from "./ui_callback"
+import { UICallback } from "../app/ui_callback"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { UIPropertiesComponent } from "../components/ui_properties_component";
@@ -166,7 +166,7 @@ export class UIStartUp
     {
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {            
-            UIStartUp.checkBuyBoosters()            
+            UIStartUp.checkBuyBoosters()              
         }
         else
         {

@@ -25,7 +25,9 @@ public class Party implements IStopWatchCallback
     public final ConcurrentHashMap<Client, Integer> totalCorrect;
     public final ConcurrentHashMap<Client, Client> blackList;
 
-    public static final int LIFETIME_BEST_LIMIT = 8;
+    private final ArrayList<Integer> currentQuestionAnswers;
+
+    public static final int LIFETIME_BEST_LIMIT = 9;
     public static final int PARTY_TOP_LIMIT = 5;
 
     public static final int AUTOCOMPLETE_PRICE = 0;
@@ -64,6 +66,8 @@ public class Party implements IStopWatchCallback
 
         totalCorrect = new ConcurrentHashMap<>();
         blackList = new ConcurrentHashMap<>();
+
+        currentQuestionAnswers = new ArrayList<>();
 
         questionTimer = new StopWatch<>(this, "randomQuizTimer");
 
@@ -236,14 +240,7 @@ public class Party implements IStopWatchCallback
 
         String response = messagesHandler.getTimerUpdateMessage(timeLeft);
 
-        if (!locked)
-        {
-            broadcastAll(response);
-        }
-        else
-        {
-            broadcast(playingPlayers, response);
-        }
+        broadcastAll(response);
     }
 
     @Override
@@ -260,8 +257,7 @@ public class Party implements IStopWatchCallback
             locked = true;
             nowQuestion = true;
 
-            broadcast(idlePlayers, messagesHandler.getLockedMessage());
-            broadcast(playingPlayers, messagesHandler.getStartMessage());
+            broadcastAll(messagesHandler.getStartMessage());
             handleBoostersMessages();
 
             questionTimer.updateTime(questionDuration);
@@ -290,8 +286,8 @@ public class Party implements IStopWatchCallback
             {
                 String topPartyResponse = messagesHandler.getTopPartyResponse();
 
-                broadcast(playingPlayers, messagesHandler::getFinishMessage);
-                broadcast(playingPlayers, topPartyResponse);
+                broadcastAll(messagesHandler::getFinishMessage);
+                broadcastAll(topPartyResponse);
 
                 restart = true;
                 nowQuestion = false;
@@ -300,7 +296,7 @@ public class Party implements IStopWatchCallback
             }
             else
             {
-                broadcast(playingPlayers, messagesHandler.getNextMessage());
+                broadcastAll(messagesHandler.getNextMessage());
                 handleBoostersMessages();
 
                 questionTimer.updateTime(questionDuration);
@@ -330,9 +326,17 @@ public class Party implements IStopWatchCallback
             return;
         }
 
-        if (!nowAnswer)
+        if (!nowAnswer || !playingPlayers.contains(player))
         {
             return;
+        }
+
+        if (currentQuestionAnswers.size() < 4)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                currentQuestionAnswers.add(0);
+            }
         }
 
         int questionNum = Integer.parseInt(lines[1]);
@@ -353,7 +357,10 @@ public class Party implements IStopWatchCallback
 
             blackList.put(player, playingPlayers.get(player));
 
+            currentQuestionAnswers.set(answer - 1, currentQuestionAnswers.get(answer - 1) + 1);
+
             send(player, response);
+            broadcast(idlePlayers, messagesHandler.getAnswerStatisticsMessage(currentQuestionAnswers));
         }
     }
 

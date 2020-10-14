@@ -67,6 +67,12 @@ export class QuestionsSystem implements ISystem
 
             centralComp.answerLoaded = false
         }
+        else if (centralComp.answerStatisticsLoaded)
+        {
+            this.displayAnswerStatistics()
+
+            centralComp.answerStatisticsLoaded = false
+        }
         else if (centralComp.finishLoaded)
         {
             this.displayFinish()
@@ -118,6 +124,33 @@ export class QuestionsSystem implements ISystem
         let text = this.centralScreenMain.getComponent(TextShape)
 
         text.value = answer
+        text.fontSize = 1
+    }
+
+    private displayAnswerStatistics(): void
+    {
+        let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
+        var answerStatistics = centralComp.answerStatistics
+
+        var toDisplay = answerStatistics.message + "\n\n\n"
+
+        for (var i = 0; i < answerStatistics.answers.length; i++)
+        {
+            toDisplay += answerStatistics.answers[i]
+
+            if (i % 2 == 1)
+            {
+                toDisplay += "\n"
+            }
+            else
+            {
+                toDisplay += "   "
+            }
+        }
+
+        let text = this.centralScreenMain.getComponent(TextShape)
+
+        text.value = toDisplay
         text.fontSize = 1
     }
 

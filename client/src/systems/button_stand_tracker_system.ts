@@ -3,18 +3,22 @@ import { BlockComponent } from "../components/block_component"
 import { CentralScreenComponent } from "../components/central_screen_component"
 import { TopPartyScreenComponent } from "../components/top_party_screen_component"
 import { Button } from "../entities/button"
+import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 
 export class ButtonStandTrackerSystem implements ISystem
 {
     private buttonsGroup: Array<Button>
+
+    private lifeTimeBestScreenMain: IEntity
     private topPartyScreenMain: IEntity
     private centralScreenMain: IEntity
 
-    private static DISTANCE: number = 4.4
+    private static DISTANCE: number = 4.5
 
     constructor(buttonsGroup: Array<Button>)
     {        
         this.buttonsGroup = buttonsGroup
+        this.lifeTimeBestScreenMain = engine.getComponentGroup(LifetimeBestScreenComponent).entities[0]
         this.topPartyScreenMain = engine.getComponentGroup(TopPartyScreenComponent).entities[0]
         this.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
     }
@@ -30,6 +34,7 @@ export class ButtonStandTrackerSystem implements ISystem
 
     update(dt: number)
     {
+        let lifeTimeBestBlockComp = this.lifeTimeBestScreenMain.getComponentOrNull(BlockComponent)
         let topBlockComp = this.topPartyScreenMain.getComponentOrNull(BlockComponent)
         let centralBlockComp = this.centralScreenMain.getComponentOrNull(BlockComponent)    
         
@@ -37,7 +42,7 @@ export class ButtonStandTrackerSystem implements ISystem
 
         this.clearButtonsColor()
 
-        if ((topBlockComp != null || centralBlockComp != null) && mustIndex == -1)
+        if (lifeTimeBestBlockComp != null || ((topBlockComp != null || centralBlockComp != null) && mustIndex == -1))
         {
             return
         }
