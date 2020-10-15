@@ -336,7 +336,7 @@ export class Scene extends SceneCallback
     private configureStartButton(): void
     {
         this.startButton = new StartButton(this)
-        this.startButton.configMain(new Vector3(29.03, 0.76, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.1, 1.2, 0.9))
+        this.startButton.configMain(new Vector3(29.05, 0.58, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
         this.startButton.addToEngine()
     }
 

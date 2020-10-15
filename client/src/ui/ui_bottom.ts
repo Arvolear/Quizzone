@@ -37,6 +37,7 @@ export class UIBottom
         UIBottom.topUpButton.isPointerBlocker = true
         UIBottom.topUpButton.hAlign = "left"
         setSection(UIBottom.topUpButton, { sourceLeft: 53, sourceTop: 547, sourceWidth: 790, sourceHeight: 190 })
+        UIBottom.topUpButton.positionX = "110px"
         UIBottom.topUpButton.positionY = "-10px"
         UIBottom.topUpButton.width = 166
         UIBottom.topUpButton.height = 40
@@ -68,7 +69,8 @@ export class UIBottom
         UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.hourglassImage.hAlign = "right"
         setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.hourglassImage.positionY = "10px"
+        UIBottom.hourglassImage.positionX = "-40px"
+        UIBottom.hourglassImage.positionY = "10px"        
         UIBottom.hourglassImage.width = 78
         UIBottom.hourglassImage.height = 70
         UIBottom.hourglassImage.opacity = 0.95
@@ -76,6 +78,7 @@ export class UIBottom
         UIBottom.tickImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.tickImage.hAlign = "right"
         setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
+        UIBottom.tickImage.positionX = "-40px"
         UIBottom.tickImage.positionY = "10px"
         UIBottom.tickImage.width = 78
         UIBottom.tickImage.height = 70
