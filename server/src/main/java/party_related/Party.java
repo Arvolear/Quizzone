@@ -301,6 +301,8 @@ public class Party implements IStopWatchCallback
 
                 questionTimer.updateTime(questionDuration);
             }
+
+            currentQuestionAnswers.clear();
         }
         else if (restart)
         {

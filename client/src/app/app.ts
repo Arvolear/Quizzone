@@ -42,6 +42,6 @@ export class App
         engine.addSystem(new ResultsSystem())
         engine.addSystem(new ScreenDistanceSystem(App.dappClientSocket))
         engine.addSystem(new TimerSystem())
-        engine.addSystem(new UISystem())
+        engine.addSystem(new UISystem(this.scene.getUI()))
     }  
 }

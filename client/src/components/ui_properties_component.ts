@@ -18,17 +18,16 @@ export class UIPropertiesComponent
 
     constructor()
     {
+        this.member = false
+        
         this.clear()
     }
 
     public clear(): void
     {
-        this.canJoin = false
-        this.member = false    
+        this.canJoin = false        
         this.autocompleteVisible = false
-        this.autocutVisible = false
-        // this.autocompleteVisible = true
-        // this.autocutVisible = true
+        this.autocutVisible = false        
         this.timeToQuizStart = ""
         this.membershipPrice = 0.0
         this.autocompleteLeft = 0

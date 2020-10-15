@@ -9,6 +9,7 @@ import { UIBottom } from "./ui_bottom"
 import { UIAutocomplete } from "./ui_autocomplete"
 import { UIAutocut } from './ui_autocut'
 import { UIMember } from './ui_member'
+import { UIInfo } from './ui_info'
 
 export class UI extends UICallback
 {
@@ -16,6 +17,7 @@ export class UI extends UICallback
 
     private static ui: UI
 
+    private static uiInfo: UIInfo
     private static uiCheckMetamask: UICheckMetamask
     private static uiStartUp: UIStartUp
     private static uiBottom: UIBottom
@@ -44,8 +46,9 @@ export class UI extends UICallback
     }
 
     private static configInitialDisplay(): void
-    {
+    {                
         UI.uiMember = new UIMember(UI.ui)
+        UI.uiInfo = new UIInfo(UI.ui)
         UI.uiCheckMetamask = new UICheckMetamask(UI.ui)
         UI.uiStartUp = new UIStartUp(UI.ui)
         UI.uiBottom = new UIBottom(UI.ui)
@@ -72,6 +75,17 @@ export class UI extends UICallback
         UICallback.properties.addComponent(new UIPropertiesComponent())
 
         engine.addEntity(UICallback.properties)
+    }
+
+    public showInfo(): void
+    {
+        UI.ui.hideAllWindows()
+        UI.uiInfo.reopen()
+    }
+
+    public hideInfo(): void
+    {
+        UI.uiInfo.close()
     }
 
     public showTopUp(): void
@@ -121,8 +135,7 @@ export class UI extends UICallback
     }
 
     public hideStartUp(): void
-    {
-        UI.uiBottom.hideHourglass()
+    {        
         UI.uiStartUp.close()
     }
 
@@ -192,6 +205,7 @@ export class UI extends UICallback
 
     public hideAllWindows(): void
     {
+        UI.uiInfo.close()
         UI.uiCheckMetamask.close()
         UI.uiStartUp.close()
         UI.uiTopUp.close()

@@ -13,7 +13,7 @@ import { getUserData } from '@decentraland/Identity'
 export class UIMember
 {
     private static CONTRACT = "0xf11ABa09A09cB9DfEea2FE219Ba8394CB002d230" // mainnet
-    // private static CONTRACT = "0xa4A8CE76b804d1e378bC86B55cDFd94c1645Db7b" // ropsten
+    // private static CONTRACT = "0x9C18d8F0C84aA8c25d2A4094D30B145E8CC27098" // ropsten
     
     private static mainBalance: float
     private static price: float
@@ -96,8 +96,8 @@ export class UIMember
             const factory = new EthConnect.ContractFactory(requestManager, abi)
             const contract = (await factory.at(UIMember.CONTRACT)) as any
 
-            const member = await contract.isMember(DappClientSocket.playerWallet)
-
+            const member = await contract.isMember(DappClientSocket.playerWallet) as boolean
+            
             UICallback.properties.getComponent(UIPropertiesComponent).member = member
         })
 

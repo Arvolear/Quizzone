@@ -1,13 +1,13 @@
-import { UI } from "../ui/ui"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
+import { UICallback } from "../app/ui_callback"
 
 export class UISystem implements ISystem
 {
-    ui: UI
+    uiCallback: UICallback
 
-    constructor()
+    constructor(UICallback: UICallback)
     {
-        this.ui = UI.getInstance()
+        this.uiCallback = UICallback
     }
 
     update(dt: number)
@@ -17,19 +17,19 @@ export class UISystem implements ISystem
 
     updateUI(): void
     {        
-        let uiPropertiesComp = this.ui.getProperties().getComponent(UIPropertiesComponent)
+        let uiPropertiesComp = UICallback.properties.getComponent(UIPropertiesComponent)
 
-        uiPropertiesComp.autocompleteVisible ? this.ui.showAutocompleteButton() : this.ui.hideAutocomplete()
-        uiPropertiesComp.autocutVisible ? this.ui.showAutocutButton() : this.ui.hideAutocut()
+        uiPropertiesComp.autocompleteVisible ? this.uiCallback.showAutocompleteButton() : this.uiCallback.hideAutocomplete()
+        uiPropertiesComp.autocutVisible ? this.uiCallback.showAutocutButton() : this.uiCallback.hideAutocut()
+        
+        this.uiCallback.setMember(uiPropertiesComp.member)
 
-        this.ui.setMember(uiPropertiesComp.member)
+        this.uiCallback.updateAutocompleteLeft()
+        this.uiCallback.updateAutocutLeft()
 
-        this.ui.updateAutocompleteLeft()
-        this.ui.updateAutocutLeft()
+        this.uiCallback.updateAutocompletePrice()
+        this.uiCallback.updateAutocutPrice()
 
-        this.ui.updateAutocompletePrice()
-        this.ui.updateAutocutPrice()
-
-        this.ui.updateCanJoinTimer()
+        this.uiCallback.updateCanJoinTimer()
     }
 }

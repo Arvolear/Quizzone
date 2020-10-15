@@ -174,10 +174,10 @@ public class PartyMessagesHandler
     {
         return "answer_statistics\n" +
                 "Players' answers\n" +
-                "4) " + answers.get(0) + "\n" +
-                "3) " + answers.get(1) + "\n" +
-                "2) " + answers.get(2) + "\n" +
-                "1) " + answers.get(3);
+                "4) " + answers.get(3) + "\n" +
+                "3) " + answers.get(2) + "\n" +
+                "2) " + answers.get(1) + "\n" +
+                "1) " + answers.get(0);
     }
 
     public String getWrongAnswerMessage()

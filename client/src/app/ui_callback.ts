@@ -6,6 +6,8 @@ export abstract class UICallback
     public static dappClientSocket: DappClientSocket
     public static canvas: UICanvas
 
+    abstract showInfo(): void
+    abstract hideInfo(): void
     abstract showTopUp(): void
     abstract hideTopUp(): void
     abstract showMember(): void

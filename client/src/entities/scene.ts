@@ -20,8 +20,11 @@ export class Scene extends SceneCallback
     private alreadyAMember: Entity
     private memberButton: Entity
     private memberButtonShape: BoxShape
-
-    private leaderBoard: Entity
+    
+    private infoBecomeButton: Entity
+    private infoBecomeButtonShape: BoxShape
+    private infoAlreadyButton: Entity
+    private infoAlreadyButtonShape: BoxShape
 
     private outCollider: Entity
     private inCollider: Entity
@@ -121,9 +124,9 @@ export class Scene extends SceneCallback
         this.memberButton.setParent(this.becomeAMember)
         this.memberButton.addComponent(new Transform(
             {
-                position: new Vector3(15, 3.7, 5.65),
+                position: new Vector3(14.48, 3.6, 5.65),
                 rotation: Quaternion.Euler(0, 0, 0),
-                scale: new Vector3(0.1, 1.2, 5.5)
+                scale: new Vector3(0.1, 1.2, 5.4)
             }
         ))
         this.memberButtonShape = new BoxShape()
@@ -137,7 +140,27 @@ export class Scene extends SceneCallback
             () =>
             {
                 this.ui.showMember()
-            }))        
+            }))
+
+        this.infoBecomeButton = new Entity()
+        engine.addEntity(this.infoBecomeButton)
+        this.infoBecomeButton.setParent(this.becomeAMember)
+        this.infoBecomeButton.addComponent(new Transform(
+            {
+                position: new Vector3(14.48, 3.6, 0.3),
+                rotation: Quaternion.Euler(0, 0, 0),
+                scale: new Vector3(0.1, 1.2, 2.9)
+            }
+        ))
+        this.infoBecomeButtonShape = new BoxShape()
+        this.infoBecomeButton.addComponentOrReplace(this.infoBecomeButtonShape)
+
+        this.infoBecomeButton.addComponent(material)
+        this.infoBecomeButton.addComponent(new OnPointerDown(
+            () =>
+            {
+                this.ui.showInfo()
+            }))     
     }
 
     private configAlreadyAMember(): void
@@ -159,6 +182,29 @@ export class Scene extends SceneCallback
                 scale: new Vector3(1, 1, 1)
             })
         this.alreadyAMember.addComponentOrReplace(transform)
+
+        this.infoAlreadyButton = new Entity()
+        engine.addEntity(this.infoAlreadyButton)
+        this.infoAlreadyButton.setParent(this.becomeAMember)
+        this.infoAlreadyButton.addComponent(new Transform(
+            {
+                position: new Vector3(14.48, 3.6, 3.3),
+                rotation: Quaternion.Euler(0, 0, 0),
+                scale: new Vector3(0.1, 1.2, 2.9)
+            }
+        ))
+        this.infoAlreadyButtonShape = new BoxShape()
+        this.infoAlreadyButton.addComponentOrReplace(this.infoAlreadyButtonShape)
+
+        let material = new Material()
+        material.albedoColor = Color4.FromHexString("#00000000")
+
+        this.infoAlreadyButton.addComponent(material)
+        this.infoAlreadyButton.addComponent(new OnPointerDown(
+            () =>
+            {
+                this.ui.showInfo()
+            }))
     }
 
     private configGrass(): void
@@ -206,9 +252,9 @@ export class Scene extends SceneCallback
         logo.addComponentOrReplace(transform)
 
         let logoAnimator = new Animator()
-        logo.addComponent(logoAnimator)
+        logo.addComponentOrReplace(logoAnimator)
 
-        const rotateClip = new AnimationState('Z Euler Rotation')
+        const rotateClip = new AnimationState('EmptyAction')
         rotateClip.looping = true
         logoAnimator.addClip(rotateClip)
 
@@ -273,10 +319,10 @@ export class Scene extends SceneCallback
         this.timedQuizScreen = new TimedQuizScreen()
 
         this.centralScreen.configMain(new Vector3(16, 3.5, 30.9), Quaternion.Euler(0, 0, 0), new Vector3(5.5, 5.5, 5.5))
-        this.leftScreen.configMain(new Vector3(16, 6.2, 30.5), Quaternion.Euler(0, 0, 0), new Vector3(4.8, 4.8, 4.8))
+        this.leftScreen.configMain(new Vector3(16, 6.2, 30.4), Quaternion.Euler(0, 0, 0), new Vector3(4.9, 4.9, 4.9))
         this.rightScreen.configMain(new Vector3(9.9, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
         this.topPartyScreen.configMain(new Vector3(16, 3.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
-        this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.2, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
+        this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.3, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
         this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
 
         this.centralScreen.addToEngine()
@@ -305,13 +351,41 @@ export class Scene extends SceneCallback
         {
             this.alreadyAMember.getComponent(GLTFShape).visible = true
             this.becomeAMember.getComponent(GLTFShape).visible = false
-            this.memberButton.removeComponent(this.memberButtonShape)
+
+            if (!this.infoAlreadyButton.hasComponent(this.infoAlreadyButtonShape))
+            {
+                this.infoAlreadyButton.addComponentOrReplace(this.infoAlreadyButtonShape)
+            }
+
+            if (this.memberButton.hasComponent(this.memberButtonShape))
+            {
+                this.memberButton.removeComponent(this.memberButtonShape)
+            }
+
+            if (this.infoBecomeButton.hasComponent(this.infoBecomeButtonShape))
+            {
+                this.infoBecomeButton.removeComponent(this.infoBecomeButtonShape)
+            }
         }
         else
         {
             this.alreadyAMember.getComponent(GLTFShape).visible = false
             this.becomeAMember.getComponent(GLTFShape).visible = true
-            this.memberButton.addComponentOrReplace(this.memberButtonShape)
+
+            if (!this.memberButton.hasComponent(this.memberButtonShape))
+            {
+                this.memberButton.addComponentOrReplace(this.memberButtonShape)
+            }
+
+            if (!this.infoBecomeButton.hasComponent(this.infoBecomeButtonShape))
+            {
+                this.infoBecomeButton.addComponentOrReplace(this.infoBecomeButtonShape)
+            }
+
+            if (this.infoAlreadyButton.hasComponent(this.infoAlreadyButtonShape))
+            {
+                this.infoAlreadyButton.removeComponent(this.infoAlreadyButtonShape)
+            }
         }
     }
 
@@ -329,5 +403,10 @@ export class Scene extends SceneCallback
     public getButtons(): Array<Button>
     {
         return this.buttons
+    }
+
+    public getUI(): UI
+    {
+        return this.ui
     }
 }

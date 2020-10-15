@@ -19,8 +19,8 @@ export class DappClientSocket
     public static network = "mainnet"
     // public static network = "goerli"
 
-    // private static location = "wss://quiz-service.dapp-craft.com:8444"
-    private static location = "ws://localhost:8080"
+    private static location = "wss://quiz-service.dapp-craft.com:8444"
+    // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -286,19 +286,17 @@ export class DappClientSocket
                     break
                 }
             case "answer_statistics":
-                {
-                    var currentQuestion = parseInt(lines[1])
-
+                {                    
                     let answerStatistics = new AnswerStatistics(
-                        lines[2],
+                        lines[1],
                         [
+                            lines[2],
                             lines[3],
                             lines[4],
-                            lines[5],
-                            lines[6]
+                            lines[5]
                         ]
                     )
-
+                    
                     centralComp.answerStatistics = answerStatistics
                     centralComp.answerStatisticsLoaded = true
 
@@ -338,7 +336,9 @@ export class DappClientSocket
                 {
                     var partyTop = ""
 
-                    for (var i = 1; i < lines.length; i++)
+                    partyTop += lines[1] + "\n\n";
+
+                    for (var i = 2; i < lines.length; i++)
                     {
                         partyTop += lines[i]
 
