@@ -42,7 +42,7 @@ export class Scene extends SceneCallback
     private startButton: StartButton
 
     private static INITIAL_X = 15.35
-    private static INITIAL_Y = 0.25
+    private static INITIAL_Y = 0.05
     private static INITIAL_Z = -19.79
     private static SCALE_FACTOR = 7.42
 
@@ -91,7 +91,7 @@ export class Scene extends SceneCallback
         quizzone.addComponentOrReplace(gltfShape2)
         const transform6 = new Transform(
             {
-                position: new Vector3(16.5, -0.1, 15.75),
+                position: new Vector3(16.5, -0.25, 15.75),
                 rotation: new Quaternion(0, 0, 0, 1),
                 scale: new Vector3(0.99, 1.0, 1.0)
             })
@@ -323,7 +323,7 @@ export class Scene extends SceneCallback
         this.rightScreen.configMain(new Vector3(9.9, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
         this.topPartyScreen.configMain(new Vector3(16, 3.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
         this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.3, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
-        this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
+        this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(7, 7, 7))
 
         this.centralScreen.addToEngine()
         this.leftScreen.addToEngine()
@@ -336,7 +336,7 @@ export class Scene extends SceneCallback
     private configureStartButton(): void
     {
         this.startButton = new StartButton(this)
-        this.startButton.configMain(new Vector3(29.05, 0.58, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
+        this.startButton.configMain(new Vector3(29.05, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
         this.startButton.addToEngine()
     }
 

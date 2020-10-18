@@ -224,6 +224,10 @@ function importQuestions($file, $shuffle)
 
     $csv = array_map('str_getcsv', file($file['tmp_name']));
 
+    if (!empty($shuffle)) {
+        shuffle($csv);
+    }
+
     for ($i = 0; $i < min(count($csv), $QUESTION_LIMIT); $i++) {
         $answer = count($csv[$i]) == 6 ? (int)$csv[$i][5] : 1;
         $localAnswer = -1;

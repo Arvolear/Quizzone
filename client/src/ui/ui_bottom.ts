@@ -6,7 +6,8 @@ export class UIBottom
 {
     private static bottomRect: UIContainerRect
 
-    private static topUpButton: UIImage    
+    private static topUpButton: UIImage
+    private static howToPlayButton: UIImage
     private static autocompleteButton: UIImage
     private static autocutButton: UIImage
 
@@ -35,53 +36,64 @@ export class UIBottom
 
         UIBottom.topUpButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.topUpButton.isPointerBlocker = true
-        UIBottom.topUpButton.hAlign = "left"
+        UIBottom.topUpButton.hAlign = "center"
         setSection(UIBottom.topUpButton, { sourceLeft: 53, sourceTop: 547, sourceWidth: 790, sourceHeight: 190 })
-        UIBottom.topUpButton.positionX = "110px"
+        UIBottom.topUpButton.positionX = "-70px"
         UIBottom.topUpButton.positionY = "-10px"
-        UIBottom.topUpButton.width = 166
-        UIBottom.topUpButton.height = 40
+        UIBottom.topUpButton.width = 145
+        UIBottom.topUpButton.height = 35
         UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
         UIBottom.topUpButton.opacity = 0.9 
+
+        UIBottom.howToPlayButton = new UIImage(UIBottom.bottomRect, atlasTexture);
+        UIBottom.howToPlayButton.isPointerBlocker = true
+        UIBottom.howToPlayButton.hAlign = "center"
+        setSection(UIBottom.howToPlayButton, { sourceLeft: 53, sourceTop: 363, sourceWidth: 790, sourceHeight: 190 })
+        UIBottom.howToPlayButton.positionX = "70px"
+        UIBottom.howToPlayButton.positionY = "-10px"
+        UIBottom.howToPlayButton.width = 145
+        UIBottom.howToPlayButton.height = 35
+        UIBottom.howToPlayButton.onClick = new OnClick(UIBottom.uiCallback.showHowToPlay)
+        UIBottom.howToPlayButton.opacity = 0.9 
 
         UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.autocompleteButton.isPointerBlocker = true
         UIBottom.autocompleteButton.hAlign = "center"
-        setSection(UIBottom.autocompleteButton, { sourceLeft: 566, sourceTop: 137, sourceWidth: 500, sourceHeight: 230 })
-        UIBottom.autocompleteButton.positionX = "-100px"
-        UIBottom.autocompleteButton.positionY = "5px"
-        UIBottom.autocompleteButton.width = 152
-        UIBottom.autocompleteButton.height = 70
+        setSection(UIBottom.autocompleteButton, { sourceLeft: 561, sourceTop: 137, sourceWidth: 490, sourceHeight: 230 })
+        UIBottom.autocompleteButton.positionX = "-45px"
+        UIBottom.autocompleteButton.positionY = "-10px"
+        UIBottom.autocompleteButton.width = 75
+        UIBottom.autocompleteButton.height = 35
         UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
 
         UIBottom.autocutButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.autocutButton.isPointerBlocker = true
         UIBottom.autocutButton.hAlign = "center"
-        setSection(UIBottom.autocutButton, { sourceLeft: 51, sourceTop: 137, sourceWidth: 500, sourceHeight: 230 })
-        UIBottom.autocutButton.positionX = "100px"
-        UIBottom.autocutButton.positionY = "5px"
-        UIBottom.autocutButton.width = 152
-        UIBottom.autocutButton.height = 70
+        setSection(UIBottom.autocutButton, { sourceLeft: 56, sourceTop: 137, sourceWidth: 490, sourceHeight: 230 })
+        UIBottom.autocutButton.positionX = "40px"
+        UIBottom.autocutButton.positionY = "-10px"
+        UIBottom.autocutButton.width = 75
+        UIBottom.autocutButton.height = 35
         UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
         UIBottom.autocutButton.opacity = 0.9
 
         UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.hourglassImage.hAlign = "right"
         setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.hourglassImage.positionX = "-40px"
-        UIBottom.hourglassImage.positionY = "10px"        
-        UIBottom.hourglassImage.width = 78
-        UIBottom.hourglassImage.height = 70
+        UIBottom.hourglassImage.positionX = "-90px"
+        UIBottom.hourglassImage.positionY = "-7px"        
+        UIBottom.hourglassImage.width = 39
+        UIBottom.hourglassImage.height = 35
         UIBottom.hourglassImage.opacity = 0.95
 
         UIBottom.tickImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.tickImage.hAlign = "right"
         setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.tickImage.positionX = "-40px"
-        UIBottom.tickImage.positionY = "10px"
-        UIBottom.tickImage.width = 78
-        UIBottom.tickImage.height = 70
+        UIBottom.tickImage.positionX = "-95px"
+        UIBottom.tickImage.positionY = "-7px"
+        UIBottom.tickImage.width = 39
+        UIBottom.tickImage.height = 35
         UIBottom.tickImage.opacity = 0.95
 
         UIBottom.tickImage.visible = false
@@ -117,6 +129,18 @@ export class UIBottom
     public hideTick(): void
     {
         UIBottom.tickImage.visible = false
+    }
+
+    public showControlButtons(): void
+    {
+        UIBottom.topUpButton.visible = true
+        UIBottom.howToPlayButton.visible = true
+    }
+
+    public hideControlButtons(): void
+    {
+        UIBottom.topUpButton.visible = false
+        UIBottom.howToPlayButton.visible = false
     }
 
     public showAutocompleteButton(): void

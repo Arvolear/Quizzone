@@ -6,6 +6,7 @@ export class UIPropertiesComponent
 
     timeToQuizStart: string
 
+    controlVisible: boolean
     autocompleteVisible: boolean
     autocutVisible: boolean
 
@@ -25,7 +26,8 @@ export class UIPropertiesComponent
 
     public clear(): void
     {
-        this.canJoin = false        
+        this.canJoin = false      
+        this.controlVisible = true  
         this.autocompleteVisible = false
         this.autocutVisible = false        
         this.timeToQuizStart = ""

@@ -48,6 +48,8 @@ public class Party implements IStopWatchCallback
     protected final StopWatch<Party> questionTimer;
     protected PartyMessagesHandler messagesHandler;
 
+    protected Random random;
+
     protected boolean joinable = false;
     protected boolean locked = false;
     protected boolean started = false;
@@ -74,6 +76,8 @@ public class Party implements IStopWatchCallback
         questionnaire = new Questionnaire();
         sqlAccess = SQLAccess.getInstance();
 
+        random = new Random();
+
         loadMessages();
         loadConstants();
     }
@@ -82,7 +86,6 @@ public class Party implements IStopWatchCallback
     {
         ArrayList<RandomCategory> categories = sqlAccess.getRandomCategories();
 
-        Random random = new Random();
         category = categories.get(random.nextInt(categories.size()));
     }
 
@@ -115,29 +118,41 @@ public class Party implements IStopWatchCallback
     {
         if (!idlePlayers.containsKey(player))
         {
-            String response;
-
             idlePlayers.put(player, player);
-
-            if (locked)
-            {
-                response = messagesHandler.getLockedMessage();
-            }
-            else if (joinable)
-            {
-                response = messagesHandler.getJoinableMessage();
-            }
-            else
-            {
-                response = messagesHandler.getHostMessage();
-            }
-
-            send(player, messagesHandler.getLifetimeBestResponse(player));
 
             if (!muteConnection)
             {
-                send(player, response);
+                if (locked)
+                {
+                    send(player, messagesHandler.getLockedMessage());
+
+                    if (nowQuestion)
+                    {
+                        send(player, messagesHandler.getNextMessage());
+                    }
+                    else if (nowAnswer)
+                    {
+                        if (currentQuestionAnswers.size() == 4)
+                        {
+                            send(player, messagesHandler.getAnswerStatisticsMessage(currentQuestionAnswers));
+                        }
+                    }
+                    else if (restart)
+                    {
+                        send(player, messagesHandler.getTopPartyResponse());
+                    }
+                }
+                else if (joinable)
+                {
+                    send(player, messagesHandler.getJoinableMessage(category.getAlias()));
+                }
+                else
+                {
+                    send(player, messagesHandler.getHostMessage());
+                }
             }
+
+            send(player, messagesHandler.getLifetimeBestResponse(player));
         }
     }
 
@@ -152,13 +167,15 @@ public class Party implements IStopWatchCallback
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
+        send(player, messagesHandler.getHideMessage("control_buttons"));
+
         String response;
 
         if (playingPlayers.size() == 1)
         {
             joinable = true;
 
-            response = messagesHandler.getJoinableMessage();
+            response = messagesHandler.getJoinableMessage(category.getAlias());
             broadcast(idlePlayers, response);
 
             questionnaire.loadQuestions(category.getCategory());
@@ -190,7 +207,6 @@ public class Party implements IStopWatchCallback
 
     synchronized public void disconnectPlayer(Client player)
     {
-        updateBestFor(player);
         player.clear();
 
         playingPlayers.remove(player);
@@ -211,7 +227,7 @@ public class Party implements IStopWatchCallback
             }
             else
             {
-                response = messagesHandler.getJoinableMessage();
+                response = messagesHandler.getJoinableMessage(category.getAlias());
             }
 
             broadcast(idlePlayers, response);
@@ -286,7 +302,14 @@ public class Party implements IStopWatchCallback
             {
                 String topPartyResponse = messagesHandler.getTopPartyResponse();
 
-                broadcastAll(messagesHandler::getFinishMessage);
+                for (var player: playingPlayers.values())
+                {
+                    send(player, messagesHandler.getShowMessage(player, "control_buttons"));
+                    send(player, messagesHandler.getHideMessage("autocomplete"));
+                    send(player, messagesHandler.getHideMessage("autocut"));
+                }
+
+                broadcastAll(messagesHandler.getFinishMessage());
                 broadcastAll(topPartyResponse);
 
                 restart = true;
@@ -359,7 +382,10 @@ public class Party implements IStopWatchCallback
 
             blackList.put(player, playingPlayers.get(player));
 
-            currentQuestionAnswers.set(answer - 1, currentQuestionAnswers.get(answer - 1) + 1);
+            if (answer >= 1 && answer <= 4)
+            {
+                currentQuestionAnswers.set(answer - 1, currentQuestionAnswers.get(answer - 1) + 1);
+            }
 
             send(player, response);
             broadcast(idlePlayers, messagesHandler.getAnswerStatisticsMessage(currentQuestionAnswers));
@@ -519,30 +545,40 @@ public class Party implements IStopWatchCallback
         nowAnswer = false;
         restart = false;
 
+        ConcurrentHashMap<Client, Client> tmpPlayers = new ConcurrentHashMap<>();
+
         blackList.clear();
 
         questionTimer.updateTime(-1);
         loadCategory();
 
-        String response = messagesHandler.getClearMessage();
-
         for (var player : playingPlayers.keySet())
         {
-            send(player, response);
-
-            updateBestFor(player);
-            connectPlayer(player);
-
-            playingPlayers.remove(player);
-            totalCorrect.remove(player);
+            tmpPlayers.put(player, player);
         }
 
         for (var player : idlePlayers.keySet())
         {
+            tmpPlayers.put(player, player);
+        }
+
+        idlePlayers.clear();
+        playingPlayers.clear();
+        totalCorrect.clear();
+
+        for (var player : tmpPlayers.keySet())
+        {
             player.clear();
 
-            send(player, response);
-            idlePlayers.remove(player);
+            try
+            {
+                player.getSession().getRemote().sendString(messagesHandler.getClearMessage());
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+
             connectPlayer(player);
         }
 
@@ -586,6 +622,7 @@ public class Party implements IStopWatchCallback
 
     synchronized public void close()
     {
+        clear();
         questionTimer.stop();
     }
 

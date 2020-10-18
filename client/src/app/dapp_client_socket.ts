@@ -117,7 +117,7 @@ export class DappClientSocket
                 }
             case "bad_connected":
                 {
-                    uiComp.canJoin = false // no break - intentional
+                    uiComp.canJoin = false
                     uiComp.timeToQuizStart = ""
 
                     var actualMessage = ""
@@ -156,6 +156,21 @@ export class DappClientSocket
 
                     DappClientSocket.sceneCallback.setCollider()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
+
+                    break
+                }
+            case "control_buttons":
+                {
+                    var action = lines[1]
+
+                    if (action == "show")
+                    {
+                        uiComp.controlVisible = true                        
+                    }
+                    else if (action == "hide")
+                    {
+                        uiComp.controlVisible = false
+                    }
 
                     break
                 }
@@ -216,16 +231,17 @@ export class DappClientSocket
                     break
                 }
             case "start":
-                {                                        
-                    var totalQuestions = parseInt(lines[1])
+                {   
+                    var currentQuestion = parseInt(lines[1])
+                    var totalQuestions = parseInt(lines[2])
 
                     let question = new Question(
-                        lines[3],
+                        lines[4],
                         [
-                            lines[4],
                             lines[5],
                             lines[6],
-                            lines[7]
+                            lines[7],
+                            lines[8]
                         ]
                     )
 
@@ -234,10 +250,9 @@ export class DappClientSocket
 
                     centralComp.question = question
                     leftComp.totalQuestions = totalQuestions
-                    leftComp.currentQuestion = 0
+                    leftComp.currentQuestion = currentQuestion
 
-                    centralComp.nextQuestionLoaded = true
-                    centralComp.answerLoaded = false
+                    centralComp.nextQuestionLoaded = true            
 
                     break
                 }
@@ -260,6 +275,11 @@ export class DappClientSocket
                     {
                         start += lines[i]
 
+                        if (i == lines.length - 2)
+                        {
+                            start += "\n"
+                        }
+
                         if (i < lines.length - 1)
                         {
                             start += "\n"
@@ -278,7 +298,17 @@ export class DappClientSocket
                 }
             case "answer":
                 {
-                    var answer = lines[1]
+                    var answer = ""
+            
+                    for (var i = 1; i < lines.length; i++)
+                    {
+                        answer += lines[i] + "\n"
+
+                        if (i < lines.length - 1)
+                        {
+                            answer += "\n"
+                        }
+                    }
 
                     centralComp.answer = answer
                     centralComp.answerLoaded = true
@@ -305,18 +335,20 @@ export class DappClientSocket
             case "next":
                 {
                     var currentQuestion = parseInt(lines[1])
+                    var totalQuestions = parseInt(lines[2])
 
                     let question = new Question(
-                        lines[3],
+                        lines[4],
                         [
-                            lines[4],
                             lines[5],
                             lines[6],
-                            lines[7]
+                            lines[7],
+                            lines[8]
                         ]
                     )
 
                     centralComp.question = question                
+                    leftComp.totalQuestions = totalQuestions
                     leftComp.currentQuestion = currentQuestion
 
                     centralComp.nextQuestionLoaded = true

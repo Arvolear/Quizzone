@@ -7,7 +7,7 @@ export abstract class UICallback
     public static canvas: UICanvas
 
     abstract showInfo(): void
-    abstract hideInfo(): void
+    abstract showHowToPlay(): void    
     abstract showTopUp(): void
     abstract hideTopUp(): void
     abstract showMember(): void
@@ -24,6 +24,8 @@ export abstract class UICallback
     abstract showAutocutWindow(): void
     abstract hideAutocutWindow(): void
     abstract hideAutocut(): void
+    abstract showControlButtons(): void
+    abstract hideControlButtons(): void
     abstract showHourglass(): void
     abstract hideHourglass(): void
     abstract showTick(time: number): void

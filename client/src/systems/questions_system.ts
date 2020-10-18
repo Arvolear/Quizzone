@@ -26,6 +26,11 @@ export class QuestionsSystem implements ISystem
 
     update(dt: number)
     {
+        this.updateCentral()                
+    }
+
+    private updateCentral(): void
+    {
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
 
         if (centralComp.getLoaded)
@@ -34,13 +39,6 @@ export class QuestionsSystem implements ISystem
 
             centralComp.getLoaded = false
         }
-
-        this.updateCentral()                
-    }
-
-    private updateCentral(): void
-    {
-        let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
 
         if (centralComp.connectedLoaded)
         {
@@ -162,7 +160,25 @@ export class QuestionsSystem implements ISystem
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
         var question = centralComp.question
 
-        var toDisplay = question.actualQuestion + "\n\n\n"
+        var actualQuestion = question.actualQuestion
+
+        var i = 60;
+
+        while (i < actualQuestion.length)
+        {
+            i = actualQuestion.indexOf(" ", i);
+
+            if (i >= actualQuestion.length)
+            {
+                break
+            }
+
+            actualQuestion = actualQuestion.substring(0, i) + '\n' + actualQuestion.substring(i + 1);
+
+            i += 60;
+        }
+
+        var toDisplay = actualQuestion + "\n\n\n"
 
         for (var i = 0; i < question.answers.length; i++)
         {

@@ -35,6 +35,6 @@ export class TimerSystem implements ISystem
         var text = this.timedQuizScreenMain.getComponent(TextShape)
 
         text.value = timedComp.timeLeft
-        text.fontSize = 2
+        text.fontSize = 1
     }
 }

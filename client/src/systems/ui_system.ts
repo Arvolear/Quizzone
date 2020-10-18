@@ -22,6 +22,8 @@ export class UISystem implements ISystem
         uiPropertiesComp.autocompleteVisible ? this.uiCallback.showAutocompleteButton() : this.uiCallback.hideAutocomplete()
         uiPropertiesComp.autocutVisible ? this.uiCallback.showAutocutButton() : this.uiCallback.hideAutocut()
         
+        uiPropertiesComp.controlVisible ? this.uiCallback.showControlButtons() : this.uiCallback.hideControlButtons()        
+
         this.uiCallback.setMember(uiPropertiesComp.member)
 
         this.uiCallback.updateAutocompleteLeft()
