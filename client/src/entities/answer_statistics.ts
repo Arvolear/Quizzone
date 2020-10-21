@@ -1,11 +1,13 @@
 export class AnswerStatistics
 {
-    message: string
+    headMessage: string
     answers: Array<string>
+    tailMessage: string
 
-    constructor(message: string, answers: Array<string>)
+    constructor(headMessage: string, answers: Array<string>, tailMessage: string)
     {
-        this.message = message
+        this.headMessage = headMessage
         this.answers = answers
+        this.tailMessage = tailMessage
     }
 }

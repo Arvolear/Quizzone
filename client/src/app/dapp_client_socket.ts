@@ -324,7 +324,8 @@ export class DappClientSocket
                             lines[3],
                             lines[4],
                             lines[5]
-                        ]
+                        ],
+                        lines[6] + "\n" + lines[7]
                     )
                     
                     centralComp.answerStatistics = answerStatistics

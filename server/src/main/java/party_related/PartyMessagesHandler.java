@@ -181,12 +181,16 @@ public class PartyMessagesHandler
 
     public String getAnswerStatisticsMessage(ArrayList<Integer> answers)
     {
+        Question question = party.questionnaire.getCurrentQuestion();
+
         return "answer_statistics\n" +
-                "Players' answers\n" +
+                "Players' answers:\n" +
                 "4) " + answers.get(3) + "\n" +
                 "3) " + answers.get(2) + "\n" +
                 "2) " + answers.get(1) + "\n" +
-                "1) " + answers.get(0);
+                "1) " + answers.get(0) + "\n" +
+                "Correct answer:\n" +
+                question.getCorrectVariant();
     }
 
     public String getWrongAnswerMessage()

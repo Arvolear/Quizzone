@@ -130,7 +130,7 @@ export class QuestionsSystem implements ISystem
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
         var answerStatistics = centralComp.answerStatistics
 
-        var toDisplay = answerStatistics.message + "\n\n\n"
+        var toDisplay = answerStatistics.headMessage + "\n"
 
         for (var i = 0; i < answerStatistics.answers.length; i++)
         {
@@ -142,9 +142,11 @@ export class QuestionsSystem implements ISystem
             }
             else
             {
-                toDisplay += "   "
+                toDisplay += "     "
             }
         }
+
+        toDisplay += "\n" + answerStatistics.tailMessage;
 
         let text = this.centralScreenMain.getComponent(TextShape)
 
@@ -178,7 +180,7 @@ export class QuestionsSystem implements ISystem
             i += 60;
         }
 
-        var toDisplay = actualQuestion + "\n\n\n"
+        var toDisplay = actualQuestion + "\n\n"
 
         for (var i = 0; i < question.answers.length; i++)
         {
@@ -190,7 +192,7 @@ export class QuestionsSystem implements ISystem
             }
             else
             {
-                toDisplay += "   "
+                toDisplay += "     "
             }
         }
 

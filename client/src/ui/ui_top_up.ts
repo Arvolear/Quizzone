@@ -128,9 +128,7 @@ export class UITopUp
         let lastSpace = valueText.text.value.lastIndexOf('  ')
 
         let amount = parseFloat(valueTextBox.currentText)
-        let balance = parseFloat(valueText.text.value.substr(firstSpace + 2, lastSpace - firstSpace))
-
-        log(balance)
+        let balance = parseFloat(valueText.text.value.substr(firstSpace + 2, lastSpace - firstSpace))        
 
         if (isNaN(amount) || amount <= 0)
         {
