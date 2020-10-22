@@ -10,6 +10,7 @@ export class UIBottom
     private static howToPlayButton: UIImage
     private static autocompleteButton: UIImage
     private static autocutButton: UIImage
+    private static leaveButton: UIImage
 
     private static hourglassImage: UIImage
     private static tickImage: UIImage
@@ -77,6 +78,17 @@ export class UIBottom
         UIBottom.autocutButton.height = 35
         UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
         UIBottom.autocutButton.opacity = 0.9
+
+        UIBottom.leaveButton = new UIImage(UIBottom.bottomRect, atlasTexture);
+        UIBottom.leaveButton.isPointerBlocker = true
+        UIBottom.leaveButton.hAlign = "right"
+        setSection(UIBottom.leaveButton, { sourceLeft: 680, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
+        UIBottom.leaveButton.positionX = "-140px"
+        UIBottom.leaveButton.positionY = "-7px"
+        UIBottom.leaveButton.width = 39
+        UIBottom.leaveButton.height = 35
+        UIBottom.leaveButton.onClick = new OnClick(UIBottom.uiCallback.showLeaveWindow)
+        UIBottom.leaveButton.opacity = 0.95
 
         UIBottom.hourglassImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.hourglassImage.hAlign = "right"
@@ -161,5 +173,15 @@ export class UIBottom
     public hideAutocutButton(): void
     {
         UIBottom.autocutButton.visible = false
+    }
+
+    public showLeaveButton(): void
+    {
+        UIBottom.leaveButton.visible = true
+    }
+
+    public hideLeaveButton(): void
+    {
+        UIBottom.leaveButton.visible = false
     }
 }

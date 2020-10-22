@@ -2,6 +2,8 @@
 export class UIPropertiesComponent
 {
     canJoin: boolean    
+    canLeave: boolean
+    freeLeave: boolean
     member: boolean
 
     timeToQuizStart: string
@@ -26,10 +28,12 @@ export class UIPropertiesComponent
 
     public clear(): void
     {
-        this.canJoin = false      
-        this.controlVisible = true  
+        this.canJoin = false
+        this.canLeave = false
+        this.freeLeave = true
+        this.controlVisible = true
         this.autocompleteVisible = false
-        this.autocutVisible = false        
+        this.autocutVisible = false   
         this.timeToQuizStart = ""
         this.membershipPrice = 0.0
         this.autocompleteLeft = 0

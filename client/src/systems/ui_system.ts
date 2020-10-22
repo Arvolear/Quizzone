@@ -24,6 +24,9 @@ export class UISystem implements ISystem
         
         uiPropertiesComp.controlVisible ? this.uiCallback.showControlButtons() : this.uiCallback.hideControlButtons()        
 
+        uiPropertiesComp.canLeave ? this.uiCallback.showLeaveButton() : this.uiCallback.hideLeave()
+        
+
         this.uiCallback.setMember(uiPropertiesComp.member)
 
         this.uiCallback.updateAutocompleteLeft()
@@ -31,6 +34,8 @@ export class UISystem implements ISystem
 
         this.uiCallback.updateAutocompletePrice()
         this.uiCallback.updateAutocutPrice()
+
+        this.uiCallback.updateLeaveMessage()
 
         this.uiCallback.updateCanJoinTimer()
     }

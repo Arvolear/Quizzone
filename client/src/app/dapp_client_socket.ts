@@ -27,7 +27,8 @@ export class DappClientSocket
 
     private static centralScreenMain: IEntity
 
-    private static DISTANCE_CODE: number = 3001;    
+    private static DISTANCE_CODE: number = 3001;
+    private static LEAVE_CODE: number = 3002;
 
     constructor(sceneCallback: SceneCallback)
     {
@@ -40,7 +41,12 @@ export class DappClientSocket
         return DappClientSocket.DISTANCE_CODE
     }
 
-    connect(): void
+    static getLeaveCode(): number
+    {
+        return DappClientSocket.LEAVE_CODE
+    }
+
+    public connect(): void
     {
         if (this.socket != null)
         {
@@ -54,7 +60,7 @@ export class DappClientSocket
         this.socket.onmessage = this.onMessage
     }
 
-    join(): void
+    public join(): void
     {         
         var response = "join\n"
         this.send(response)
@@ -106,7 +112,8 @@ export class DappClientSocket
                     }
 
                     uiComp.canJoin = true
-
+                    uiComp.canLeave = false
+                    
                     uiComp.autocompletePrice = autocompletePrice
                     uiComp.autocutPrice = autocutPrice
 
@@ -116,10 +123,7 @@ export class DappClientSocket
                     break
                 }
             case "bad_connected":
-                {
-                    uiComp.canJoin = false
-                    uiComp.timeToQuizStart = ""
-
+                {                    
                     var actualMessage = ""
 
                     for (var i = 1; i < lines.length; i++)
@@ -131,6 +135,10 @@ export class DappClientSocket
                             actualMessage += "\n"
                         }
                     }
+
+                    uiComp.canJoin = false
+                    uiComp.canLeave = false
+                    uiComp.timeToQuizStart = ""
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
@@ -149,7 +157,11 @@ export class DappClientSocket
                         {
                             actualMessage += "\n"
                         }
-                    }                    
+                    }
+
+                    uiComp.canJoin = false
+                    uiComp.canLeave = true
+                    uiComp.freeLeave = true    
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
@@ -245,7 +257,9 @@ export class DappClientSocket
                         ]
                     )
 
-                    uiComp.canJoin = false
+                    uiComp.canJoin = false      
+                    uiComp.canLeave = true       
+                    uiComp.freeLeave = false
                     uiComp.timeToQuizStart = ""
 
                     centralComp.question = question
@@ -358,6 +372,9 @@ export class DappClientSocket
                 }
             case "finish":
                 {                    
+                    uiComp.canLeave = false
+                    uiComp.freeLeave = true
+
                     centralComp.finishLoaded = true
 
                     DappClientSocket.sceneCallback.dropCollider()
@@ -499,7 +516,8 @@ export class DappClientSocket
         lifetimeBestScreenMain.getComponent(LifetimeBestScreenComponent).clear()
         timedQuizScreenMain.getComponent(TimedQuizScreenComponent).clear()
 
-        if (event.code != DappClientSocket.DISTANCE_CODE)
+        if (event.code != DappClientSocket.DISTANCE_CODE &&
+            event.code != DappClientSocket.LEAVE_CODE)
         {
             centralScreenMain.getComponent(TextShape).value = "Disconnected remotely\n\nPlease consider reconnecting"
             centralScreenMain.getComponent(TextShape).fontSize = 1

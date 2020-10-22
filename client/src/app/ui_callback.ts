@@ -24,6 +24,10 @@ export abstract class UICallback
     abstract showAutocutWindow(): void
     abstract hideAutocutWindow(): void
     abstract hideAutocut(): void
+    abstract showLeaveButton(): void
+    abstract showLeaveWindow(): void
+    abstract hideLeaveWindow(): void
+    abstract hideLeave(): void
     abstract showControlButtons(): void
     abstract hideControlButtons(): void
     abstract showHourglass(): void
@@ -37,5 +41,6 @@ export abstract class UICallback
     abstract updateAutocutPrice(): void
     abstract updateAutocompleteLeft(): void
     abstract updateAutocutLeft(): void
+    abstract updateLeaveMessage(): void
     abstract updateCanJoinTimer(): void
 }

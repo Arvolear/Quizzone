@@ -9,6 +9,7 @@ import { UIBottom } from "./ui_bottom"
 import { UIAutocomplete } from "./ui_autocomplete"
 import { UIAutocut } from './ui_autocut'
 import { UIMember } from './ui_member'
+import { UILeave } from './ui_leave'
 
 export class UI extends UICallback
 {
@@ -23,6 +24,7 @@ export class UI extends UICallback
     private static uiMember: UIMember
     private static uiAutocomplete: UIAutocomplete
     private static uiAutocut: UIAutocut
+    private static uiLeave: UILeave
 
     private constructor()
     {
@@ -52,6 +54,7 @@ export class UI extends UICallback
         UI.uiTopUp = new UITopUp(UI.ui)        
         UI.uiAutocomplete = new UIAutocomplete(UI.ui)
         UI.uiAutocut = new UIAutocut(UI.ui)
+        UI.uiLeave = new UILeave(UI.ui)
     }
 
     public static getInstance(): UI
@@ -179,6 +182,28 @@ export class UI extends UICallback
         UI.uiAutocut.close()
     }
 
+    public showLeaveButton(): void
+    {
+        UI.uiBottom.showLeaveButton()
+    }
+
+    public showLeaveWindow(): void
+    {
+        UI.ui.hideAllWindows()
+        UI.uiLeave.reopen()
+    }
+
+    public hideLeaveWindow(): void
+    {
+        UI.uiLeave.close()
+    }
+
+    public hideLeave(): void
+    {
+        UI.uiBottom.hideLeaveButton()
+        UI.uiLeave.close()
+    }
+
     public showControlButtons(): void
     {
         UI.uiBottom.showControlButtons()
@@ -217,6 +242,7 @@ export class UI extends UICallback
         UI.uiMember.close()
         UI.uiAutocomplete.close()
         UI.uiAutocut.close()
+        UI.uiLeave.close()
     }
 
     public showUniversalError(message: string): void
@@ -249,6 +275,11 @@ export class UI extends UICallback
     public updateAutocutLeft(): void
     {
         UI.uiAutocut.updateAutocutLeft()
+    }
+
+    public updateLeaveMessage(): void
+    {
+        UI.uiLeave.updateMessage()
     }
 
     public updateCanJoinTimer(): void
