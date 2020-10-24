@@ -44,7 +44,7 @@ export class UIBottom
         UIBottom.topUpButton.width = 145
         UIBottom.topUpButton.height = 35
         UIBottom.topUpButton.onClick = new OnClick(UIBottom.uiCallback.showTopUp)
-        UIBottom.topUpButton.opacity = 0.9 
+        UIBottom.topUpButton.opacity = 0.9
 
         UIBottom.howToPlayButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.howToPlayButton.isPointerBlocker = true
@@ -55,7 +55,7 @@ export class UIBottom
         UIBottom.howToPlayButton.width = 145
         UIBottom.howToPlayButton.height = 35
         UIBottom.howToPlayButton.onClick = new OnClick(UIBottom.uiCallback.showHowToPlay)
-        UIBottom.howToPlayButton.opacity = 0.9 
+        UIBottom.howToPlayButton.opacity = 0.9
 
         UIBottom.autocompleteButton = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.autocompleteButton.isPointerBlocker = true
@@ -94,7 +94,7 @@ export class UIBottom
         UIBottom.hourglassImage.hAlign = "right"
         setSection(UIBottom.hourglassImage, { sourceLeft: 230, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
         UIBottom.hourglassImage.positionX = "0px"
-        UIBottom.hourglassImage.positionY = "-7px"        
+        UIBottom.hourglassImage.positionY = "-7px"
         UIBottom.hourglassImage.width = 39
         UIBottom.hourglassImage.height = 35
         UIBottom.hourglassImage.opacity = 0.95
