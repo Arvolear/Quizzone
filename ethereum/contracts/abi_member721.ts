@@ -1,3 +1,6 @@
+// private static CONTRACT = "0xf11ABa09A09cB9DfEea2FE219Ba8394CB002d230" // mainnet
+// private static CONTRACT = "0x9C18d8F0C84aA8c25d2A4094D30B145E8CC27098" // ropsten
+
 export const abi = [
     {
         "inputs": [

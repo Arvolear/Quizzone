@@ -36,7 +36,7 @@ export abstract class UICallback
     abstract setMember(member: boolean): void
     abstract hideAllWindows(): void
     abstract showUniversalError(message: string): void
-    abstract showNotEnoughFundsError(): void
+    abstract showNotEnoughManaFundsError(): void
     abstract updateAutocompletePrice(): void
     abstract updateAutocutPrice(): void
     abstract updateAutocompleteLeft(): void

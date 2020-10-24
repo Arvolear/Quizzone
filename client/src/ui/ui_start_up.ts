@@ -208,7 +208,7 @@ export class UIStartUp
     {
         if (UIStartUp.maticBalance < UIStartUp.boostersToBuyValue)
         {
-            UIStartUp.uiCallback.showNotEnoughFundsError()
+            UIStartUp.uiCallback.showNotEnoughManaFundsError()
         }
         else
         {
@@ -297,7 +297,7 @@ export class UIStartUp
         UIStartUp.fundsError.close()
     }
 
-    public showNotEnoughFundsError(): void
+    public showNotEnoughManaFundsError(): void
     {
         UIStartUp.startUp.close()
         UIStartUp.fundsError.reopen()

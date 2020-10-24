@@ -251,10 +251,10 @@ export class UI extends UICallback
         UI.uiTopUp.showUniversalError(message)
     }
 
-    public showNotEnoughFundsError(): void
+    public showNotEnoughManaFundsError(): void
     {
         UI.ui.hideAllWindows()
-        UI.uiStartUp.showNotEnoughFundsError()
+        UI.uiStartUp.showNotEnoughManaFundsError()
     }
 
     public updateAutocompletePrice(): void

@@ -1,3 +1,4 @@
+import utils from "../../node_modules/decentraland-ecs-utils/index"
 import { SceneCallback } from '../app/scene_callback'
 import { UI } from '../ui/ui'
 import { Button } from "./button"
@@ -18,6 +19,7 @@ export class Scene extends SceneCallback
 
     private becomeAMember: Entity
     private alreadyAMember: Entity
+    private memberCard: Entity
     private memberButton: Entity
     private memberButtonShape: BoxShape
     
@@ -52,15 +54,17 @@ export class Scene extends SceneCallback
 
         this.configScene()
         this.configBecomeAMember()
-        this.configAlreadyAMember()        
+        this.configAlreadyAMember()           
         this.configGrass()
         this.configLogo()
-        this.configColliders()        
+        this.configColliders()
 
         this.configureUI()
         this.configureButtons()
         this.configureScreens()
         this.configureStartButton()
+
+        this.configMemberCard()     
     }
 
     private configureUI(): void
@@ -205,6 +209,35 @@ export class Scene extends SceneCallback
             {
                 this.ui.showInfo()
             }))
+    }
+
+    private configMemberCard(): void
+    {
+        const memberCardShape = new GLTFShape("models/member/member_card.glb")
+        memberCardShape.withCollisions = false
+        memberCardShape.isPointerBlocker = true
+        memberCardShape.visible = true
+
+        this.memberCard = new Entity('member_card')
+        engine.addEntity(this.memberCard)
+        this.memberCard.setParent(this.scene)
+        this.memberCard.addComponentOrReplace(memberCardShape)
+
+        const transform = new Transform(
+            {
+                position: new Vector3(2.8, 1.1, 30),
+                rotation: Quaternion.Euler(180, 0, 0),
+                scale: new Vector3(2.5, 2.5, 2.5)
+            })
+        this.memberCard.addComponentOrReplace(transform)
+
+        this.memberCard.addComponent(new utils.KeepRotatingComponent(Quaternion.Euler(0, 45, 0)))
+
+        this.memberCard.addComponent(new OnPointerDown(() =>
+            {
+                this.ui.showMember()
+            }
+        ))
     }
 
     private configGrass(): void
@@ -366,6 +399,11 @@ export class Scene extends SceneCallback
             {
                 this.infoBecomeButton.removeComponent(this.infoBecomeButtonShape)
             }
+
+            if (this.memberCard.hasComponent(OnPointerDown))
+            {
+                this.memberCard.removeComponent(OnPointerDown)
+            }
         }
         else
         {
@@ -385,6 +423,14 @@ export class Scene extends SceneCallback
             if (this.infoAlreadyButton.hasComponent(this.infoAlreadyButtonShape))
             {
                 this.infoAlreadyButton.removeComponent(this.infoAlreadyButtonShape)
+            }
+
+            if (!this.memberCard.hasComponent(OnPointerDown))
+            {
+                this.memberCard.addComponentOrReplace(new OnPointerDown(() =>
+                {
+                    this.ui.showMember()
+                }))
             }
         }
     }

@@ -26,7 +26,7 @@ export class UITopUp
         UITopUp.universalError.background.isPointerBlocker = true
 
         UITopUp.universalError.addText('Error', 0, 153, Color4.Black(), 30)
-        UITopUp.universalError.addText('', 0, 30, new Color4(1.0, 0.15, 0.3, 1.0), 35)
+        UITopUp.universalError.addText('', 0, 26, new Color4(1.0, 0.15, 0.3, 1.0), 35)
 
         UITopUp.universalError.addButton(
             'Close',
