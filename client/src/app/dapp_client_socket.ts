@@ -14,7 +14,7 @@ import { AnswerStatistics } from "../entities/answer_statistics"
 
 export class DappClientSocket
 {
-    public static playerWallet;
+    public static playerWallet
     public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
     public static network = "mainnet"
     // public static network = "goerli"
@@ -27,8 +27,8 @@ export class DappClientSocket
 
     private static centralScreenMain: IEntity
 
-    private static DISTANCE_CODE: number = 3001;
-    private static LEAVE_CODE: number = 3002;
+    private static DISTANCE_CODE: number = 3001
+    private static LEAVE_CODE: number = 3002
 
     constructor(sceneCallback: SceneCallback)
     {
