@@ -17,18 +17,18 @@ public class PartyMessagesHandler
 
     public String getLockedMessage()
     {
-        return "bad_connected\n" +
-                "The session has already started\n" +
-                "Please wait for the next quiz";
+        return "bad_connected";
     }
 
-    public String getJoinableMessage()
+    public String getJoinableMessage(String topic)
     {
         return "connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
-                "Click the button to join the quiz!\n" +
-                "-------------------------------->";
+                "You can join a random quiz now!\n" +
+                "Randomly chosen topic - " + topic + "\n" +
+                "Please click the check in button to join\n" +
+                "---------------------------------------------->";
     }
 
     public String getHostMessage()
@@ -36,14 +36,16 @@ public class PartyMessagesHandler
         return "connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
-                "Click the button to start the quiz!\n" +
-                "-------------------------------->";
+                "Special quiz registration is not open yet...\n" +
+                "However, you may call your friends to play a random quiz!\n" +
+                "You all will have to click the check in button\n" +
+                "---------------------------------------------->";
     }
 
     public String getCountdownStartMessage(String topic)
     {
         return "countdown\n" +
-                "The quiz starts in ...\n" +
+                "The random quiz starts in ...\n" +
                 "Players: " + party.playingPlayers.size() + "/" + party.maxPlayingSize + "\n" +
                 "Topic: " + topic + "\n" +
                 "Questions: " + party.questionnaire.getTotalNumber();
@@ -77,6 +79,11 @@ public class PartyMessagesHandler
             return type + "\n" +
                     "show\n" +
                     player.getAutocutLeft();
+        }
+        else if (type.equals("control_buttons"))
+        {
+            return type + "\n" +
+                    "show";
         }
 
         return "";
@@ -133,7 +140,7 @@ public class PartyMessagesHandler
 
     public String getHideMessage(String type)
     {
-        if (type.equals("autocomplete") || type.equals("autocut"))
+        if (type.equals("autocomplete") || type.equals("autocut") || type.equals("control_buttons"))
         {
             return type + "\n" + "hide";
         }
@@ -146,6 +153,7 @@ public class PartyMessagesHandler
         Question question = party.questionnaire.getCurrentQuestion();
 
         return "start\n" +
+                party.questionnaire.getCurrentQuestionNumber() + "\n" +
                 party.questionnaire.getTotalNumber() + "\n" +
                 question.toString();
     }
@@ -161,6 +169,7 @@ public class PartyMessagesHandler
 
         return "next\n" +
                 party.questionnaire.getCurrentQuestionNumber() + "\n" +
+                party.questionnaire.getTotalNumber() + "\n" +
                 question.toString();
     }
 
@@ -170,17 +179,33 @@ public class PartyMessagesHandler
                 "That's correct!";
     }
 
-    public String getWrongAnswerMessage()
+    public String getAnswerStatisticsMessage(ArrayList<Integer> answers)
     {
-        return "answer\n" +
-                "Sorry, that's wrong!";
+        Question question = party.questionnaire.getCurrentQuestion();
+
+        return "answer_statistics\n" +
+                "Players' answers:\n" +
+                "4) " + answers.get(3) + "\n" +
+                "3) " + answers.get(2) + "\n" +
+                "2) " + answers.get(1) + "\n" +
+                "1) " + answers.get(0) + "\n" +
+                "Correct answer:\n" +
+                question.getCorrectVariant();
     }
 
-    public String getFinishMessage(Client player)
+    public String getWrongAnswerMessage()
     {
-        return "finish\n" +
-                "Thanks for playing!\n" +
-                "Your score - " + party.totalCorrect.get(player) + "/" + party.questionnaire.getTotalNumber();
+        Question question = party.questionnaire.getCurrentQuestion();
+
+        return "answer\n" +
+                "Sorry, that's wrong!\n" +
+                "Correct answer was:\n" +
+                question.getCorrectVariant();
+    }
+
+    public String getFinishMessage()
+    {
+        return "finish";
     }
 
     public String getClearMessage()
@@ -193,6 +218,7 @@ public class PartyMessagesHandler
         StringBuilder builder = new StringBuilder();
 
         builder.append("top_party\n").
+                append("Thanks for playing!\n").
                 append("Party best\n");
 
         ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
@@ -238,8 +264,7 @@ public class PartyMessagesHandler
         StringBuilder builder = new StringBuilder();
         String lifetimeBest = party.sqlAccess.getLifetimeBest(player.getNick());
 
-        builder.append("lifetime_best\n").
-                append("Lifetime best\n");
+        builder.append("lifetime_best\n");
 
         for (int i = 0; i < allLifetimeBest.size() && i < Party.LIFETIME_BEST_LIMIT; i++)
         {

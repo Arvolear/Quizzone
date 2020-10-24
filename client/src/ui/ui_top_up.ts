@@ -1,7 +1,7 @@
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
-import { UI } from "./ui"
+import { UICallback } from "../app/ui_callback"
 import { CustomPromptText, CustomPromptTextBox } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { DappClientSocket } from "../app/dapp_client_socket"
 
@@ -10,9 +10,9 @@ export class UITopUp
     private static topUpMatic: ui.CustomPrompt
     private static universalError: ui.CustomPrompt
 
-    private static uiCallback: UI
+    private static uiCallback: UICallback
 
-    constructor(ui: UI)
+    constructor(ui: UICallback)
     {
         UITopUp.uiCallback = ui
 
@@ -44,26 +44,29 @@ export class UITopUp
 
     private configTopUp(): void
     {
-        UITopUp.topUpMatic = new ui.CustomPrompt(PromptStyles.LIGHT, 500, 400)
+        UITopUp.topUpMatic = new ui.CustomPrompt(PromptStyles.LIGHT, 500, 450)
         UITopUp.topUpMatic.background.isPointerBlocker = true
 
-        UITopUp.topUpMatic.addText('Top up matic MANA', 0, 180, Color4.Black(), 30)
-        UITopUp.topUpMatic.addText('(takes 5-10 minutes)', 0, 145, Color4.Black(), 20)
-        UITopUp.topUpMatic.addText('Main balance:  ...  MANA', 0, 95, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UITopUp.topUpMatic.addText('Matic balance:  ...  MANA', 0, 65, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Top up matic MANA', 0, 205, Color4.Black(), 30)
+        UITopUp.topUpMatic.addText('The whole procedure takes 5-10 minutes', 0, 170, Color4.Black(), 20)
+        UITopUp.topUpMatic.addText('You will have to sign TWO transactions', 0, 140, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UITopUp.topUpMatic.addText('After main MANA is withdrawn,', 0, 110, Color4.Black(), 20)
+        UITopUp.topUpMatic.addText('matic MANA will appear shortly', 0, 90, Color4.Black(), 20)        
+        UITopUp.topUpMatic.addText('Main balance:  ...  MANA', 0, 40, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Matic balance:  ...  MANA', 0, 10, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
-        UITopUp.topUpMatic.addText('Amount:', -104, 10, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UITopUp.topUpMatic.addText('Amount:', -104, -40, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
         UITopUp.topUpMatic.addTextBox(
             0,
-            -40,
+            -90,
             "Enter MANA"
         )
 
         UITopUp.topUpMatic.addButton(
             'Top up',
             -100,
-            -140,
+            -175,
             () =>
             {
                 UITopUp.transferToMatic()
@@ -74,7 +77,7 @@ export class UITopUp
         UITopUp.topUpMatic.addButton(
             'Cancel',
             100,
-            -140,
+            -175,
             () =>
             {
                 UITopUp.uiCallback.hideTopUp()
@@ -94,8 +97,8 @@ export class UITopUp
 
         balancePromise.then((balance) => 
         {
-            let valueMainText = UITopUp.topUpMatic.elements[2] as CustomPromptText
-            let valueMaticText = UITopUp.topUpMatic.elements[3] as CustomPromptText
+            let valueMainText = UITopUp.topUpMatic.elements[5] as CustomPromptText
+            let valueMaticText = UITopUp.topUpMatic.elements[6] as CustomPromptText
 
             let balanceMainStr = balance.l1.toString()
             let dotMainIndex = balanceMainStr.indexOf(".")
@@ -118,15 +121,14 @@ export class UITopUp
 
     private static transferToMatic(): void
     {
-        let valueText = UITopUp.topUpMatic.elements[2] as CustomPromptText
-        let valueTextBox = UITopUp.topUpMatic.elements[5] as CustomPromptTextBox
+        let valueText = UITopUp.topUpMatic.elements[5] as CustomPromptText
+        let valueTextBox = UITopUp.topUpMatic.elements[8] as CustomPromptTextBox
 
-        let firstSpace = valueText.text.value.indexOf(' ')
-        let secondSpace = valueText.text.value.indexOf(' ', firstSpace + 1)
-        let lastSpace = valueText.text.value.lastIndexOf(' ')
+        let firstSpace = valueText.text.value.indexOf('  ')   
+        let lastSpace = valueText.text.value.lastIndexOf('  ')
 
         let amount = parseFloat(valueTextBox.currentText)
-        let balance = parseFloat(valueText.text.value.substr(secondSpace + 1, lastSpace - secondSpace - 1))
+        let balance = parseFloat(valueText.text.value.substr(firstSpace + 2, lastSpace - firstSpace))        
 
         if (isNaN(amount) || amount <= 0)
         {

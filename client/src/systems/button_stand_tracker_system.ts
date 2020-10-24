@@ -2,18 +2,23 @@ import { ButtonComponent } from "../components/button_component"
 import { BlockComponent } from "../components/block_component"
 import { CentralScreenComponent } from "../components/central_screen_component"
 import { TopPartyScreenComponent } from "../components/top_party_screen_component"
+import { Button } from "../entities/button"
+import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 
 export class ButtonStandTrackerSystem implements ISystem
 {
-    private buttonsGroup: any
+    private buttonsGroup: Array<Button>
+
+    private lifeTimeBestScreenMain: IEntity
     private topPartyScreenMain: IEntity
     private centralScreenMain: IEntity
 
-    private static DISTANCE: number = 2.8
+    private static DISTANCE: number = 4.5
 
-    constructor()
-    {
-        this.buttonsGroup = engine.getComponentGroup(ButtonComponent)
+    constructor(buttonsGroup: Array<Button>)
+    {        
+        this.buttonsGroup = buttonsGroup
+        this.lifeTimeBestScreenMain = engine.getComponentGroup(LifetimeBestScreenComponent).entities[0]
         this.topPartyScreenMain = engine.getComponentGroup(TopPartyScreenComponent).entities[0]
         this.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
     }
@@ -29,6 +34,7 @@ export class ButtonStandTrackerSystem implements ISystem
 
     update(dt: number)
     {
+        let lifeTimeBestBlockComp = this.lifeTimeBestScreenMain.getComponentOrNull(BlockComponent)
         let topBlockComp = this.topPartyScreenMain.getComponentOrNull(BlockComponent)
         let centralBlockComp = this.centralScreenMain.getComponentOrNull(BlockComponent)    
         
@@ -36,15 +42,15 @@ export class ButtonStandTrackerSystem implements ISystem
 
         this.clearButtonsColor()
 
-        if ((topBlockComp != null || centralBlockComp != null) && mustIndex == -1)
+        if (lifeTimeBestBlockComp != null || ((topBlockComp != null || centralBlockComp != null) && mustIndex == -1))
         {
             return
         }
 
-        for (let button of this.buttonsGroup.entities)
+        for (let button of this.buttonsGroup)
         {            
-            let dist = this.distanceXYZ(button.getComponent(Transform).position, Camera.instance.position)
-            var index = button.getComponent(ButtonComponent).index
+            let dist = this.distanceXYZ(button.getEntity().getComponent(Transform).position, Camera.instance.position)
+            var index = button.getEntity().getComponent(ButtonComponent).index
 
             if (mustIndex != -1)
             {        
@@ -52,25 +58,24 @@ export class ButtonStandTrackerSystem implements ISystem
 
                 if (mustIndex - 1 == index)
                 {                
-                    button.getComponent(Material).albedoColor = Color3.FromHexString("#80ffb0")
-                    this.displayText(index)                    
+                    button.showYellow()
                 }                    
             }
             else if (dist < ButtonStandTrackerSystem.DISTANCE)
             {            
-                button.getComponent(Material).albedoColor = Color3.FromHexString("#80b0ff")               
-
-                this.displayText(index)
-                this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = index                
+                button.showBlue()
+                
+                this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = index
+                return              
             }            
         }
     }
 
     private clearButtonsColor(): void
     {
-        for (let button of this.buttonsGroup.entities)
+        for (let button of this.buttonsGroup) 
         { 
-            var index = button.getComponent(ButtonComponent).index
+            var index = button.getEntity().getComponent(ButtonComponent).index
             var curIndex = this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton
 
             if (index == curIndex)
@@ -79,39 +84,8 @@ export class ButtonStandTrackerSystem implements ISystem
             }
             else
             {
-                button.getComponent(Material).albedoColor = Color3.White()
+                button.showPurple()
             }
-        }
-    }
-
-    private displayText(index: number): void
-    {
-        let text = this.topPartyScreenMain.getComponent(TextShape)
-
-        text.fontSize = 2
-
-        switch(index)
-        {
-            case 0:
-                {
-                    text.value = "4\t3\n\n2    >1"
-                    break
-                }
-            case 1:
-                {
-                    text.value = "4\t3\n\n2<    1"                    
-                    break
-                }
-            case 2:
-                {
-                    text.value = "4    >3\n\n2\t1"                    
-                    break
-                }
-            case 3:
-                {
-                    text.value = "4<    3\n\n2\t1"                    
-                    break
-                }
         }
     }
 }

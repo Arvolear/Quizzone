@@ -1,27 +1,25 @@
+import { UICallback } from "../app/ui_callback"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { UIPropertiesComponent } from "../components/ui_properties_component";
 import { DappClientSocket } from "../app/dapp_client_socket";
-import { UI } from './ui';
 import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
 import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
 import { UIMember } from './ui_member';
 
 export class UIStartUp
 {
-    private static dappClientSocket: DappClientSocket
-
     private static startUp: ui.CustomPrompt
     private static fundsError: ui.CustomPrompt
 
-    private static uiCallback: UI
+    private static uiCallback: UICallback
 
     private static maticBalance: number
     private static autocompleteNum: number
     private static autocutNum: number
     private static boostersToBuyValue: number
 
-    constructor(ui: UI)
+    constructor(ui: UICallback)
     {
         UIStartUp.uiCallback = ui
         UIStartUp.maticBalance = 0
@@ -31,12 +29,7 @@ export class UIStartUp
 
         this.configError()
         this.configStartUp()
-    }
-
-    public static setClientSocket(dappClientSocket: DappClientSocket): void
-    {
-        UIStartUp.dappClientSocket = dappClientSocket;
-    }
+    }   
 
     private configError(): void
     {
@@ -76,7 +69,7 @@ export class UIStartUp
         UIStartUp.startUp.addText('Your matic balance:  ...  MANA', 0, 145, new Color4(1.0, 0.15, 0.3, 1.0), 20)
 
         UIStartUp.startUp.addText('Autocomplete question booster', 0, 110, Color4.Black(), 25)
-        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 83, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText(UICallback.properties.getComponent(UIPropertiesComponent).autocompletePrice.toString(), -65, 83, new Color4(1.0, 0.15, 0.3, 1.0), 20)
         UIStartUp.startUp.addText('MANA each', 25, 83, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIStartUp.startUp.addIcon("images/minus.png", -100, 25, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
@@ -106,7 +99,7 @@ export class UIStartUp
         })
 
         UIStartUp.startUp.addText('50/50 booster', 0, -25, Color4.Black(), 25)
-        UIStartUp.startUp.addText(UI.properties.getComponent(UIPropertiesComponent).autocutPrice.toString(), -65, -52, new Color4(1.0, 0.15, 0.3, 1.0), 20)
+        UIStartUp.startUp.addText(UICallback.properties.getComponent(UIPropertiesComponent).autocutPrice.toString(), -65, -52, new Color4(1.0, 0.15, 0.3, 1.0), 20)
         UIStartUp.startUp.addText('MANA each', 25, -52, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIStartUp.startUp.addIcon("images/minus.png", -100, -110, 50, 50, { sourceWidth: 550, sourceHeight: 550 }).image.onClick = new OnClick(() => 
         {
@@ -150,7 +143,7 @@ export class UIStartUp
     private updateButtonText(): void
     {
         let buttonText = UIStartUp.startUp.elements[19] as CustomPromptText
-        let uiPropertiesComp = UI.properties.getComponent(UIPropertiesComponent)
+        let uiPropertiesComp = UICallback.properties.getComponent(UIPropertiesComponent)
 
         UIStartUp.boostersToBuyValue = uiPropertiesComp.autocompletePrice * UIStartUp.autocompleteNum + uiPropertiesComp.autocutPrice * UIStartUp.autocutNum
 
@@ -173,13 +166,13 @@ export class UIStartUp
     {
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {            
-            UIStartUp.checkBuyBoosters()            
+            UIStartUp.checkBuyBoosters()              
         }
         else
         {
-            UI.properties.getComponent(UIPropertiesComponent).canJoin = false
+            UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
             UIStartUp.uiCallback.hideAllWindows()        
-            UIStartUp.dappClientSocket.join()
+            UICallback.dappClientSocket.join()
         }
     }
 
@@ -188,7 +181,7 @@ export class UIStartUp
         const sendAutocomplete = executeTask(async () =>
         {            
             UIStartUp.uiCallback.showHourglass()
-            UIStartUp.dappClientSocket.join()
+            UICallback.dappClientSocket.join()
 
             await matic.sendMana(DappClientSocket.myWallet, UIStartUp.boostersToBuyValue, true, DappClientSocket.network).then(() => 
             {                            
@@ -197,7 +190,7 @@ export class UIStartUp
                     UIStartUp.autocutNum + "\n" +
                     DappClientSocket.playerWallet
 
-                UIStartUp.dappClientSocket.send(toSend)                
+                UICallback.dappClientSocket.send(toSend)                
 
                 UIStartUp.uiCallback.hideAllWindows()
                 UIStartUp.uiCallback.showTick(8)
@@ -219,7 +212,7 @@ export class UIStartUp
         }
         else
         {
-            UI.properties.getComponent(UIPropertiesComponent).canJoin = false
+            UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
             UIStartUp.buyBoosters()            
             UIStartUp.uiCallback.showCheckMetamask()
         }
@@ -228,7 +221,7 @@ export class UIStartUp
     public updateAutocompletePrice(): void
     {
         let valueText = UIStartUp.startUp.elements[6] as CustomPromptText
-        let uiPropertiesComp = UI.properties.getComponent(UIPropertiesComponent)
+        let uiPropertiesComp = UICallback.properties.getComponent(UIPropertiesComponent)
         let value = uiPropertiesComp.autocompletePrice
 
         if (uiPropertiesComp.member)
@@ -244,7 +237,7 @@ export class UIStartUp
     public updateAutocutPrice(): void
     {
         let valueText = UIStartUp.startUp.elements[12] as CustomPromptText
-        let uiPropertiesComp = UI.properties.getComponent(UIPropertiesComponent)
+        let uiPropertiesComp = UICallback.properties.getComponent(UIPropertiesComponent)
         let value = uiPropertiesComp.autocutPrice
 
         if (uiPropertiesComp.member)
@@ -260,7 +253,7 @@ export class UIStartUp
     public updateTimer(): void
     {
         let valueText = UIStartUp.startUp.elements[1] as CustomPromptText
-        let value = UI.properties.getComponent(UIPropertiesComponent).timeToQuizStart
+        let value = UICallback.properties.getComponent(UIPropertiesComponent).timeToQuizStart
 
         valueText.text.value = value
     }

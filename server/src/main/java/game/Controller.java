@@ -203,6 +203,8 @@ public class Controller implements IStopWatchCallback
             {
                 timedParty.connectPlayer(player);
             }
+
+            party.clear();
         }
     }
 

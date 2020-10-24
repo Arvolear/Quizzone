@@ -1,7 +1,5 @@
 package party_related;
 
-import game.Client;
-
 public class TimedPartyMessagesHandler extends PartyMessagesHandler
 {
     TimedPartyMessagesHandler(Party party)
@@ -10,21 +8,22 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     }
 
     @Override
-    public String getJoinableMessage()
+    public String getJoinableMessage(String topic)
     {
         return "connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
-                "Welcome to the special quiz!\n" +
-                "Click the button to join!\n" +
-                "-------------------------------->";
+                "Welcome to the special quiz registration!\n" +
+                "Today special quiz topic - " + topic + "\n" +
+                "Please click the check in button to join!\n" +
+                "---------------------------------------------->";
     }
 
     @Override
     public String getHostMessage()
     {
         return "bad_connected\n" +
-                "Get ready!\n" +
+                "Get ready and call your friends!\n" +
                 "The special quiz starts very soon!";
     }
 
@@ -39,11 +38,9 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     }
 
     @Override
-    public String getFinishMessage(Client player)
+    public String getFinishMessage()
     {
-        return "finish\n" +
-                "Thanks for playing! See you in a week!\n" +
-                "Your score: " + party.totalCorrect.get(player) + "/" + party.questionnaire.getTotalNumber();
+        return "finish\n";
     }
 
     public String getTimedClearMessage()

@@ -220,9 +220,13 @@ function importQuestions($file, $shuffle)
         for ($j = 0; $j < count($types); $j++) {
             unset($_SESSION[$types[$j] . $i]);
         }
-    }
+    }    
 
     $csv = array_map('str_getcsv', file($file['tmp_name']));
+
+    if (!empty($shuffle)) {
+        shuffle($csv);
+    }
 
     for ($i = 0; $i < min(count($csv), $QUESTION_LIMIT); $i++) {
         $answer = count($csv[$i]) == 6 ? (int)$csv[$i][5] : 1;      

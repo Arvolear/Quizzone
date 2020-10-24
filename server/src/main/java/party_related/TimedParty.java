@@ -133,8 +133,7 @@ public class TimedParty extends Party
 
         if (category != null && ready)
         {
-            String response = timedMessagesHandler.getTimedQuizTimerResponse(-1, category.getAlias());
-            send(player, response);
+            send(player, timedMessagesHandler.getTimedQuizTimerResponse(-1, category.getAlias()));
         }
     }
 
@@ -149,6 +148,8 @@ public class TimedParty extends Party
         playingPlayers.put(player, idlePlayers.get(player));
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
+
+        send(player, messagesHandler.getHideMessage("control_buttons"));
 
         String response;
 
@@ -209,7 +210,7 @@ public class TimedParty extends Party
 
             if (joinable)
             {
-                response = messagesHandler.getJoinableMessage();
+                response = messagesHandler.getJoinableMessage(category.getAlias());
             }
             else
             {
@@ -272,6 +273,11 @@ public class TimedParty extends Party
 
         finishLoadCategory();
 
+        for (var player : playingPlayers.keySet())
+        {
+            updateBestFor(player);
+        }
+
         super.finish();
         controller.timedPartyIsFinished();
 
@@ -283,7 +289,7 @@ public class TimedParty extends Party
         ready = true;
         joinable = true;
 
-        String response = messagesHandler.getJoinableMessage();
+        String response = messagesHandler.getJoinableMessage(category.getAlias());
         broadcast(idlePlayers, response);
 
         TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;

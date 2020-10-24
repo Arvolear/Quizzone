@@ -1,4 +1,5 @@
-import '../../node_modules/@dcl/l2-utils/matic/index'
+import { UICallback } from '../app/ui_callback'
+import { SceneCallback } from '../app/scene_callback'
 import { DappClientSocket } from "../app/dapp_client_socket"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UIStartUp } from "./ui_start_up"
@@ -8,14 +9,14 @@ import { UIBottom } from "./ui_bottom"
 import { UIAutocomplete } from "./ui_autocomplete"
 import { UIAutocut } from './ui_autocut'
 import { UIMember } from './ui_member'
+import { UILeave } from './ui_leave'
 
-export class UI 
+export class UI extends UICallback
 {
+    private static sceneCallback: SceneCallback
+
     private static ui: UI
-
-    public static properties: Entity
-    public static canvas: UICanvas
-
+    
     private static uiCheckMetamask: UICheckMetamask
     private static uiStartUp: UIStartUp
     private static uiBottom: UIBottom
@@ -23,30 +24,37 @@ export class UI
     private static uiMember: UIMember
     private static uiAutocomplete: UIAutocomplete
     private static uiAutocut: UIAutocut
+    private static uiLeave: UILeave
 
     private constructor()
     {
-        UI.canvas = new UICanvas()
+        super()
+
+        UI.canvas = new UICanvas()        
 
         this.configureProperties()
     }
 
     public static setClientSocket(dappClientSocket: DappClientSocket): void
     {
-        UIStartUp.setClientSocket(dappClientSocket)
-        UIAutocomplete.setClientSocket(dappClientSocket)
-        UIAutocut.setClientSocket(dappClientSocket)
+        UICallback.dappClientSocket = dappClientSocket
+    }
+
+    public static setSceneCallback(sceneCallback: SceneCallback)
+    {
+        UI.sceneCallback = sceneCallback
     }
 
     private static configInitialDisplay(): void
-    {
+    {                
+        UI.uiMember = new UIMember(UI.ui)        
         UI.uiCheckMetamask = new UICheckMetamask(UI.ui)
         UI.uiStartUp = new UIStartUp(UI.ui)
         UI.uiBottom = new UIBottom(UI.ui)
-        UI.uiTopUp = new UITopUp(UI.ui)
-        UI.uiMember = new UIMember(UI.ui)
+        UI.uiTopUp = new UITopUp(UI.ui)        
         UI.uiAutocomplete = new UIAutocomplete(UI.ui)
         UI.uiAutocut = new UIAutocut(UI.ui)
+        UI.uiLeave = new UILeave(UI.ui)
     }
 
     public static getInstance(): UI
@@ -62,13 +70,23 @@ export class UI
 
     private configureProperties(): void
     {
-        UI.properties = new Entity()
+        UICallback.properties = new Entity()
 
-        UI.properties.addComponent(new UIPropertiesComponent())
+        UICallback.properties.addComponent(new UIPropertiesComponent())
 
-        engine.addEntity(UI.properties)
+        engine.addEntity(UICallback.properties)
     }
 
+    public showInfo(): void
+    {
+        openExternalURL("https://dapp-craft.com/quizzone/club")
+    }
+
+    public showHowToPlay(): void
+    {
+        openExternalURL("https://dapp-craft.com/quizzone/how-to-play")
+    }
+    
     public showTopUp(): void
     {
         UI.ui.hideAllWindows()
@@ -116,8 +134,7 @@ export class UI
     }
 
     public hideStartUp(): void
-    {
-        UI.uiBottom.hideHourglass()
+    {        
         UI.uiStartUp.close()
     }
 
@@ -165,6 +182,38 @@ export class UI
         UI.uiAutocut.close()
     }
 
+    public showLeaveButton(): void
+    {
+        UI.uiBottom.showLeaveButton()
+    }
+
+    public showLeaveWindow(): void
+    {
+        UI.ui.hideAllWindows()
+        UI.uiLeave.reopen()
+    }
+
+    public hideLeaveWindow(): void
+    {
+        UI.uiLeave.close()
+    }
+
+    public hideLeave(): void
+    {
+        UI.uiBottom.hideLeaveButton()
+        UI.uiLeave.close()
+    }
+
+    public showControlButtons(): void
+    {
+        UI.uiBottom.showControlButtons()
+    }
+
+    public hideControlButtons(): void
+    {
+        UI.uiBottom.hideControlButtons()
+    }
+
     public showHourglass(): void
     {
         UI.uiBottom.showHourglass()
@@ -182,17 +231,18 @@ export class UI
 
     public setMember(member: boolean): void
     {
-        UI.uiBottom.setMember(member)
+        UI.sceneCallback.setMember(member)
     }
 
     public hideAllWindows(): void
-    {
+    {        
         UI.uiCheckMetamask.close()
         UI.uiStartUp.close()
         UI.uiTopUp.close()
         UI.uiMember.close()
         UI.uiAutocomplete.close()
         UI.uiAutocut.close()
+        UI.uiLeave.close()
     }
 
     public showUniversalError(message: string): void
@@ -225,6 +275,11 @@ export class UI
     public updateAutocutLeft(): void
     {
         UI.uiAutocut.updateAutocutLeft()
+    }
+
+    public updateLeaveMessage(): void
+    {
+        UI.uiLeave.updateMessage()
     }
 
     public updateCanJoinTimer(): void

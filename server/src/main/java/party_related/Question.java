@@ -15,6 +15,11 @@ public class Question
         this.answer = answer;
     }
 
+    public String getCorrectVariant()
+    {
+        return variants.get(variants.size() - answer);
+    }
+
     public String getQuestion()
     {
         return question;

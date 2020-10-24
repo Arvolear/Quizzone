@@ -7,10 +7,10 @@ import java.util.Objects;
 
 public class Client
 {
-    private Session session;
-    private String realm;
-    private String wallet;
-    private String nick;
+    private final Session session;
+    private final String realm;
+    private final String wallet;
+    private final String nick;
 
     private int autocompleteLeft;
     private int autocutLeft;
