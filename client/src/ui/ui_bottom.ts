@@ -83,7 +83,7 @@ export class UIBottom
         UIBottom.leaveButton.isPointerBlocker = true
         UIBottom.leaveButton.hAlign = "right"
         setSection(UIBottom.leaveButton, { sourceLeft: 680, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.leaveButton.positionX = "-50px"
+        UIBottom.leaveButton.positionX = "-45px"
         UIBottom.leaveButton.positionY = "-7px"
         UIBottom.leaveButton.width = 39
         UIBottom.leaveButton.height = 35
@@ -102,7 +102,7 @@ export class UIBottom
         UIBottom.tickImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.tickImage.hAlign = "right"
         setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.tickImage.positionX = "-3px"
+        UIBottom.tickImage.positionX = "0px"
         UIBottom.tickImage.positionY = "-7px"
         UIBottom.tickImage.width = 39
         UIBottom.tickImage.height = 35

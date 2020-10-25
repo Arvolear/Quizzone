@@ -30,8 +30,8 @@ public class Party implements IStopWatchCallback
     public static final int LIFETIME_BEST_LIMIT = 9;
     public static final int PARTY_TOP_LIMIT = 5;
 
-    public static final int AUTOCOMPLETE_PRICE = 0;
-    public static final int AUTOCUT_PRICE = 0;
+    public static final int AUTOCOMPLETE_PRICE = 50;
+    public static final int AUTOCUT_PRICE = 25;
 
     protected boolean ready;
 

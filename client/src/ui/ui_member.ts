@@ -54,7 +54,7 @@ export class UIMember
         UIMember.member.addText('Quizzone membership', 0, 205, Color4.Black(), 30)
 
         UIMember.member.addText('Quizzone members have 50% off the boosters price', 0, 155, new Color4(0.24, 0.22, 0.25, 1.0), 20)
-        UIMember.member.addText('You will receive an ERC721 token named \"QZONE\"', 0, 105, new Color4(0.24, 0.22, 0.25, 1.0), 20)
+        UIMember.member.addText('You will receive an NFT token named \"QZONE\"', 0, 105, new Color4(0.24, 0.22, 0.25, 1.0), 20)
         UIMember.member.addText('that denotes a membership', 0, 75, new Color4(0.24, 0.22, 0.25, 1.0), 20)
 
         UIMember.member.addText('Your balance:  ...  ETH', 0, 20, new Color4(0.24, 0.22, 0.25, 1.0), 25)

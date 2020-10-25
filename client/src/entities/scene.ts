@@ -31,6 +31,7 @@ export class Scene extends SceneCallback
     private outCollider: Entity
     private inCollider: Entity
     private inColliderShape: GLTFShape
+    private outColliderShape: GLTFShape
 
     private buttons: Array<Button> = []
 
@@ -303,15 +304,15 @@ export class Scene extends SceneCallback
                 scale: new Vector3(1, 1, 1)
             })
 
-        const outColliderShape = new GLTFShape("models/colliders/out_collider.glb")
-        outColliderShape.withCollisions = true
-        outColliderShape.isPointerBlocker = false
-        outColliderShape.visible = true
+        this.outColliderShape = new GLTFShape("models/colliders/out_collider.glb")
+        this.outColliderShape.withCollisions = true
+        this.outColliderShape.isPointerBlocker = false
+        this.outColliderShape.visible = true
 
         this.outCollider = new Entity('out_collider')
         engine.addEntity(this.outCollider)
         this.outCollider.setParent(this.scene)
-        this.outCollider.addComponentOrReplace(outColliderShape)
+        this.outCollider.addComponentOrReplace(this.outColliderShape)
         this.outCollider.addComponentOrReplace(transform)
 
         this.inColliderShape = new GLTFShape("models/colliders/in_collider.glb")
@@ -435,15 +436,18 @@ export class Scene extends SceneCallback
         }
     }
 
-    public setCollider(): void
+    public setColliderAndTeleport(): void
     {
         this.inCollider.addComponentOrReplace(this.inColliderShape)
-        movePlayerTo({ x: 16, y: 0, z: 16 })
+        this.outCollider.removeComponent(this.outColliderShape)
+
+        // movePlayerTo({ x: 16, y: 0, z: 16 }) // teleport
     }
 
     public dropCollider(): void
     {
         this.inCollider.removeComponent(this.inColliderShape)
+        this.outCollider.addComponentOrReplace(this.outColliderShape)        
     }
 
     public getButtons(): Array<Button>

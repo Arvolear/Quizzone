@@ -19,8 +19,8 @@ export class DappClientSocket
     public static network = "mainnet"
     // public static network = "goerli"
 
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -166,7 +166,7 @@ export class DappClientSocket
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
 
-                    DappClientSocket.sceneCallback.setCollider()
+                    DappClientSocket.sceneCallback.setColliderAndTeleport()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
 
                     break
