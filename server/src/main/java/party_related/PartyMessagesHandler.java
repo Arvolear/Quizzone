@@ -48,7 +48,7 @@ public class PartyMessagesHandler
                 "The random quiz starts in ...\n" +
                 "Players: " + party.playingPlayers.size() + "/" + party.maxPlayingSize + "\n" +
                 "Topic: " + topic + "\n" +
-                "Questions: " + party.questionnaire.getTotalNumber();
+                "Questions: " + party.getQuestionnaire().getTotalNumber();
     }
 
     public String getCountdownWaitMessage(String topic)
@@ -57,7 +57,7 @@ public class PartyMessagesHandler
                 "Waiting for the players ...\n" +
                 party.playingPlayers.size() + "/" + party.startGameThreshold + "\n" +
                 "Topic: " + topic + "\n" +
-                "Questions: " + party.questionnaire.getTotalNumber();
+                "Questions: " + party.getQuestionnaire().getTotalNumber();
     }
 
     public String getTimerUpdateMessage(int timeLeft)
@@ -68,22 +68,25 @@ public class PartyMessagesHandler
 
     public String getShowMessage(Client player, String type)
     {
-        if (type.equals("autocomplete"))
+        switch (type)
         {
-            return type + "\n" +
-                    "show\n" +
-                    player.getAutocompleteLeft();
-        }
-        else if (type.equals("autocut"))
-        {
-            return type + "\n" +
-                    "show\n" +
-                    player.getAutocutLeft();
-        }
-        else if (type.equals("control_buttons"))
-        {
-            return type + "\n" +
-                    "show";
+            case "autocomplete":
+            {
+                return type + "\n" +
+                        "show\n" +
+                        player.getAutocompleteLeft();
+            }
+            case "autocut":
+            {
+                return type + "\n" +
+                        "show\n" +
+                        player.getAutocutLeft();
+            }
+            case "control_buttons":
+            {
+                return type + "\n" +
+                        "show";
+            }
         }
 
         return "";
@@ -93,11 +96,11 @@ public class PartyMessagesHandler
     {
         if (type.equals("autocomplete"))
         {
-            return type + "\n" + "display" + "\n" + party.questionnaire.getCurrentQuestion().getAnswer();
+            return type + "\n" + "display" + "\n" + party.getQuestionnaire().getCurrentQuestion().getAnswer();
         }
         else if (type.equals("autocut"))
         {
-            Question question = party.questionnaire.getCurrentQuestion();
+            Question question = party.getQuestionnaire().getCurrentQuestion();
             ArrayList<String> variants = new ArrayList<>(question.getVariants());
             int answer = question.getAnswer() - 1;
 
@@ -150,11 +153,11 @@ public class PartyMessagesHandler
 
     public String getStartMessage()
     {
-        Question question = party.questionnaire.getCurrentQuestion();
+        Question question = party.getQuestionnaire().getCurrentQuestion();
 
         return "start\n" +
-                party.questionnaire.getCurrentQuestionNumber() + "\n" +
-                party.questionnaire.getTotalNumber() + "\n" +
+                party.getQuestionnaire().getCurrentQuestionNumber() + "\n" +
+                party.getQuestionnaire().getTotalNumber() + "\n" +
                 question.toString();
     }
 
@@ -165,11 +168,11 @@ public class PartyMessagesHandler
 
     public String getNextMessage()
     {
-        Question question = party.questionnaire.getCurrentQuestion();
+        Question question = party.getQuestionnaire().getCurrentQuestion();
 
         return "next\n" +
-                party.questionnaire.getCurrentQuestionNumber() + "\n" +
-                party.questionnaire.getTotalNumber() + "\n" +
+                party.getQuestionnaire().getCurrentQuestionNumber() + "\n" +
+                party.getQuestionnaire().getTotalNumber() + "\n" +
                 question.toString();
     }
 
@@ -181,7 +184,7 @@ public class PartyMessagesHandler
 
     public String getAnswerStatisticsMessage(ArrayList<Integer> answers)
     {
-        Question question = party.questionnaire.getCurrentQuestion();
+        Question question = party.getQuestionnaire().getCurrentQuestion();
 
         return "answer_statistics\n" +
                 "Players' answers:\n" +
@@ -195,7 +198,7 @@ public class PartyMessagesHandler
 
     public String getWrongAnswerMessage()
     {
-        Question question = party.questionnaire.getCurrentQuestion();
+        Question question = party.getQuestionnaire().getCurrentQuestion();
 
         return "answer\n" +
                 "Sorry, that's wrong!\n" +
@@ -245,7 +248,7 @@ public class PartyMessagesHandler
                     append(pair.getKey().getNick()).
                     append(" ----- ").append(pair.getValue()).
                     append("/").
-                    append(party.questionnaire.getTotalNumber()).
+                    append(party.getQuestionnaire().getTotalNumber()).
                     append("\n");
 
             place++;

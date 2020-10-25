@@ -199,7 +199,7 @@ public class Controller implements IStopWatchCallback
                 continue;
             }
 
-            for (var player : party.idlePlayers.values())
+            for (var player : party.getIdlePlayers().values())
             {
                 timedParty.connectPlayer(player);
             }
@@ -216,7 +216,7 @@ public class Controller implements IStopWatchCallback
             party.clear();
         }
 
-        for (var player : timedParty.idlePlayers.values())
+        for (var player : timedParty.getIdlePlayers().values())
         {
             connectToParty(player);
         }

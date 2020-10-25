@@ -15,8 +15,8 @@ public class Client
     private int autocompleteLeft;
     private int autocutLeft;
 
-    public boolean autocompleteReady;
-    public boolean autocutReady;
+    private boolean autocompleteReady;
+    private boolean autocutReady;
 
     public Client(Session session, String realm, String wallet, String nick)
     {
@@ -113,5 +113,25 @@ public class Client
     public int getAutocutLeft()
     {
         return autocutLeft;
+    }
+
+    public boolean isAutocompleteReady()
+    {
+        return autocompleteReady;
+    }
+
+    public boolean isAutocutReady()
+    {
+        return autocutReady;
+    }
+
+    public void setAutocompleteReady(boolean autocompleteReady)
+    {
+        this.autocompleteReady = autocompleteReady;
+    }
+
+    public void setAutocutReady(boolean autocutReady)
+    {
+        this.autocutReady = autocutReady;
     }
 }
