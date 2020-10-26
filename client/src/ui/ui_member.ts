@@ -48,7 +48,7 @@ export class UIMember
 
     private configAutocomplete(): void
     {
-        UIMember.member = new ui.CustomPrompt(PromptStyles.LIGHT, 570, 450)
+        UIMember.member = new ui.CustomPrompt(PromptStyles.LIGHT, 585, 450)
         UIMember.member.background.isPointerBlocker = true
 
         UIMember.member.addText('Quizzone membership', 0, 205, Color4.Black(), 30)
@@ -59,9 +59,9 @@ export class UIMember
 
         UIMember.member.addText('Your balance:  ...  ETH', 0, 20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
-        UIMember.member.addText('Membership price:', -67, -35, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UIMember.member.addText(UICallback.properties.getComponent(UIPropertiesComponent).membershipPrice.toString(), 87, -35, new Color4(1.0, 0.15, 0.3, 1.0), 25)
-        UIMember.member.addText('ETH', 151, -35, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UIMember.member.addText('Membership price:', -151, -35, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UIMember.member.addText(UICallback.properties.getComponent(UIPropertiesComponent).membershipPrice.toString(), 6, -35, new Color4(1.0, 0.15, 0.3, 1.0), 25)
+        UIMember.member.addText('ETH (1000 MANA)', 160, -35, new Color4(0.24, 0.22, 0.25, 1.0), 25)
         UIMember.member.addText('Become a Quizzone member?', 0, -95, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
         UIMember.member.addButton(
