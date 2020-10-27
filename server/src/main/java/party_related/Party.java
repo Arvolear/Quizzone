@@ -138,7 +138,7 @@ public class Party implements IStopWatchCallback
                     }
                     else if (restart)
                     {
-                        send(player, messagesHandler.getTopPartyResponse());
+                        send(player, messagesHandler.getTopPartyResponse(player, true));
                     }
                 }
                 else if (joinable)
@@ -299,17 +299,7 @@ public class Party implements IStopWatchCallback
 
             if (questionnaire.isFinished())
             {
-                String topPartyResponse = messagesHandler.getTopPartyResponse();
-
-                for (var player: playingPlayers.values())
-                {
-                    send(player, messagesHandler.getShowMessage(player, "control_buttons"));
-                    send(player, messagesHandler.getHideMessage("autocomplete"));
-                    send(player, messagesHandler.getHideMessage("autocut"));
-                }
-
-                broadcastAll(messagesHandler.getFinishMessage());
-                broadcastAll(topPartyResponse);
+                sendFinishMessages();
 
                 restart = true;
                 nowQuestion = false;
@@ -532,6 +522,28 @@ public class Party implements IStopWatchCallback
         catch (Exception ex)
         {
             ex.printStackTrace();
+        }
+    }
+
+    synchronized private void sendFinishMessages()
+    {
+        for (var player: playingPlayers.values())
+        {
+            send(player, messagesHandler.getShowMessage(player, "control_buttons"));
+            send(player, messagesHandler.getHideMessage("autocomplete"));
+            send(player, messagesHandler.getHideMessage("autocut"));
+        }
+
+        broadcastAll(messagesHandler.getFinishMessage());
+
+        for (var player: playingPlayers.values())
+        {
+            send(player, messagesHandler.getTopPartyResponse(player, false));
+        }
+
+        for (var player: idlePlayers.values())
+        {
+            send(player, messagesHandler.getTopPartyResponse(player, true));
         }
     }
 

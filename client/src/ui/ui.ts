@@ -10,6 +10,7 @@ import { UIAutocomplete } from "./ui_autocomplete"
 import { UIAutocut } from './ui_autocut'
 import { UIMember } from './ui_member'
 import { UILeave } from './ui_leave'
+import { UIError } from './ui_error'
 
 export class UI extends UICallback
 {
@@ -25,6 +26,7 @@ export class UI extends UICallback
     private static uiAutocomplete: UIAutocomplete
     private static uiAutocut: UIAutocut
     private static uiLeave: UILeave
+    private static uiError: UIError
 
     private constructor()
     {
@@ -55,6 +57,7 @@ export class UI extends UICallback
         UI.uiAutocomplete = new UIAutocomplete(UI.ui)
         UI.uiAutocut = new UIAutocut(UI.ui)
         UI.uiLeave = new UILeave(UI.ui)
+        UI.uiError = new UIError(UI.ui)
     }
 
     public static getInstance(): UI
@@ -243,18 +246,30 @@ export class UI extends UICallback
         UI.uiAutocomplete.close()
         UI.uiAutocut.close()
         UI.uiLeave.close()
+        UI.uiError.close()
     }
 
     public showUniversalError(message: string): void
     {
         UI.ui.hideAllWindows()
-        UI.uiTopUp.showUniversalError(message)
+        UI.uiError.showUniversalError(message)
     }
 
     public showNotEnoughManaFundsError(): void
     {
         UI.ui.hideAllWindows()
-        UI.uiStartUp.showNotEnoughManaFundsError()
+        UI.uiError.showNotEnoughManaFundsError()
+    }
+
+    public showWaitEndError(): void
+    {
+        UI.ui.hideAllWindows()
+        UI.uiError.showWaitEndError()
+    }    
+
+    public hideError(): void
+    {
+        UI.uiError.close()
     }
 
     public updateAutocompletePrice(): void

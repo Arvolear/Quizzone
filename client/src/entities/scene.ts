@@ -1,5 +1,7 @@
 import utils from "../../node_modules/decentraland-ecs-utils/index"
 import { SceneCallback } from '../app/scene_callback'
+import { UICallback } from "../app/ui_callback"
+import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UI } from '../ui/ui'
 import { Button } from "./button"
 import { CentralScreen } from "./central_screen"
@@ -353,9 +355,9 @@ export class Scene extends SceneCallback
         this.timedQuizScreen = new TimedQuizScreen()
 
         this.centralScreen.configMain(new Vector3(16, 3.5, 30.9), Quaternion.Euler(0, 0, 0), new Vector3(5.5, 5.5, 5.5))
-        this.leftScreen.configMain(new Vector3(16, 6.3, 30.4), Quaternion.Euler(0, 0, 0), new Vector3(4.9, 4.9, 4.9))
+        this.leftScreen.configMain(new Vector3(16, 6.4, 30.4), Quaternion.Euler(0, 0, 0), new Vector3(4.9, 4.9, 4.9))
         this.rightScreen.configMain(new Vector3(9.9, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
-        this.topPartyScreen.configMain(new Vector3(16, 3.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
+        this.topPartyScreen.configMain(new Vector3(16, 3.8, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
         this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.3, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
         this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(7, 7, 7))
 
@@ -376,7 +378,14 @@ export class Scene extends SceneCallback
 
     public startGame(): void
     {
-        this.ui.showStartUp()
+        if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
+        {
+            this.ui.showStartUp()
+        }
+        else
+        {
+            this.ui.showWaitEndError()
+        }
     }
 
     public setMember(member: boolean): void

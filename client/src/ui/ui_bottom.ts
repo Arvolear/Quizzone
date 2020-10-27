@@ -61,10 +61,10 @@ export class UIBottom
         UIBottom.autocompleteButton.isPointerBlocker = true
         UIBottom.autocompleteButton.hAlign = "center"
         setSection(UIBottom.autocompleteButton, { sourceLeft: 561, sourceTop: 137, sourceWidth: 490, sourceHeight: 230 })
-        UIBottom.autocompleteButton.positionX = "-45px"
-        UIBottom.autocompleteButton.positionY = "-10px"
-        UIBottom.autocompleteButton.width = 75
-        UIBottom.autocompleteButton.height = 35
+        UIBottom.autocompleteButton.positionX = "-60px"
+        UIBottom.autocompleteButton.positionY = "-5px"
+        UIBottom.autocompleteButton.width = 106
+        UIBottom.autocompleteButton.height = 50
         UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
 
@@ -72,10 +72,10 @@ export class UIBottom
         UIBottom.autocutButton.isPointerBlocker = true
         UIBottom.autocutButton.hAlign = "center"
         setSection(UIBottom.autocutButton, { sourceLeft: 56, sourceTop: 137, sourceWidth: 490, sourceHeight: 230 })
-        UIBottom.autocutButton.positionX = "40px"
-        UIBottom.autocutButton.positionY = "-10px"
-        UIBottom.autocutButton.width = 75
-        UIBottom.autocutButton.height = 35
+        UIBottom.autocutButton.positionX = "55px"
+        UIBottom.autocutButton.positionY = "-5px"
+        UIBottom.autocutButton.width = 106
+        UIBottom.autocutButton.height = 50
         UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
         UIBottom.autocutButton.opacity = 0.9
 

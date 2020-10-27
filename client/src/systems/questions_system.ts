@@ -170,7 +170,7 @@ export class QuestionsSystem implements ISystem
         {
             i = actualQuestion.indexOf(" ", i);
 
-            if (i >= actualQuestion.length)
+            if (i >= actualQuestion.length || i == 0)
             {
                 break
             }

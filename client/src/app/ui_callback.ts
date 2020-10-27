@@ -13,7 +13,7 @@ export abstract class UICallback
     abstract showMember(): void
     abstract hideMember(): void
     abstract showCheckMetamask(): void
-    abstract hideCheckMetamask(): void
+    abstract hideCheckMetamask(): void    
     abstract showStartUp(): void
     abstract hideStartUp(): void
     abstract showAutocompleteButton(): void
@@ -37,6 +37,8 @@ export abstract class UICallback
     abstract hideAllWindows(): void
     abstract showUniversalError(message: string): void
     abstract showNotEnoughManaFundsError(): void
+    abstract showWaitEndError(): void
+    abstract hideError(): void
     abstract updateAutocompletePrice(): void
     abstract updateAutocutPrice(): void
     abstract updateAutocompleteLeft(): void

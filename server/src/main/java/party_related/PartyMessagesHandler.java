@@ -216,13 +216,20 @@ public class PartyMessagesHandler
         return "clear";
     }
 
-    public String getTopPartyResponse()
+    public String getTopPartyResponse(Client player, boolean isObserver)
     {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("top_party\n").
-                append("Thanks for playing!\n").
-                append("Party best\n");
+        builder.append("top_party\n");
+
+        if (isObserver)
+        {
+            builder.append("Thanks for watching!\n");
+        }
+        else
+        {
+            builder.append("Thanks for playing!\n");
+        }
 
         ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
 
@@ -239,7 +246,7 @@ public class PartyMessagesHandler
 
         for (var pair : topParty)
         {
-            if (place >= Party.PARTY_TOP_LIMIT)
+            if (place > Party.PARTY_TOP_LIMIT)
             {
                 break;
             }
@@ -252,6 +259,33 @@ public class PartyMessagesHandler
                     append("\n");
 
             place++;
+        }
+
+        place = 1;
+        boolean ok = false;
+
+        for (var pair : topParty)
+        {
+            if (player.equals(pair.getKey()))
+            {
+                builder.append("------------------------------------\n").
+                        append(place).append(") ").
+                        append(pair.getKey().getNick()).
+                        append(" ----- ").append(pair.getValue()).
+                        append("/").
+                        append(party.getQuestionnaire().getTotalNumber());
+
+                ok = true;
+                break;
+            }
+
+            place++;
+        }
+
+        if (!ok)
+        {
+            builder.append("------------------------------------\n").
+                    append("You were an observer");
         }
 
         return builder.toString();
