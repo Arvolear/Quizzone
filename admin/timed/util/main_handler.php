@@ -64,7 +64,7 @@ function getCategories($table, $alias, $what)
 
         if ($what == "production") {
             $DB_OUTPUT .= "<th>Quiz ingame name</th>";
-            $DB_OUTPUT .= "<th>Quiz start time</th>";
+            $DB_OUTPUT .= "<th>Quiz UTC start time</th>";
         } elseif ($what == "finished") {
             $DB_OUTPUT .= "<th>Quiz ingame name</th>";
         }

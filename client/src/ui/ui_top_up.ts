@@ -8,38 +8,14 @@ import { DappClientSocket } from "../app/dapp_client_socket"
 export class UITopUp
 {
     private static topUpMatic: ui.CustomPrompt
-    private static universalError: ui.CustomPrompt
 
     private static uiCallback: UICallback
 
     constructor(ui: UICallback)
     {
         UITopUp.uiCallback = ui
-
-        this.configError()
+     
         this.configTopUp()
-    }
-
-    private configError(): void
-    {
-        UITopUp.universalError = new ui.CustomPrompt(PromptStyles.LIGHT)
-        UITopUp.universalError.background.isPointerBlocker = true
-
-        UITopUp.universalError.addText('Error', 0, 153, Color4.Black(), 30)
-        UITopUp.universalError.addText('', 0, 30, new Color4(1.0, 0.15, 0.3, 1.0), 35)
-
-        UITopUp.universalError.addButton(
-            'Close',
-            -0,
-            -120,
-            () =>
-            {
-                UITopUp.uiCallback.hideTopUp()
-            },
-            ButtonStyles.F
-        )
-
-        UITopUp.universalError.close()
     }
 
     private configTopUp(): void
@@ -115,8 +91,7 @@ export class UITopUp
 
     public close(): void
     {
-        UITopUp.topUpMatic.close()
-        UITopUp.universalError.close()
+        UITopUp.topUpMatic.close()        
     }
 
     private static transferToMatic(): void
@@ -157,15 +132,5 @@ export class UITopUp
         })
 
         topUp.then()
-    }
-
-    public showUniversalError(value: string): void
-    {
-        UITopUp.topUpMatic.close()        
-
-        let text = UITopUp.universalError.elements[1] as CustomPromptText
-        text.text.value = value
-
-        UITopUp.universalError.reopen()
-    }
+    }   
 }

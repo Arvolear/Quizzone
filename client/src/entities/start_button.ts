@@ -1,6 +1,4 @@
 import { SceneCallback } from "../app/scene_callback"
-import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { UICallback } from "../app/ui_callback"
 
 export class StartButton
 {
@@ -33,11 +31,8 @@ export class StartButton
 
         this.button.addComponent(new OnPointerDown(
             () =>
-            {
-                if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
-                {
-                    this.sceneCallback.startGame()
-                }
+            {            
+                this.sceneCallback.startGame()                
             }))
     }
 

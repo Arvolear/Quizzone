@@ -61,10 +61,10 @@ export class UIBottom
         UIBottom.autocompleteButton.isPointerBlocker = true
         UIBottom.autocompleteButton.hAlign = "center"
         setSection(UIBottom.autocompleteButton, { sourceLeft: 561, sourceTop: 137, sourceWidth: 490, sourceHeight: 230 })
-        UIBottom.autocompleteButton.positionX = "-45px"
-        UIBottom.autocompleteButton.positionY = "-10px"
-        UIBottom.autocompleteButton.width = 75
-        UIBottom.autocompleteButton.height = 35
+        UIBottom.autocompleteButton.positionX = "-60px"
+        UIBottom.autocompleteButton.positionY = "-5px"
+        UIBottom.autocompleteButton.width = 106
+        UIBottom.autocompleteButton.height = 50
         UIBottom.autocompleteButton.onClick = new OnClick(UIBottom.uiCallback.showAutocompleteWindow)
         UIBottom.autocompleteButton.opacity = 0.9
 
@@ -72,10 +72,10 @@ export class UIBottom
         UIBottom.autocutButton.isPointerBlocker = true
         UIBottom.autocutButton.hAlign = "center"
         setSection(UIBottom.autocutButton, { sourceLeft: 56, sourceTop: 137, sourceWidth: 490, sourceHeight: 230 })
-        UIBottom.autocutButton.positionX = "40px"
-        UIBottom.autocutButton.positionY = "-10px"
-        UIBottom.autocutButton.width = 75
-        UIBottom.autocutButton.height = 35
+        UIBottom.autocutButton.positionX = "55px"
+        UIBottom.autocutButton.positionY = "-5px"
+        UIBottom.autocutButton.width = 106
+        UIBottom.autocutButton.height = 50
         UIBottom.autocutButton.onClick = new OnClick(UIBottom.uiCallback.showAutocutWindow)
         UIBottom.autocutButton.opacity = 0.9
 
@@ -83,7 +83,7 @@ export class UIBottom
         UIBottom.leaveButton.isPointerBlocker = true
         UIBottom.leaveButton.hAlign = "right"
         setSection(UIBottom.leaveButton, { sourceLeft: 680, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.leaveButton.positionX = "-50px"
+        UIBottom.leaveButton.positionX = "-45px"
         UIBottom.leaveButton.positionY = "-7px"
         UIBottom.leaveButton.width = 39
         UIBottom.leaveButton.height = 35
@@ -102,7 +102,7 @@ export class UIBottom
         UIBottom.tickImage = new UIImage(UIBottom.bottomRect, atlasTexture);
         UIBottom.tickImage.hAlign = "right"
         setSection(UIBottom.tickImage, { sourceLeft: 455, sourceTop: 740, sourceWidth: 200, sourceHeight: 180 })
-        UIBottom.tickImage.positionX = "-3px"
+        UIBottom.tickImage.positionX = "0px"
         UIBottom.tickImage.positionY = "-7px"
         UIBottom.tickImage.width = 39
         UIBottom.tickImage.height = 35

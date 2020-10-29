@@ -1,6 +1,10 @@
+import utils from "../../node_modules/decentraland-ecs-utils/index"
 import { SceneCallback } from '../app/scene_callback'
+import { UICallback } from "../app/ui_callback"
+import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UI } from '../ui/ui'
 import { Button } from "./button"
+import { ButtonsColliderTrigger } from "./buttons_collider_trigger"
 import { CentralScreen } from "./central_screen"
 import { LeftScreen } from "./left_screen"
 import { LifetimeBestScreen } from "./lifetime_best_screen"
@@ -18,6 +22,7 @@ export class Scene extends SceneCallback
 
     private becomeAMember: Entity
     private alreadyAMember: Entity
+    private memberCard: Entity
     private memberButton: Entity
     private memberButtonShape: BoxShape
     
@@ -29,6 +34,8 @@ export class Scene extends SceneCallback
     private outCollider: Entity
     private inCollider: Entity
     private inColliderShape: GLTFShape
+    private outColliderShape: GLTFShape
+    private buttonsColliderTrigger: ButtonsColliderTrigger
 
     private buttons: Array<Button> = []
 
@@ -39,7 +46,8 @@ export class Scene extends SceneCallback
     private lifetimeBestScreen: Screen
     private timedQuizScreen: Screen
 
-    private startButton: StartButton
+    private startButtonRight: StartButton
+    private startButtonLeft: StartButton
 
     private static INITIAL_X = 15.35
     private static INITIAL_Y = 0.05
@@ -52,18 +60,22 @@ export class Scene extends SceneCallback
 
         this.configScene()
         this.configBecomeAMember()
-        this.configAlreadyAMember()        
+        this.configAlreadyAMember()           
         this.configGrass()
         this.configLogo()
-        this.configColliders()        
+        this.configColliders()
 
-        this.configureUI()
-        this.configureButtons()
-        this.configureScreens()
-        this.configureStartButton()
+        this.configUI()
+        this.configButtons()
+        this.configScreens()
+        this.configStartButton()
+
+        this.configMemberCard()
+        
+        this.configButtonsCollisionTrigger()
     }
 
-    private configureUI(): void
+    private configUI(): void
     {
         this.ui = UI.getInstance()
     }
@@ -207,6 +219,35 @@ export class Scene extends SceneCallback
             }))
     }
 
+    private configMemberCard(): void
+    {
+        const memberCardShape = new GLTFShape("models/member/member_card.glb")
+        memberCardShape.withCollisions = false
+        memberCardShape.isPointerBlocker = true
+        memberCardShape.visible = true
+
+        this.memberCard = new Entity('member_card')
+        engine.addEntity(this.memberCard)
+        this.memberCard.setParent(this.scene)
+        this.memberCard.addComponentOrReplace(memberCardShape)
+
+        const transform = new Transform(
+            {
+                position: new Vector3(3.8, 1.1, 12),
+                rotation: Quaternion.Euler(180, 0, 0),
+                scale: new Vector3(2.5, 2.5, 2.5)
+            })
+        this.memberCard.addComponentOrReplace(transform)
+
+        this.memberCard.addComponent(new utils.KeepRotatingComponent(Quaternion.Euler(0, 45, 0)))
+
+        this.memberCard.addComponent(new OnPointerDown(() =>
+            {
+                this.ui.showMember()
+            }
+        ))
+    }
+
     private configGrass(): void
     {
         const gltfShape = new GLTFShape("models/grass/FloorBaseGrass_01.glb")
@@ -270,15 +311,15 @@ export class Scene extends SceneCallback
                 scale: new Vector3(1, 1, 1)
             })
 
-        const outColliderShape = new GLTFShape("models/colliders/out_collider.glb")
-        outColliderShape.withCollisions = true
-        outColliderShape.isPointerBlocker = false
-        outColliderShape.visible = true
+        this.outColliderShape = new GLTFShape("models/colliders/out_collider.glb")
+        this.outColliderShape.withCollisions = true
+        this.outColliderShape.isPointerBlocker = false
+        this.outColliderShape.visible = true
 
         this.outCollider = new Entity('out_collider')
         engine.addEntity(this.outCollider)
         this.outCollider.setParent(this.scene)
-        this.outCollider.addComponentOrReplace(outColliderShape)
+        this.outCollider.addComponentOrReplace(this.outColliderShape)
         this.outCollider.addComponentOrReplace(transform)
 
         this.inColliderShape = new GLTFShape("models/colliders/in_collider.glb")
@@ -292,7 +333,7 @@ export class Scene extends SceneCallback
         this.inCollider.addComponentOrReplace(transform)
     }
 
-    private configureButtons(): void
+    private configButtons(): void
     {
         for (var i = 0; i < 2; i++)
         {
@@ -309,7 +350,7 @@ export class Scene extends SceneCallback
         }
     }
 
-    private configureScreens(): void
+    private configScreens(): void
     {
         this.centralScreen = new CentralScreen()
         this.leftScreen = new LeftScreen()
@@ -319,9 +360,9 @@ export class Scene extends SceneCallback
         this.timedQuizScreen = new TimedQuizScreen()
 
         this.centralScreen.configMain(new Vector3(16, 3.5, 30.9), Quaternion.Euler(0, 0, 0), new Vector3(5.5, 5.5, 5.5))
-        this.leftScreen.configMain(new Vector3(16, 6.3, 30.4), Quaternion.Euler(0, 0, 0), new Vector3(4.9, 4.9, 4.9))
+        this.leftScreen.configMain(new Vector3(16, 6.4, 30.4), Quaternion.Euler(0, 0, 0), new Vector3(4.9, 4.9, 4.9))
         this.rightScreen.configMain(new Vector3(9.9, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
-        this.topPartyScreen.configMain(new Vector3(16, 3.5, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
+        this.topPartyScreen.configMain(new Vector3(16, 3.8, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
         this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.3, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
         this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(7, 7, 7))
 
@@ -333,16 +374,35 @@ export class Scene extends SceneCallback
         this.timedQuizScreen.addToEngine()
     }
 
-    private configureStartButton(): void
+    private configStartButton(): void
     {
-        this.startButton = new StartButton(this)
-        this.startButton.configMain(new Vector3(29.05, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
-        this.startButton.addToEngine()
+        this.startButtonRight = new StartButton(this)
+        this.startButtonLeft = new StartButton(this)
+
+        this.startButtonRight.configMain(new Vector3(29.05, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
+        this.startButtonLeft.configMain(new Vector3(2.55, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
+
+        this.startButtonRight.addToEngine()
+        this.startButtonLeft.addToEngine()
+    }
+
+    private configButtonsCollisionTrigger(): void
+    {
+        this.buttonsColliderTrigger = new ButtonsColliderTrigger(this.ui, new Vector3(16, 4, 19.1), new Quaternion(0, 0, 0, 1), new Vector3(15.1, 8, 15.1))
+
+        this.buttonsColliderTrigger.addToEngine()
     }
 
     public startGame(): void
     {
-        this.ui.showStartUp()
+        if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
+        {
+            this.ui.showStartUp()
+        }
+        else
+        {
+            this.ui.showWaitEndError("Can\'t check in")
+        }
     }
 
     public setMember(member: boolean): void
@@ -366,6 +426,11 @@ export class Scene extends SceneCallback
             {
                 this.infoBecomeButton.removeComponent(this.infoBecomeButtonShape)
             }
+
+            if (this.memberCard.hasComponent(OnPointerDown))
+            {
+                this.memberCard.removeComponent(OnPointerDown)
+            }
         }
         else
         {
@@ -386,18 +451,39 @@ export class Scene extends SceneCallback
             {
                 this.infoAlreadyButton.removeComponent(this.infoAlreadyButtonShape)
             }
+
+            if (!this.memberCard.hasComponent(OnPointerDown))
+            {
+                this.memberCard.addComponentOrReplace(new OnPointerDown(() =>
+                {
+                    this.ui.showMember()
+                }))
+            }
         }
     }
 
-    public setCollider(): void
+    public setColliderAndTeleport(): void
     {
         this.inCollider.addComponentOrReplace(this.inColliderShape)
-        movePlayerTo({ x: 16, y: 0, z: 16 })
+        this.outCollider.removeComponent(this.outColliderShape)
+
+        // movePlayerTo({ x: 16, y: 0, z: 16 }) // teleport
     }
 
     public dropCollider(): void
     {
         this.inCollider.removeComponent(this.inColliderShape)
+        this.outCollider.addComponentOrReplace(this.outColliderShape)        
+    }
+
+    public turnOnButtonCollisions(): void
+    {
+        this.buttonsColliderTrigger.turnOnCollisions()
+    }
+
+    public turnOffButtonCollisions(): void
+    {
+        this.buttonsColliderTrigger.turnOffCollisions()
     }
 
     public getButtons(): Array<Button>

@@ -9,8 +9,7 @@ import { UIMember } from './ui_member';
 
 export class UIStartUp
 {
-    private static startUp: ui.CustomPrompt
-    private static fundsError: ui.CustomPrompt
+    private static startUp: ui.CustomPrompt    
 
     private static uiCallback: UICallback
 
@@ -24,36 +23,11 @@ export class UIStartUp
         UIStartUp.uiCallback = ui
         UIStartUp.maticBalance = 0
         UIStartUp.autocompleteNum = 0
-        UIStartUp.autocutNum = 0        
+        UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0
-
-        this.configError()
+        
         this.configStartUp()
     }   
-
-    private configError(): void
-    {
-        UIStartUp.fundsError = new ui.CustomPrompt(PromptStyles.LIGHT)
-        UIStartUp.fundsError.background.isPointerBlocker = true
-
-        UIStartUp.fundsError.addText('Error', 0, 153, Color4.Black(), 30)
-        UIStartUp.fundsError.addText('Not enough funds', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
-        UIStartUp.fundsError.addText('Please consider topping up', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UIStartUp.fundsError.addText('matic MANA', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-
-        UIStartUp.fundsError.addButton(
-            'Close',
-            -0,
-            -120,
-            () =>
-            {
-                UIStartUp.uiCallback.hideStartUp()
-            },
-            ButtonStyles.F
-        )
-
-        UIStartUp.fundsError.close()
-    }
 
     private configStartUp(): void
     {
@@ -208,7 +182,7 @@ export class UIStartUp
     {
         if (UIStartUp.maticBalance < UIStartUp.boostersToBuyValue)
         {
-            UIStartUp.uiCallback.showNotEnoughFundsError()
+            UIStartUp.uiCallback.showNotEnoughManaFundsError()
         }
         else
         {
@@ -270,6 +244,8 @@ export class UIStartUp
         autocompleteText.text.value = "0"
         autocutText.text.value = "0"
 
+        this.updateButtonText()
+
         UIMember.checkMembership()
 
         const balancePromise = executeTask(async () =>
@@ -293,13 +269,6 @@ export class UIStartUp
 
     public close(): void
     {
-        UIStartUp.startUp.close()
-        UIStartUp.fundsError.close()
-    }
-
-    public showNotEnoughFundsError(): void
-    {
-        UIStartUp.startUp.close()
-        UIStartUp.fundsError.reopen()
+        UIStartUp.startUp.close()        
     }
 }

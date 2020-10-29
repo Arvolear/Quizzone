@@ -16,13 +16,13 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
                 "Welcome to the special quiz registration!\n" +
                 "Today special quiz topic - " + topic + "\n" +
                 "Please click the check in button to join!\n" +
-                "---------------------------------------------->";
+                "<--------------------------------------------->";
     }
 
     @Override
     public String getHostMessage()
     {
-        return "bad_connected\n" +
+        return "awaiting_connection\n" +
                 "Get ready and call your friends!\n" +
                 "The special quiz starts very soon!";
     }

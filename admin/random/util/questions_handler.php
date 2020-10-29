@@ -41,9 +41,9 @@ function getCategory($category)
     $DB_OUTPUT .= "<p style=\"font-size:24px;text-align:center;\">$category";
 
     if (mysqli_num_rows($resultEdit) > 0) {
-        $DB_OUTPUT .= " (edit):</p>";
+        $DB_OUTPUT .= " (edit), questions - " . mysqli_num_rows($result) . ":</p>";
     } else {
-        $DB_OUTPUT .= " (finished):</p>";
+        $DB_OUTPUT .= " (finished), questions - " . mysqli_num_rows($result) . ":</p>";
     }
 
     if (mysqli_num_rows($result) > 0) {

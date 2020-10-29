@@ -1,6 +1,6 @@
 import { getCurrentRealm } from "@decentraland/EnvironmentAPI"
 import { getUserData } from "@decentraland/Identity"
-import { Question } from "../entities/question"
+import { Question } from "../entities_utils/question"
 import { CentralScreenComponent } from "../components/central_screen_component"
 import { LeftScreenComponent } from "../components/left_screen_component"
 import { RightScreenComponent } from "../components/right_screen_component"
@@ -10,7 +10,7 @@ import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { SceneCallback } from "./scene_callback"
-import { AnswerStatistics } from "../entities/answer_statistics"
+import { AnswerStatistics } from "../entities_utils/answer_statistics"
 
 export class DappClientSocket
 {
@@ -122,8 +122,8 @@ export class DappClientSocket
 
                     break
                 }
-            case "bad_connected":
-                {                    
+            case "awaiting_connection":
+                {
                     var actualMessage = ""
 
                     for (var i = 1; i < lines.length; i++)
@@ -142,6 +142,16 @@ export class DappClientSocket
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
+
+                    break
+                }
+            case "bad_connected":
+                {
+                    DappClientSocket.sceneCallback.turnOnButtonCollisions()
+
+                    uiComp.canJoin = false
+                    uiComp.canLeave = false
+                    uiComp.timeToQuizStart = ""
 
                     break
                 }
@@ -166,7 +176,7 @@ export class DappClientSocket
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
 
-                    DappClientSocket.sceneCallback.setCollider()
+                    DappClientSocket.sceneCallback.setColliderAndTeleport()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
 
                     break
@@ -242,7 +252,35 @@ export class DappClientSocket
 
                     break
                 }
-            case "start":
+            case "start_idle":
+                {
+                    var currentQuestion = parseInt(lines[1])
+                    var totalQuestions = parseInt(lines[2])
+
+                    let question = new Question(
+                        lines[4],
+                        [
+                            lines[5],
+                            lines[6],
+                            lines[7],
+                            lines[8]
+                        ]
+                    )
+
+                    DappClientSocket.sceneCallback.turnOnButtonCollisions()
+
+                    uiComp.canJoin = false                    
+                    uiComp.timeToQuizStart = ""
+
+                    centralComp.question = question
+                    leftComp.totalQuestions = totalQuestions
+                    leftComp.currentQuestion = currentQuestion
+
+                    centralComp.nextQuestionLoaded = true  
+
+                    break
+                }
+            case "start_playing":
                 {   
                     var currentQuestion = parseInt(lines[1])
                     var totalQuestions = parseInt(lines[2])
@@ -258,7 +296,7 @@ export class DappClientSocket
                     )
 
                     uiComp.canJoin = false      
-                    uiComp.canLeave = true       
+                    uiComp.canLeave = true
                     uiComp.freeLeave = false
                     uiComp.timeToQuizStart = ""
 
@@ -377,6 +415,7 @@ export class DappClientSocket
 
                     centralComp.finishLoaded = true
 
+                    DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.dropCollider()
                     lifetimeBestScreenMain.addComponentOrReplace(new BlockComponent)
 
@@ -449,6 +488,7 @@ export class DappClientSocket
                     topPartyScreenMain.getComponent(TextShape).value = ""
                     timedQuizScreenMain.getComponent(TextShape).value = ""
 
+                    DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.dropCollider()
 
                     break
@@ -533,6 +573,7 @@ export class DappClientSocket
         lifetimeBestScreenMain.getComponent(TextShape).value = ""
         timedQuizScreenMain.getComponent(TextShape).value = ""
 
+        DappClientSocket.sceneCallback.turnOffButtonCollisions()
         DappClientSocket.sceneCallback.dropCollider()
     }
 
