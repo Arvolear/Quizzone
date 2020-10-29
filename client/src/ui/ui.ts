@@ -261,10 +261,10 @@ export class UI extends UICallback
         UI.uiError.showNotEnoughManaFundsError()
     }
 
-    public showWaitEndError(): void
+    public showWaitEndError(message: string): void
     {
         UI.ui.hideAllWindows()
-        UI.uiError.showWaitEndError()
+        UI.uiError.showWaitEndError(message)
     }    
 
     public hideError(): void

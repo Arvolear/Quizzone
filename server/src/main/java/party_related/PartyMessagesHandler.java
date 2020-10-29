@@ -28,7 +28,7 @@ public class PartyMessagesHandler
                 "You can join a random quiz now!\n" +
                 "Randomly chosen topic - " + topic + "\n" +
                 "Please click the check in button to join\n" +
-                "---------------------------------------------->";
+                "<--------------------------------------------->";
     }
 
     public String getHostMessage()
@@ -39,7 +39,7 @@ public class PartyMessagesHandler
                 "Special quiz registration is not open yet...\n" +
                 "However, you may call your friends to play a random quiz!\n" +
                 "You all will have to click the check in button\n" +
-                "---------------------------------------------->";
+                "<--------------------------------------------->";
     }
 
     public String getCountdownStartMessage(String topic)
@@ -151,11 +151,21 @@ public class PartyMessagesHandler
         return "";
     }
 
-    public String getStartMessage()
+    public String getStartPlayingMessage()
     {
         Question question = party.getQuestionnaire().getCurrentQuestion();
 
-        return "start\n" +
+        return "start_playing\n" +
+                party.getQuestionnaire().getCurrentQuestionNumber() + "\n" +
+                party.getQuestionnaire().getTotalNumber() + "\n" +
+                question.toString();
+    }
+
+    public String getStartIdleMessage()
+    {
+        Question question = party.getQuestionnaire().getCurrentQuestion();
+
+        return "start_idle\n" +
                 party.getQuestionnaire().getCurrentQuestionNumber() + "\n" +
                 party.getQuestionnaire().getTotalNumber() + "\n" +
                 question.toString();

@@ -1,5 +1,5 @@
-import { AnswerStatistics } from "../entities/answer_statistics"
-import { Question } from "../entities/question"
+import { AnswerStatistics } from "../entities_utils/answer_statistics"
+import { Question } from "../entities_utils/question"
 
 @Component("centralScreenComponent")
 export class CentralScreenComponent

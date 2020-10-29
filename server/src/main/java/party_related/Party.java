@@ -272,7 +272,8 @@ public class Party implements IStopWatchCallback
             locked = true;
             nowQuestion = true;
 
-            broadcastAll(messagesHandler.getStartMessage());
+            broadcast(playingPlayers, messagesHandler.getStartPlayingMessage());
+            broadcast(idlePlayers, messagesHandler.getStartIdleMessage());
             handleBoostersMessages();
 
             questionTimer.updateTime(questionDuration);

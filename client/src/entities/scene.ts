@@ -4,6 +4,7 @@ import { UICallback } from "../app/ui_callback"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UI } from '../ui/ui'
 import { Button } from "./button"
+import { ButtonsColliderTrigger } from "./buttons_collider_trigger"
 import { CentralScreen } from "./central_screen"
 import { LeftScreen } from "./left_screen"
 import { LifetimeBestScreen } from "./lifetime_best_screen"
@@ -34,6 +35,7 @@ export class Scene extends SceneCallback
     private inCollider: Entity
     private inColliderShape: GLTFShape
     private outColliderShape: GLTFShape
+    private buttonsColliderTrigger: ButtonsColliderTrigger
 
     private buttons: Array<Button> = []
 
@@ -44,7 +46,8 @@ export class Scene extends SceneCallback
     private lifetimeBestScreen: Screen
     private timedQuizScreen: Screen
 
-    private startButton: StartButton
+    private startButtonRight: StartButton
+    private startButtonLeft: StartButton
 
     private static INITIAL_X = 15.35
     private static INITIAL_Y = 0.05
@@ -62,15 +65,17 @@ export class Scene extends SceneCallback
         this.configLogo()
         this.configColliders()
 
-        this.configureUI()
-        this.configureButtons()
-        this.configureScreens()
-        this.configureStartButton()
+        this.configUI()
+        this.configButtons()
+        this.configScreens()
+        this.configStartButton()
 
-        this.configMemberCard()     
+        this.configMemberCard()
+        
+        this.configButtonsCollisionTrigger()
     }
 
-    private configureUI(): void
+    private configUI(): void
     {
         this.ui = UI.getInstance()
     }
@@ -228,7 +233,7 @@ export class Scene extends SceneCallback
 
         const transform = new Transform(
             {
-                position: new Vector3(2.8, 1.1, 30),
+                position: new Vector3(3.8, 1.1, 12),
                 rotation: Quaternion.Euler(180, 0, 0),
                 scale: new Vector3(2.5, 2.5, 2.5)
             })
@@ -328,7 +333,7 @@ export class Scene extends SceneCallback
         this.inCollider.addComponentOrReplace(transform)
     }
 
-    private configureButtons(): void
+    private configButtons(): void
     {
         for (var i = 0; i < 2; i++)
         {
@@ -345,7 +350,7 @@ export class Scene extends SceneCallback
         }
     }
 
-    private configureScreens(): void
+    private configScreens(): void
     {
         this.centralScreen = new CentralScreen()
         this.leftScreen = new LeftScreen()
@@ -369,11 +374,23 @@ export class Scene extends SceneCallback
         this.timedQuizScreen.addToEngine()
     }
 
-    private configureStartButton(): void
+    private configStartButton(): void
     {
-        this.startButton = new StartButton(this)
-        this.startButton.configMain(new Vector3(29.05, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
-        this.startButton.addToEngine()
+        this.startButtonRight = new StartButton(this)
+        this.startButtonLeft = new StartButton(this)
+
+        this.startButtonRight.configMain(new Vector3(29.05, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
+        this.startButtonLeft.configMain(new Vector3(2.55, 0.48, 29.95), Quaternion.Euler(0, 0, 0), new Vector3(1.15, 1.1, 0.8))
+
+        this.startButtonRight.addToEngine()
+        this.startButtonLeft.addToEngine()
+    }
+
+    private configButtonsCollisionTrigger(): void
+    {
+        this.buttonsColliderTrigger = new ButtonsColliderTrigger(this.ui, new Vector3(16, 4, 19.1), new Quaternion(0, 0, 0, 1), new Vector3(15.1, 8, 15.1))
+
+        this.buttonsColliderTrigger.addToEngine()
     }
 
     public startGame(): void
@@ -384,7 +401,7 @@ export class Scene extends SceneCallback
         }
         else
         {
-            this.ui.showWaitEndError()
+            this.ui.showWaitEndError("Can\'t check in")
         }
     }
 
@@ -457,6 +474,16 @@ export class Scene extends SceneCallback
     {
         this.inCollider.removeComponent(this.inColliderShape)
         this.outCollider.addComponentOrReplace(this.outColliderShape)        
+    }
+
+    public turnOnButtonCollisions(): void
+    {
+        this.buttonsColliderTrigger.turnOnCollisions()
+    }
+
+    public turnOffButtonCollisions(): void
+    {
+        this.buttonsColliderTrigger.turnOffCollisions()
     }
 
     public getButtons(): Array<Button>

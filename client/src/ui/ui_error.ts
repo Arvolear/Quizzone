@@ -72,7 +72,7 @@ export class UIError
         UIError.waitEndError.background.isPointerBlocker = true
 
         UIError.waitEndError.addText('Error', 0, 153, Color4.Black(), 30)
-        UIError.waitEndError.addText('Can\'t check in', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UIError.waitEndError.addText('', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
         UIError.waitEndError.addText('Quiz has already started', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
         UIError.waitEndError.addText('please wait for it to end', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
@@ -110,8 +110,11 @@ export class UIError
         UIError.universalError.reopen()
     }
 
-    public showWaitEndError(): void
+    public showWaitEndError(value: string): void
     {
+        let text = UIError.waitEndError.elements[1] as CustomPromptText
+        text.text.value = value
+
         UIError.waitEndError.reopen()
     }
 }
