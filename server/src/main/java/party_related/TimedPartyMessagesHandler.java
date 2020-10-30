@@ -10,7 +10,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     @Override
     public String getJoinableMessage(String topic)
     {
-        return "connected\n" +
+        return "join_connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
                 "Welcome to the special quiz registration!\n" +
@@ -22,7 +22,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     @Override
     public String getHostMessage()
     {
-        return "awaiting_connection\n" +
+        return "awaiting_connected\n" +
                 "Get ready and call your friends!\n" +
                 "The special quiz starts very soon!";
     }

@@ -4,6 +4,7 @@ import { UICallback } from '../app/ui_callback'
 import { DappClientSocket } from "../app/dapp_client_socket"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
+import { Sounds } from "../app/sounds"
 
 export class UIAutocomplete
 {
@@ -11,8 +12,11 @@ export class UIAutocomplete
 
     private static uiCallback: UICallback
 
+    private static sounds: Sounds
+
     constructor(ui: UICallback)
     {
+        UIAutocomplete.sounds = Sounds.getInstance()
         UIAutocomplete.uiCallback = ui
 
         this.configAutocomplete()
@@ -56,6 +60,8 @@ export class UIAutocomplete
 
     private static activateAutocomplete(): void
     {
+        UIAutocomplete.sounds.playUseBooster()
+
         var toSend = "use_autocomplete\n" +            
             DappClientSocket.playerWallet
 

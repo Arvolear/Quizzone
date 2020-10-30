@@ -15,7 +15,7 @@ export class App
     public static dappClientSocket: DappClientSocket   
 
     constructor()
-    {
+    {        
         this.configureScene()
         this.configureSocket()
         this.configureSystems()

@@ -10,7 +10,7 @@ public class Question
 
     public Question(String question, ArrayList<String> variants, int answer)
     {
-        this.question = question;
+        this.question = question.trim();
         this.variants = variants;
         this.answer = answer;
     }

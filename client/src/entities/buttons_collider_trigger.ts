@@ -7,6 +7,8 @@ export class ButtonsColliderTrigger
 
     private static uiCallback: UICallback
 
+    private specialCase: boolean
+
     constructor(uiCallback: UICallback, position: Vector3, rotation: Quaternion, scale: Vector3)
     {
         ButtonsColliderTrigger.uiCallback = uiCallback
@@ -39,24 +41,35 @@ export class ButtonsColliderTrigger
                 0,
                 0,
                 null,
-                null,
                 () =>
                 {
-                    log("WAIT FOR THE QUIZ TO END")
+                    this.specialCase = false
+                },
+                () =>
+                {
+                    if (!this.specialCase)
+                    {
+                        log("WAIT FOR THE QUIZ TO END")
 
-                    ButtonsColliderTrigger.uiCallback.showWaitEndError("Too late...")
+                        ButtonsColliderTrigger.uiCallback.showWaitEndError("Too late...")
+                    }
                 },
                 null,
                 false
             )
         )
-        
+
         this.collisionBox.getComponent(utils.TriggerComponent).enabled = false
     }
 
     public getEntity(): Entity
     {
         return this.collisionBox;
+    }
+
+    public turnOnSpecialCaseCollision(): void
+    {
+        this.specialCase = true
     }
 
     public turnOnCollisions(): void

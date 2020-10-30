@@ -11,6 +11,7 @@ import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_compon
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { SceneCallback } from "./scene_callback"
 import { AnswerStatistics } from "../entities_utils/answer_statistics"
+import { Sounds } from "./sounds"
 
 export class DappClientSocket
 {
@@ -19,8 +20,8 @@ export class DappClientSocket
     public static network = "mainnet"
     // public static network = "goerli"
 
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -66,10 +67,93 @@ export class DappClientSocket
         this.send(response)
     }
 
+    private static readToTheEndFrom(lines: string[], index: number, useNewLine: boolean = true): string
+    {
+        var actualMessage = ""
+
+        for (var i = index; i < lines.length; i++)
+        {
+            actualMessage += lines[i] + (useNewLine ? "\n" : "")
+
+            if (i < lines.length - 1)
+            {
+                actualMessage += "\n"
+            }
+        }
+
+        return actualMessage
+    }
+
+    private static getQuestionFrom(lines: string[], index: number): Question
+    {
+        let question = new Question(
+            lines[index],
+            [
+                lines[index + 1],
+                lines[index + 2],
+                lines[index + 3],
+                lines[index + 4]
+            ]
+        )
+
+        return question
+    }
+
+    private static getAnswerStatisticsFrom(lines: string[], index: number): AnswerStatistics
+    {
+        let answerStatistics = new AnswerStatistics(
+            lines[index],
+            [
+                lines[index + 1],
+                lines[index + 2],
+                lines[index + 3],
+                lines[index + 4]
+            ],
+            lines[index + 5] + "\n" + lines[index + 6]
+        )
+
+        return answerStatistics
+    }
+
+    private static getScheduledTimerFrom(lines: string[], index: number): string
+    {
+        let start = ""
+
+        for (var i = index; i < lines.length; i++)
+        {
+            start += lines[i]
+
+            if (i == lines.length - 2)
+            {
+                start += "\n"
+            }
+
+            if (i < lines.length - 1)
+            {
+                start += "\n"
+            }
+        }   
+
+        return start
+    }
+
+    private static getPartyTopFrom(lines: string[], index: number): string
+    {
+        let partyTop = lines[index] + "\n\n";
+
+        var tmpMessage = DappClientSocket.readToTheEndFrom(lines, index + 1, false)
+
+        partyTop += tmpMessage 
+
+        return partyTop
+    }
+
     // Be careful, different this! 
     private onMessage(event: any): void
     {
         log("RECEIVED: " + event.data)
+
+        let sounds = Sounds.getInstance()
 
         let centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
         let leftScreenMain = engine.getComponentGroup(LeftScreenComponent).entities[0]
@@ -94,23 +178,13 @@ export class DappClientSocket
 
         switch (lines[0])
         {
-            case "connected":
-                {
-                    var actualMessage = ""
-                    
+            case "host_connected":
+                {                    
                     var autocompletePrice = parseInt(lines[1])
                     var autocutPrice = parseInt(lines[2])
 
-                    for (var i = 3; i < lines.length; i++)
-                    {
-                        actualMessage += lines[i] + "\n"
-
-                        if (i < lines.length - 1)
-                        {
-                            actualMessage += "\n"
-                        }
-                    }
-
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
+                    
                     uiComp.canJoin = true
                     uiComp.canLeave = false
                     
@@ -118,23 +192,35 @@ export class DappClientSocket
                     uiComp.autocutPrice = autocutPrice
 
                     centralComp.connected = actualMessage
-                    centralComp.connectedLoaded = true     
+                    centralComp.connectedLoaded = true
+
+                    sounds.playIdleMusic()
 
                     break
                 }
-            case "awaiting_connection":
+            case "join_connected":
                 {
-                    var actualMessage = ""
+                    var autocompletePrice = parseInt(lines[1])
+                    var autocutPrice = parseInt(lines[2])
 
-                    for (var i = 1; i < lines.length; i++)
-                    {
-                        actualMessage += lines[i] + "\n"
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
 
-                        if (i < lines.length - 1)
-                        {
-                            actualMessage += "\n"
-                        }
-                    }
+                    uiComp.canJoin = true
+                    uiComp.canLeave = false
+
+                    uiComp.autocompletePrice = autocompletePrice
+                    uiComp.autocutPrice = autocutPrice
+
+                    centralComp.connected = actualMessage
+                    centralComp.connectedLoaded = true
+
+                    sounds.playJoinMusic()
+
+                    break
+                }
+            case "awaiting_connected":
+                {
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     uiComp.canJoin = false
                     uiComp.canLeave = false
@@ -142,6 +228,8 @@ export class DappClientSocket
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
+
+                    sounds.playIdleMusic()
 
                     break
                 }
@@ -157,27 +245,19 @@ export class DappClientSocket
                 }
             case "countdown":
                 {
-                    var actualMessage = ""
-
-                    for (var i = 1; i < lines.length; i++)
-                    {
-                        actualMessage += lines[i] + "\n"
-
-                        if (i < lines.length - 1)
-                        {
-                            actualMessage += "\n"
-                        }
-                    }
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     uiComp.canJoin = false
                     uiComp.canLeave = true
-                    uiComp.freeLeave = true    
+                    uiComp.freeLeave = true
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
 
                     DappClientSocket.sceneCallback.setColliderAndTeleport()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
+
+                    sounds.playJoinMusic()
 
                     break
                 }
@@ -235,15 +315,7 @@ export class DappClientSocket
                     }
                     else if (action == "display")
                     {
-                        let question = new Question(
-                            lines[3],
-                            [
-                                lines[4],
-                                lines[5],
-                                lines[6],
-                                lines[7]
-                            ]
-                        )
+                        let question = DappClientSocket.getQuestionFrom(lines, 3)
 
                         centralComp.question = question                        
 
@@ -257,15 +329,7 @@ export class DappClientSocket
                     var currentQuestion = parseInt(lines[1])
                     var totalQuestions = parseInt(lines[2])
 
-                    let question = new Question(
-                        lines[4],
-                        [
-                            lines[5],
-                            lines[6],
-                            lines[7],
-                            lines[8]
-                        ]
-                    )
+                    let question = DappClientSocket.getQuestionFrom(lines, 4)
 
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
 
@@ -278,6 +342,8 @@ export class DappClientSocket
 
                     centralComp.nextQuestionLoaded = true  
 
+                    sounds.muteMusic()
+
                     break
                 }
             case "start_playing":
@@ -285,15 +351,7 @@ export class DappClientSocket
                     var currentQuestion = parseInt(lines[1])
                     var totalQuestions = parseInt(lines[2])
 
-                    let question = new Question(
-                        lines[4],
-                        [
-                            lines[5],
-                            lines[6],
-                            lines[7],
-                            lines[8]
-                        ]
-                    )
+                    let question = DappClientSocket.getQuestionFrom(lines, 4)
 
                     uiComp.canJoin = false      
                     uiComp.canLeave = true
@@ -304,7 +362,9 @@ export class DappClientSocket
                     leftComp.totalQuestions = totalQuestions
                     leftComp.currentQuestion = currentQuestion
 
-                    centralComp.nextQuestionLoaded = true            
+                    centralComp.nextQuestionLoaded = true    
+                    
+                    sounds.muteMusic()
 
                     break
                 }
@@ -321,22 +381,7 @@ export class DappClientSocket
                 }
             case "scheduled_timer":
                 {
-                    var start = ""
-
-                    for (var i = 1; i < lines.length; i++)
-                    {
-                        start += lines[i]
-
-                        if (i == lines.length - 2)
-                        {
-                            start += "\n"
-                        }
-
-                        if (i < lines.length - 1)
-                        {
-                            start += "\n"
-                        }
-                    }    
+                    var start = DappClientSocket.getScheduledTimerFrom(lines, 1)
 
                     timedComp.timeLeft = start
 
@@ -350,17 +395,7 @@ export class DappClientSocket
                 }
             case "answer":
                 {
-                    var answer = ""
-            
-                    for (var i = 1; i < lines.length; i++)
-                    {
-                        answer += lines[i] + "\n"
-
-                        if (i < lines.length - 1)
-                        {
-                            answer += "\n"
-                        }
-                    }
+                    var answer = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     centralComp.answer = answer
                     centralComp.answerLoaded = true
@@ -369,16 +404,7 @@ export class DappClientSocket
                 }
             case "answer_statistics":
                 {                    
-                    let answerStatistics = new AnswerStatistics(
-                        lines[1],
-                        [
-                            lines[2],
-                            lines[3],
-                            lines[4],
-                            lines[5]
-                        ],
-                        lines[6] + "\n" + lines[7]
-                    )
+                    let answerStatistics = DappClientSocket.getAnswerStatisticsFrom(lines, 1)
                     
                     centralComp.answerStatistics = answerStatistics
                     centralComp.answerStatisticsLoaded = true
@@ -390,15 +416,7 @@ export class DappClientSocket
                     var currentQuestion = parseInt(lines[1])
                     var totalQuestions = parseInt(lines[2])
 
-                    let question = new Question(
-                        lines[4],
-                        [
-                            lines[5],
-                            lines[6],
-                            lines[7],
-                            lines[8]
-                        ]
-                    )
+                    let question = DappClientSocket.getQuestionFrom(lines, 4)
 
                     centralComp.question = question                
                     leftComp.totalQuestions = totalQuestions
@@ -423,19 +441,7 @@ export class DappClientSocket
                 }
             case "top_party":
                 {
-                    var partyTop = ""
-
-                    partyTop += lines[1] + "\n\n";
-
-                    for (var i = 2; i < lines.length; i++)
-                    {
-                        partyTop += lines[i]
-
-                        if (i < lines.length - 1)
-                        {
-                            partyTop += "\n"
-                        }
-                    }        
+                    var partyTop = DappClientSocket.getPartyTopFrom(lines, 1)
 
                     topComp.topPartyPlayers = partyTop
                     topComp.topPartyPlayersLoaded = true
@@ -444,17 +450,7 @@ export class DappClientSocket
                 }
             case "lifetime_best":
                 {
-                    var allBest = ""
-
-                    for (var i = 1; i < lines.length; i++)
-                    {
-                        allBest += lines[i]
-
-                        if (i < lines.length - 1)
-                        {
-                            allBest += "\n"
-                        }
-                    }    
+                    var allBest = DappClientSocket.readToTheEndFrom(lines, 1, false)  
 
                     bestComp.lifetimeBest = allBest
                     bestComp.lifetimeBestLoaded = true
@@ -490,6 +486,8 @@ export class DappClientSocket
 
                     DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.dropCollider()
+
+                    sounds.playIdleMusic()
 
                     break
                 }
@@ -564,6 +562,11 @@ export class DappClientSocket
         }
         else
         {
+            if (event.code == DappClientSocket.LEAVE_CODE)
+            {
+                DappClientSocket.sceneCallback.turnOnSpecialCaseCollision()
+            }
+            
             centralScreenMain.getComponent(TextShape).value = ""
         }
 

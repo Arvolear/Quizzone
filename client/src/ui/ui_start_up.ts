@@ -6,12 +6,15 @@ import { DappClientSocket } from "../app/dapp_client_socket";
 import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
 import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
 import { UIMember } from './ui_member';
+import { Sounds } from "../app/sounds";
 
 export class UIStartUp
 {
-    private static startUp: ui.CustomPrompt    
+    private static startUp: ui.CustomPrompt
 
     private static uiCallback: UICallback
+
+    private static sounds: Sounds
 
     private static maticBalance: number
     private static autocompleteNum: number
@@ -20,14 +23,16 @@ export class UIStartUp
 
     constructor(ui: UICallback)
     {
+        UIStartUp.sounds = Sounds.getInstance()
+
         UIStartUp.uiCallback = ui
         UIStartUp.maticBalance = 0
         UIStartUp.autocompleteNum = 0
         UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0
-        
+
         this.configStartUp()
-    }   
+    }
 
     private configStartUp(): void
     {
@@ -52,6 +57,8 @@ export class UIStartUp
 
             if (UIStartUp.autocompleteNum > 0)
             {
+                UIStartUp.sounds.playLessBooster()
+
                 UIStartUp.autocompleteNum--;
                 autocompleteText.text.value = UIStartUp.autocompleteNum.toString()
                 this.updateButtonText()
@@ -66,6 +73,8 @@ export class UIStartUp
 
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
             {
+                UIStartUp.sounds.playMoreBooster()
+
                 UIStartUp.autocompleteNum++;
                 autocompleteText.text.value = UIStartUp.autocompleteNum.toString()
                 this.updateButtonText()
@@ -82,6 +91,8 @@ export class UIStartUp
 
             if (UIStartUp.autocutNum > 0)
             {
+                UIStartUp.sounds.playLessBooster()
+
                 UIStartUp.autocutNum--;
                 autocompleteText.text.value = UIStartUp.autocutNum.toString()
                 this.updateButtonText()
@@ -96,6 +107,8 @@ export class UIStartUp
 
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum < 3)
             {
+                UIStartUp.sounds.playMoreBooster()
+
                 UIStartUp.autocutNum++;
                 autocompleteText.text.value = UIStartUp.autocutNum.toString()
                 this.updateButtonText()
@@ -109,7 +122,7 @@ export class UIStartUp
             }, ButtonStyles.CUSTOM, new Texture("images/button_back.png"), 450, 120, 1450, 400, true)
 
         UIStartUp.startUp.addIcon("images/e.png", -155, -195, 40, 40, { sourceWidth: 400, sourceHeight: 400 })
-        UIStartUp.startUp.addText('Join without boosters', 35, -185, Color4.White(), 25).text.isPointerBlocker = false        
+        UIStartUp.startUp.addText('Join without boosters', 35, -185, Color4.White(), 25).text.isPointerBlocker = false
 
         UIStartUp.startUp.close()
     }
@@ -125,7 +138,7 @@ export class UIStartUp
         {
             UIStartUp.boostersToBuyValue /= 2;
         }
-        
+
         if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {
             buttonText.text.value = "Join and spend " + UIStartUp.boostersToBuyValue.toString() + " MANA"
@@ -138,38 +151,47 @@ export class UIStartUp
 
     private joinTheQuiz(): void
     {
-        if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
-        {            
-            UIStartUp.checkBuyBoosters()              
+        if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
+        {
+            if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
+            {
+                UIStartUp.checkBuyBoosters()
+            }
+            else
+            {
+                UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
+                UIStartUp.uiCallback.hideAllWindows()
+                UICallback.dappClientSocket.join()
+            }
         }
         else
         {
-            UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
-            UIStartUp.uiCallback.hideAllWindows()        
-            UICallback.dappClientSocket.join()
+            UIStartUp.uiCallback.showWaitEndError("Can\'t check in")
         }
     }
 
     private static buyBoosters(): void
     {
         const sendAutocomplete = executeTask(async () =>
-        {            
+        {
             UIStartUp.uiCallback.showHourglass()
             UICallback.dappClientSocket.join()
 
             await matic.sendMana(DappClientSocket.myWallet, UIStartUp.boostersToBuyValue, true, DappClientSocket.network).then(() => 
-            {                            
+            {
                 var toSend = "buy_boosters\n" +
                     UIStartUp.autocompleteNum + "\n" +
                     UIStartUp.autocutNum + "\n" +
                     DappClientSocket.playerWallet
 
-                UICallback.dappClientSocket.send(toSend)                
+                UICallback.dappClientSocket.send(toSend)
+
+                UIStartUp.sounds.playBuyBooster()
 
                 UIStartUp.uiCallback.hideAllWindows()
                 UIStartUp.uiCallback.showTick(8)
             }).catch((e) => 
-            {                                                              
+            {
                 UIStartUp.uiCallback.hideHourglass()
                 UIStartUp.uiCallback.hideAllWindows()
             })
@@ -187,7 +209,7 @@ export class UIStartUp
         else
         {
             UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
-            UIStartUp.buyBoosters()            
+            UIStartUp.buyBoosters()
             UIStartUp.uiCallback.showCheckMetamask()
         }
     }
@@ -233,7 +255,7 @@ export class UIStartUp
     }
 
     public reopen(): void
-    {        
+    {
         UIStartUp.autocompleteNum = 0
         UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0
@@ -269,6 +291,6 @@ export class UIStartUp
 
     public close(): void
     {
-        UIStartUp.startUp.close()        
+        UIStartUp.startUp.close()
     }
 }

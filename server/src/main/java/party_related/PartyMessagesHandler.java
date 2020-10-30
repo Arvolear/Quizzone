@@ -22,7 +22,7 @@ public class PartyMessagesHandler
 
     public String getJoinableMessage(String topic)
     {
-        return "connected\n" +
+        return "join_connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
                 "You can join a random quiz now!\n" +
@@ -33,7 +33,7 @@ public class PartyMessagesHandler
 
     public String getHostMessage()
     {
-        return "connected\n" +
+        return "host_connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
                 "Special quiz registration is not open yet...\n" +

@@ -486,6 +486,11 @@ export class Scene extends SceneCallback
         this.buttonsColliderTrigger.turnOffCollisions()
     }
 
+    public turnOnSpecialCaseCollision(): void
+    {
+        this.buttonsColliderTrigger.turnOnSpecialCaseCollision()
+    }
+
     public getButtons(): Array<Button>
     {
         return this.buttons
