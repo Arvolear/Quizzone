@@ -399,7 +399,7 @@ export class Scene extends SceneCallback
         {
             this.ui.showStartUp()
         }
-        else if (UICallback.properties.getComponent(UIPropertiesComponent).begoreTimed)
+        else if (UICallback.properties.getComponent(UIPropertiesComponent).beforeTimed)
         {
             this.ui.showWaitStartError("Can\'t check in")
         }

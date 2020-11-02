@@ -234,41 +234,48 @@ public class PartyMessagesHandler
         return "clear";
     }
 
-    public String getApplaudsForPlace(Client player)
+    public String getApplauds(Client player, boolean isObserver)
     {
-        ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
-
-        topParty.sort((left, right) ->
-        {
-            int res = right.getValue() - left.getValue();
-
-            return res == 0 ?
-                    party.playingPlayers.get(left.getKey()).getNick().compareTo(party.playingPlayers.get(right.getKey()).getNick()) :
-                    res;
-        });
-
-        int place = 1;
-        boolean ok = false;
-
-        for (var pair : topParty)
-        {
-            if (place > Party.PARTY_TOP_LIMIT)
-            {
-                break;
-            }
-
-            if (player.equals(pair.getKey()))
-            {
-                ok = true;
-                break;
-            }
-
-            place++;
-        }
-
-        if (ok)
+        if (isObserver)
         {
             return "applauds";
+        }
+        else
+        {
+            ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
+
+            topParty.sort((left, right) ->
+            {
+                int res = right.getValue() - left.getValue();
+
+                return res == 0 ?
+                        party.playingPlayers.get(left.getKey()).getNick().compareTo(party.playingPlayers.get(right.getKey()).getNick()) :
+                        res;
+            });
+
+            int place = 1;
+            boolean ok = false;
+
+            for (var pair : topParty)
+            {
+                if (place > Party.PARTY_TOP_LIMIT)
+                {
+                    break;
+                }
+
+                if (player.equals(pair.getKey()))
+                {
+                    ok = true;
+                    break;
+                }
+
+                place++;
+            }
+
+            if (ok)
+            {
+                return "applauds";
+            }
         }
 
         return "";

@@ -546,13 +546,13 @@ public class Party implements IStopWatchCallback
         for (var player: playingPlayers.values())
         {
             send(player, messagesHandler.getTopPartyResponse(player, false));
-            send(player, messagesHandler.getApplaudsForPlace(player));
+            send(player, messagesHandler.getApplauds(player, false));
         }
 
         for (var player: idlePlayers.values())
         {
             send(player, messagesHandler.getTopPartyResponse(player, true));
-            send(player, messagesHandler.getApplaudsForPlace(player));
+            send(player, messagesHandler.getApplauds(player, true));
         }
     }
 

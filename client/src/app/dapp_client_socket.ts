@@ -186,7 +186,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
 
                     uiComp.canJoin = true
-                    uiComp.begoreTimed = false
+                    uiComp.beforeTimed = false
                     uiComp.canLeave = false
 
                     uiComp.autocompletePrice = autocompletePrice
@@ -207,7 +207,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
 
                     uiComp.canJoin = true
-                    uiComp.begoreTimed = false
+                    uiComp.beforeTimed = false
                     uiComp.canLeave = false
 
                     uiComp.autocompletePrice = autocompletePrice
@@ -226,7 +226,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     uiComp.canJoin = false
-                    uiComp.begoreTimed = true
+                    uiComp.beforeTimed = true
                     uiComp.canLeave = false
                     uiComp.timeToQuizStart = ""
 
@@ -245,7 +245,7 @@ export class DappClientSocket
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
 
                     uiComp.canJoin = false
-                    uiComp.begoreTimed = false
+                    uiComp.beforeTimed = false
                     uiComp.canLeave = false                    
 
                     centralComp.connected = actualMessage
@@ -258,7 +258,7 @@ export class DappClientSocket
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
 
                     uiComp.canJoin = false
-                    uiComp.begoreTimed = false
+                    uiComp.beforeTimed = false
                     uiComp.canLeave = false
                     uiComp.timeToQuizStart = ""
 
@@ -269,7 +269,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     uiComp.canJoin = false
-                    uiComp.begoreTimed = false
+                    uiComp.beforeTimed = false
                     uiComp.canLeave = true
                     uiComp.freeLeave = true
 

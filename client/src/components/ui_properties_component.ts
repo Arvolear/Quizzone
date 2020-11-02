@@ -2,7 +2,7 @@
 export class UIPropertiesComponent
 {
     canJoin: boolean
-    begoreTimed: boolean 
+    beforeTimed: boolean 
     canLeave: boolean
     freeLeave: boolean
     member: boolean
@@ -30,7 +30,7 @@ export class UIPropertiesComponent
     public clear(): void
     {
         this.canJoin = false
-        this.begoreTimed = false
+        this.beforeTimed = false
         this.canLeave = false
         this.freeLeave = true
 
