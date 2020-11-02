@@ -297,6 +297,14 @@ export class UI extends UICallback
         UI.uiError.showNotEnoughManaFundsError()
     }
 
+    public showWaitStartError(message: string): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showWaitStartError(message)
+    }   
+
     public showWaitEndError(message: string): void
     {
         UI.sounds.playError()

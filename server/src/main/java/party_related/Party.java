@@ -17,8 +17,8 @@ public class Party implements IStopWatchCallback
     public static final int LIFETIME_BEST_LIMIT = 9;
     public static final int PARTY_TOP_LIMIT = 5;
 
-    public static final int AUTOCOMPLETE_PRICE = 0;
-    public static final int AUTOCUT_PRICE = 0;
+    public static final int AUTOCOMPLETE_PRICE = 50;
+    public static final int AUTOCUT_PRICE = 25;
 
     private final QuizLogger logger;
 
@@ -123,7 +123,14 @@ public class Party implements IStopWatchCallback
             {
                 if (locked)
                 {
-                    send(player, messagesHandler.getLockedMessage());
+                    if (!started)
+                    {
+                        send(player, messagesHandler.getFullMessage());
+                    }
+                    else
+                    {
+                        send(player, messagesHandler.getLockedMessage());
+                    }
 
                     if (nowQuestion)
                     {
@@ -199,8 +206,7 @@ public class Party implements IStopWatchCallback
             locked = true;
             joinable = false;
 
-            response = messagesHandler.getLockedMessage();
-            broadcast(idlePlayers, response);
+            broadcast(idlePlayers, messagesHandler.getFullMessage());
         }
     }
 
@@ -546,6 +552,7 @@ public class Party implements IStopWatchCallback
         for (var player: idlePlayers.values())
         {
             send(player, messagesHandler.getTopPartyResponse(player, true));
+            send(player, messagesHandler.getApplaudsForPlace(player));
         }
     }
 

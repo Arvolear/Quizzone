@@ -64,8 +64,8 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
             timeLeft /= 24;
             int days = timeLeft;
 
-            int[] timeArray = new int[] {days, hours, minutes, seconds};
-            String[] aliasArray = new String[] {"d", "h", "m", "s"};
+            int[] timeArray = new int[]{days, hours, minutes, seconds};
+            String[] aliasArray = new String[]{"d", "h", "m", "s"};
 
             for (int i = 0; i < timeArray.length; i++)
             {
@@ -82,10 +82,15 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
 
             response += "\nTopic: " + topic;
         }
-        else
+        else if (party.isLocked())
         {
             response += "The special quiz\n" +
                     "has started!";
+        }
+        else
+        {
+            response += "The special quiz\n" +
+                    "registration is in progress";
         }
 
         return response;

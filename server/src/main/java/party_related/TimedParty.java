@@ -177,8 +177,7 @@ public class TimedParty extends Party
         {
             locked = true;
 
-            response = messagesHandler.getLockedMessage();
-            broadcast(idlePlayers, response);
+            broadcast(idlePlayers,  messagesHandler.getFullMessage());
         }
     }
 
@@ -230,8 +229,15 @@ public class TimedParty extends Party
     {
         super.updateTimer(name, timeLeft);
 
+        TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
+
         if (!name.equals(countdownTimer.getName()) || countdownTimer.isStopped())
         {
+            if (!countdownTimer.isStopped() && category != null)
+            {
+                controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(-1, category.getAlias()));
+            }
+
             return;
         }
 
@@ -246,12 +252,9 @@ public class TimedParty extends Party
             }
         }
 
-        TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
-
         if (category != null)
         {
-            String response = timedMessagesHandler.getTimedQuizTimerResponse(timeLeft, category.getAlias());
-            controller.broadcastAll(response);
+            controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(timeLeft, category.getAlias()));
         }
     }
 

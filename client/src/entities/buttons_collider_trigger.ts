@@ -41,10 +41,7 @@ export class ButtonsColliderTrigger
                 0,
                 0,
                 null,
-                () =>
-                {
-                    this.specialCase = false
-                },
+                null,
                 () =>
                 {
                     if (!this.specialCase)
@@ -54,7 +51,10 @@ export class ButtonsColliderTrigger
                         ButtonsColliderTrigger.uiCallback.showWaitEndError("Too late...")
                     }
                 },
-                null,
+                () =>
+                {
+                    this.specialCase = false
+                },
                 false
             )
         )

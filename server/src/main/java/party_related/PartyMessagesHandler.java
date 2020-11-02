@@ -20,6 +20,12 @@ public class PartyMessagesHandler
         return "bad_connected";
     }
 
+    public String getFullMessage()
+    {
+        return "full_connected\n" +
+                "The quiz is full, please wait for it to end!";
+    }
+
     public String getJoinableMessage(String topic)
     {
         return "join_connected\n" +

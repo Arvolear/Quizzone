@@ -20,8 +20,8 @@ export class DappClientSocket
     public static network = "mainnet"
     // public static network = "goerli"
 
-    // private static location = "wss://quiz-service.dapp-craft.com:8444"
-    private static location = "ws://localhost:8080"
+    private static location = "wss://quiz-service.dapp-craft.com:8444"
+    // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -186,6 +186,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
 
                     uiComp.canJoin = true
+                    uiComp.begoreTimed = false
                     uiComp.canLeave = false
 
                     uiComp.autocompletePrice = autocompletePrice
@@ -206,6 +207,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
 
                     uiComp.canJoin = true
+                    uiComp.begoreTimed = false
                     uiComp.canLeave = false
 
                     uiComp.autocompletePrice = autocompletePrice
@@ -224,6 +226,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     uiComp.canJoin = false
+                    uiComp.begoreTimed = true
                     uiComp.canLeave = false
                     uiComp.timeToQuizStart = ""
 
@@ -235,11 +238,27 @@ export class DappClientSocket
 
                     break
                 }
+            case "full_connected":
+                {
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
+
+                    DappClientSocket.sceneCallback.turnOnButtonCollisions()
+
+                    uiComp.canJoin = false
+                    uiComp.begoreTimed = false
+                    uiComp.canLeave = false                    
+
+                    centralComp.connected = actualMessage
+                    centralComp.connectedLoaded = true            
+
+                    break
+                }
             case "bad_connected":
                 {
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
 
                     uiComp.canJoin = false
+                    uiComp.begoreTimed = false
                     uiComp.canLeave = false
                     uiComp.timeToQuizStart = ""
 
@@ -250,6 +269,7 @@ export class DappClientSocket
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
 
                     uiComp.canJoin = false
+                    uiComp.begoreTimed = false
                     uiComp.canLeave = true
                     uiComp.freeLeave = true
 

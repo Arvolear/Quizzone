@@ -7,6 +7,7 @@ export class UIError
 {    
     private static fundsError: ui.CustomPrompt
     private static universalError: ui.CustomPrompt
+    private static waitStartError: ui.CustomPrompt
     private static waitEndError: ui.CustomPrompt
 
     private static uiCallback: UICallback
@@ -17,7 +18,8 @@ export class UIError
 
         this.configFundsError()    
         this.configUniversalError()
-        this.configWaitEndError()    
+        this.configWaitStartError()
+        this.configWaitEndError()
     }
 
     private configFundsError(): void
@@ -66,6 +68,30 @@ export class UIError
         UIError.universalError.close()
     }
 
+    private configWaitStartError(): void
+    {
+        UIError.waitStartError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIError.waitStartError.background.isPointerBlocker = true
+
+        UIError.waitStartError.addText('Error', 0, 153, Color4.Black(), 30)
+        UIError.waitStartError.addText('', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UIError.waitStartError.addText('The special quiz', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UIError.waitStartError.addText('registration will open soon', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+
+        UIError.waitStartError.addButton(
+            'Ok',
+            -0,
+            -120,
+            () =>
+            {
+                UIError.uiCallback.hideError()
+            },
+            ButtonStyles.F
+        )
+
+        UIError.waitStartError.close()
+    }
+
     private configWaitEndError(): void
     {
         UIError.waitEndError = new ui.CustomPrompt(PromptStyles.LIGHT)
@@ -108,6 +134,14 @@ export class UIError
         text.text.value = value
 
         UIError.universalError.reopen()
+    }
+
+    public showWaitStartError(value: string): void
+    {
+        let text = UIError.waitStartError.elements[1] as CustomPromptText
+        text.text.value = value
+
+        UIError.waitStartError.reopen()
     }
 
     public showWaitEndError(value: string): void
