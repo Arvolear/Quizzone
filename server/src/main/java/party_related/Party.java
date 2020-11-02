@@ -540,6 +540,7 @@ public class Party implements IStopWatchCallback
         for (var player: playingPlayers.values())
         {
             send(player, messagesHandler.getTopPartyResponse(player, false));
+            send(player, messagesHandler.getApplaudsForPlace(player));
         }
 
         for (var player: idlePlayers.values())
@@ -584,7 +585,10 @@ public class Party implements IStopWatchCallback
 
             try
             {
-                player.getSession().getRemote().sendString(messagesHandler.getClearMessage());
+                if (player.getSession().isOpen())
+                {
+                    player.getSession().getRemote().sendString(messagesHandler.getClearMessage());
+                }
             }
             catch (Exception ex)
             {

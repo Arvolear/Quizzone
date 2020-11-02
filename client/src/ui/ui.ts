@@ -176,6 +176,8 @@ export class UI extends UICallback
 
     public hideAutocompleteWindow(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiAutocomplete.close()
     }
 
@@ -200,6 +202,8 @@ export class UI extends UICallback
 
     public hideAutocutWindow(): void
     {
+        UI.sounds.playCloseWindow()
+        
         UI.uiAutocut.close()
     }
 
@@ -216,7 +220,7 @@ export class UI extends UICallback
 
     public showLeaveWindow(): void
     {
-        UI.sounds.playOpenWindow()
+        UI.sounds.playAlert()
 
         UI.ui.hideAllWindows()
         UI.uiLeave.reopen()

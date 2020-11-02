@@ -24,7 +24,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     {
         return "awaiting_connected\n" +
                 "Get ready and call your friends!\n" +
-                "The special quiz starts very soon!";
+                "The special quiz registration opens very soon!";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
 
         if (timeLeft > 0)
         {
-            response += "Special quiz starts in\n";
+            response += "Special quiz registration in\n";
 
             int seconds = timeLeft % 60;
             timeLeft /= 60;

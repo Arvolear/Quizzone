@@ -14,11 +14,13 @@ public class TimedParty extends Party
     private Calendar startTime;
 
     private int blockOtherPartiesTimeout;
+    private boolean sendHost;
 
     public TimedParty(Controller controller)
     {
         super();
 
+        sendHost = true;
         this.controller = controller;
         countdownTimer = new StopWatch<>(this, "timedQuizTimer");
     }
@@ -27,6 +29,7 @@ public class TimedParty extends Party
     {
         ready = false;
         category = null;
+        sendHost = true;
         countdownTimer.updateTime(-1);
 
         TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
@@ -98,6 +101,7 @@ public class TimedParty extends Party
             return;
         }
 
+        sendHost = true;
         category = categories.get(leastIndex);
         startTime = categories.get(leastIndex).getStartTime();
 
@@ -234,7 +238,12 @@ public class TimedParty extends Party
         if (timeLeft <= blockOtherPartiesTimeout)
         {
             controller.timedPartyIsWaiting();
-            broadcast(idlePlayers, messagesHandler.getHostMessage());
+
+            if (sendHost)
+            {
+                broadcast(idlePlayers, messagesHandler.getHostMessage());
+                sendHost = false;
+            }
         }
 
         TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;

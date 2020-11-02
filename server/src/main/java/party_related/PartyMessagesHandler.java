@@ -189,7 +189,19 @@ public class PartyMessagesHandler
     public String getCorrectAnswerMessage()
     {
         return "answer\n" +
+                "true\n" +
                 "That's correct!";
+    }
+
+    public String getWrongAnswerMessage()
+    {
+        Question question = party.getQuestionnaire().getCurrentQuestion();
+
+        return "answer\n" +
+                "false\n" +
+                "Sorry, that's wrong!\n" +
+                "Correct answer was:\n" +
+                question.getCorrectVariant();
     }
 
     public String getAnswerStatisticsMessage(ArrayList<Integer> answers)
@@ -206,16 +218,6 @@ public class PartyMessagesHandler
                 question.getCorrectVariant();
     }
 
-    public String getWrongAnswerMessage()
-    {
-        Question question = party.getQuestionnaire().getCurrentQuestion();
-
-        return "answer\n" +
-                "Sorry, that's wrong!\n" +
-                "Correct answer was:\n" +
-                question.getCorrectVariant();
-    }
-
     public String getFinishMessage()
     {
         return "finish";
@@ -224,6 +226,46 @@ public class PartyMessagesHandler
     public String getClearMessage()
     {
         return "clear";
+    }
+
+    public String getApplaudsForPlace(Client player)
+    {
+        ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
+
+        topParty.sort((left, right) ->
+        {
+            int res = right.getValue() - left.getValue();
+
+            return res == 0 ?
+                    party.playingPlayers.get(left.getKey()).getNick().compareTo(party.playingPlayers.get(right.getKey()).getNick()) :
+                    res;
+        });
+
+        int place = 1;
+        boolean ok = false;
+
+        for (var pair : topParty)
+        {
+            if (place > Party.PARTY_TOP_LIMIT)
+            {
+                break;
+            }
+
+            if (player.equals(pair.getKey()))
+            {
+                ok = true;
+                break;
+            }
+
+            place++;
+        }
+
+        if (ok)
+        {
+            return "applauds";
+        }
+
+        return "";
     }
 
     public String getTopPartyResponse(Client player, boolean isObserver)
@@ -238,7 +280,7 @@ public class PartyMessagesHandler
         }
         else
         {
-            builder.append("Thanks for playing!\n");
+            builder.append("Thanks for playing! Now you can leave the field!\n");
         }
 
         ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());

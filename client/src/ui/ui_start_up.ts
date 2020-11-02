@@ -161,7 +161,7 @@ export class UIStartUp
             {
                 UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
                 UIStartUp.uiCallback.hideAllWindows()
-                UICallback.dappClientSocket.join()
+                UICallback.dappClientSocket.join()                
             }
         }
         else
@@ -210,7 +210,7 @@ export class UIStartUp
         {
             UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
             UIStartUp.buyBoosters()
-            UIStartUp.uiCallback.showCheckMetamask()
+            UIStartUp.uiCallback.showCheckMetamask()            
         }
     }
 

@@ -464,10 +464,10 @@ export class Scene extends SceneCallback
 
     public setColliderAndTeleport(): void
     {
+        movePlayerTo({ x: 16, y: 0, z: 16 }) // teleport
+
         this.inCollider.addComponentOrReplace(this.inColliderShape)
         this.outCollider.removeComponent(this.outColliderShape)
-
-        // movePlayerTo({ x: 16, y: 0, z: 16 }) // teleport
     }
 
     public dropCollider(): void
