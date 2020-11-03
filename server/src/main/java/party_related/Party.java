@@ -358,6 +358,8 @@ public class Party implements IStopWatchCallback
             {
                 currentQuestionAnswers.add(0);
             }
+
+            broadcast(idlePlayers, messagesHandler.getAnswerStatisticsSoundMessage());
         }
 
         int questionNum = Integer.parseInt(lines[1]);

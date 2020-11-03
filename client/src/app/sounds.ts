@@ -6,6 +6,7 @@ export class Sounds
     private idleSource: AudioSource
     private joinSource: AudioSource
     private awaitingSource: AudioSource
+    private questionSource: AudioSource
 
     private passiveSoundsEntity: Entity
     private openWindowSource: AudioSource
@@ -31,6 +32,7 @@ export class Sounds
     private focusSource: AudioSource
     private soundPrestartSource: AudioSource
     private applaudsSource: AudioSource
+    private statisticsSource: AudioSource
 
     private constructor()
     {
@@ -66,6 +68,11 @@ export class Sounds
         this.awaitingSource = new AudioSource(awaitingClip)
         this.awaitingSource.loop = true
         this.awaitingSource.volume = 1.0   
+
+        let questionClip = new AudioClip("sounds/music/question.mp3")
+        this.questionSource = new AudioSource(questionClip)
+        this.questionSource.loop = true
+        this.questionSource.volume = 1.0   
 
         for (var i = 0; i < 3; i++)
         {
@@ -215,6 +222,11 @@ export class Sounds
         this.soundPrestartSource.volume = 0.5
         this.soundPrestartSource.playing = false  
 
+        let statisticsClip = new AudioClip("sounds/sounds/active_sounds/statistics.mp3")
+        this.statisticsSource = new AudioSource(statisticsClip)
+        this.statisticsSource.volume = 0.5
+        this.statisticsSource.playing = false  
+
         this.activeSoundsEntity = new Entity()
 
         engine.addEntity(this.activeSoundsEntity)
@@ -224,6 +236,7 @@ export class Sounds
     {
         this.awaitingSource.playing = false
         this.joinSource.playing = false
+        this.questionSource.playing = false
 
         for (var i = 0; i < this.musicEntities.length; i++)
         {
@@ -237,6 +250,7 @@ export class Sounds
     {
         this.awaitingSource.playing = false
         this.idleSource.playing = false
+        this.questionSource.playing = false
 
         for (var i = 0; i < this.musicEntities.length; i++)
         {
@@ -244,6 +258,19 @@ export class Sounds
         }
 
         this.joinSource.playing = true
+    }
+
+    public playQuestionMusic(): void
+    {        
+        this.idleSource.playing = false
+        this.questionSource.playing = false
+
+        for (var i = 0; i < this.musicEntities.length; i++)
+        {
+            this.musicEntities[i].addComponentOrReplace(this.questionSource)
+        }
+
+        this.questionSource.playing = true
     }
 
     public playAwaitingMusic(): void
@@ -262,6 +289,7 @@ export class Sounds
     {
         this.joinSource.playing = false
         this.idleSource.playing = false
+        this.questionSource.playing = false
     }
 
     public playOpenWindow(): void
@@ -397,6 +425,13 @@ export class Sounds
         this.activeSoundsEntity.addComponentOrReplace(this.soundPrestartSource)
         this.soundPrestartSource.playOnce()
     }    
+
+    public playStatistics(): void
+    {        
+        this.sound321Source.playing = false
+        this.activeSoundsEntity.addComponentOrReplace(this.statisticsSource)
+        this.statisticsSource.playOnce()
+    }   
 
     public getPassiveSoundsEntity(): Entity
     {

@@ -422,6 +422,15 @@ export class DappClientSocket
                                 {
                                     sounds.playSound321()
                                 }
+
+                                break
+                            }
+                        case "10":
+                            {
+                                if (centralComp.hasStarted && centralComp.nowQuestion)
+                                {
+                                    sounds.playQuestionMusic()
+                                }
                             }
                     }
 
@@ -460,6 +469,8 @@ export class DappClientSocket
                         sounds.playWrong()
                     }
 
+                    sounds.muteMusic()
+
                     break
                 }
             case "answer_statistics":
@@ -468,6 +479,12 @@ export class DappClientSocket
 
                     centralComp.answerStatistics = answerStatistics
                     centralComp.answerStatisticsLoaded = true
+
+                    break
+                }
+            case "answer_statistics_sound":
+                {
+                    sounds.playStatistics()
 
                     break
                 }

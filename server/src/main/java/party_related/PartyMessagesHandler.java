@@ -224,6 +224,11 @@ public class PartyMessagesHandler
                 question.getCorrectVariant();
     }
 
+    public String getAnswerStatisticsSoundMessage()
+    {
+        return "answer_statistics_sound";
+    }
+
     public String getFinishMessage()
     {
         return "finish";
