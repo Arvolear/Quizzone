@@ -55,7 +55,7 @@ if (isDisplayEmpty()) {
 
         <div class="card">
             <div class="card_question">
-                <span class="title">Import questions (CSV)</span>
+                <span class="title">Import questions (CSV), delimiter - ";"</span>
                 <form autocomplete="off" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" enctype="multipart/form-data">
                     <br>
                     <div class="publish_columns">

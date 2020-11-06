@@ -20,6 +20,8 @@ export class Scene extends SceneCallback
 
     private scene: Entity
 
+    private banner: Entity
+
     private becomeAMember: Entity
     private alreadyAMember: Entity
     private memberCard: Entity
@@ -59,6 +61,7 @@ export class Scene extends SceneCallback
         super()
 
         this.configScene()
+        this.configBanner()
         this.configBecomeAMember()
         this.configAlreadyAMember()           
         this.configGrass()
@@ -109,6 +112,27 @@ export class Scene extends SceneCallback
             })
 
         quizzone.addComponentOrReplace(transform6)
+    }
+
+    private configBanner(): void
+    {         
+        const bannerShape = new GLTFShape("models/banner/banner.glb")
+        bannerShape.withCollisions = true
+        bannerShape.isPointerBlocker = false
+        bannerShape.visible = true
+
+        this.banner = new Entity('banner')
+        engine.addEntity(this.banner)
+        this.banner.setParent(this.scene)
+        this.banner.addComponentOrReplace(bannerShape)
+
+        const transform = new Transform(
+            {
+                position: new Vector3(16.5, -0.4, 15.8),
+                rotation: new Quaternion(0, 0, 0, 1),
+                scale: new Vector3(1, 1, 1)
+            })
+        this.banner.addComponentOrReplace(transform)
     }
 
     private configBecomeAMember(): void

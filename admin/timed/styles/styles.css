@@ -40,6 +40,10 @@
     color: #eeeeee;
 }
 
+.green_td {
+    color: #33d155;
+}
+
 .green_submit {
     width: 100%;
     padding: 5px;
@@ -251,7 +255,7 @@
     transition: 0.2s;
     cursor: pointer;
     display: block;
-    text-align: center; 
+    text-align: center;
 }
 
 .green_check_clicked {
