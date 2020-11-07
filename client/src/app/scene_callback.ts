@@ -7,4 +7,5 @@ export abstract class SceneCallback
     abstract turnOnButtonCollisions(): void    
     abstract turnOffButtonCollisions(): void    
     abstract turnOnSpecialCaseCollision(): void
+    abstract buyBoostersIfShould(): void
 }

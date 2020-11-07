@@ -1,6 +1,7 @@
 package party_related;
 
 import game.Client;
+import game.Controller;
 import game.IStopWatchCallback;
 import game.StopWatch;
 import log.QuizLogger;
@@ -14,6 +15,8 @@ import java.util.function.Function;
 
 public class Party implements IStopWatchCallback
 {
+    protected final Controller controller;
+
     public static final int LIFETIME_BEST_LIMIT = 9;
     public static final int PARTY_TOP_LIMIT = 5;
 
@@ -58,8 +61,10 @@ public class Party implements IStopWatchCallback
 
     protected boolean muteConnection = false;
 
-    public Party()
+    public Party(Controller controller)
     {
+        this.controller = controller;
+
         logger = QuizLogger.getInstance();
 
         idlePlayers = new ConcurrentHashMap<>();
@@ -173,6 +178,7 @@ public class Party implements IStopWatchCallback
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
+        send(player, messagesHandler.getSuccessfulJoinMessage());
         send(player, messagesHandler.getHideMessage("control_buttons"));
 
         String response;
@@ -278,8 +284,7 @@ public class Party implements IStopWatchCallback
             locked = true;
             nowQuestion = true;
 
-            broadcast(playingPlayers, messagesHandler.getStartPlayingMessage());
-            broadcast(idlePlayers, messagesHandler.getStartIdleMessage());
+            sendStartMessages();
             handleBoostersMessages();
 
             questionTimer.updateTime(questionDuration);
@@ -532,6 +537,12 @@ public class Party implements IStopWatchCallback
         {
             ex.printStackTrace();
         }
+    }
+
+    synchronized protected void sendStartMessages()
+    {
+        broadcast(playingPlayers, messagesHandler.getStartPlayingMessage());
+        broadcast(idlePlayers, messagesHandler.getStartIdleMessage());
     }
 
     synchronized private void sendFinishMessages()

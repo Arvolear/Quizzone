@@ -519,6 +519,11 @@ export class Scene extends SceneCallback
         this.buttonsColliderTrigger.turnOnSpecialCaseCollision()
     }
 
+    public buyBoostersIfShould(): void
+    {
+        this.ui.buyBoostersIfShould()
+    }
+
     public getButtons(): Array<Button>
     {
         return this.buttons

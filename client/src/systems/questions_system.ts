@@ -130,11 +130,11 @@ export class QuestionsSystem implements ISystem
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
         var answerStatistics = centralComp.answerStatistics
 
-        var toDisplay = answerStatistics.headMessage + "\n"
+        var toDisplay = answerStatistics.headMessage.trim() + "\n"
 
         for (var i = 0; i < answerStatistics.answers.length; i++)
         {
-            toDisplay += answerStatistics.answers[i]
+            toDisplay += answerStatistics.answers[i].trim()
 
             if (i % 2 == 1)
             {
@@ -162,7 +162,7 @@ export class QuestionsSystem implements ISystem
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
         var question = centralComp.question
 
-        var actualQuestion = question.actualQuestion
+        var actualQuestion = question.actualQuestion.trim()
 
         var i = 60;
 
@@ -184,7 +184,7 @@ export class QuestionsSystem implements ISystem
 
         for (var i = 0; i < question.answers.length; i++)
         {
-            toDisplay += question.answers[i]
+            toDisplay += question.answers[i].trim()
 
             if (i % 2 == 1)
             {

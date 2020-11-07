@@ -8,8 +8,6 @@ import java.util.*;
 
 public class TimedParty extends Party
 {
-    private final Controller controller;
-
     private final StopWatch<TimedParty> countdownTimer;
     private Calendar startTime;
 
@@ -18,10 +16,9 @@ public class TimedParty extends Party
 
     public TimedParty(Controller controller)
     {
-        super();
+        super(controller);
 
         sendHost = true;
-        this.controller = controller;
         countdownTimer = new StopWatch<>(this, "timedQuizTimer");
     }
 
@@ -153,6 +150,7 @@ public class TimedParty extends Party
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
+        send(player, messagesHandler.getSuccessfulJoinMessage());
         send(player, messagesHandler.getHideMessage("control_buttons"));
 
         String response;
@@ -177,7 +175,7 @@ public class TimedParty extends Party
         {
             locked = true;
 
-            broadcast(idlePlayers,  messagesHandler.getFullMessage());
+            broadcast(idlePlayers, messagesHandler.getFullMessage());
         }
     }
 
@@ -229,15 +227,8 @@ public class TimedParty extends Party
     {
         super.updateTimer(name, timeLeft);
 
-        TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
-
         if (!name.equals(countdownTimer.getName()) || countdownTimer.isStopped())
         {
-            if (!countdownTimer.isStopped() && category != null)
-            {
-                controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(-1, category.getAlias()));
-            }
-
             return;
         }
 
@@ -254,6 +245,8 @@ public class TimedParty extends Party
 
         if (category != null)
         {
+            TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
+
             controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(timeLeft, category.getAlias()));
         }
     }
@@ -275,6 +268,19 @@ public class TimedParty extends Party
             questionnaire.loadQuestions(category.getCategory());
             controller.timedPartyIsJoinable();
             setJoinable();
+        }
+    }
+
+    @Override
+    synchronized protected void sendStartMessages()
+    {
+        super.sendStartMessages();
+
+        if (category != null)
+        {
+            TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
+
+            controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(-1, category.getAlias()));
         }
     }
 

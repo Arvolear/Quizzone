@@ -21,6 +21,8 @@ export class UIStartUp
     private static autocutNum: number
     private static boostersToBuyValue: number
 
+    private static shallBuyBoosters: boolean
+
     constructor(ui: UICallback)
     {
         UIStartUp.sounds = Sounds.getInstance()
@@ -30,6 +32,7 @@ export class UIStartUp
         UIStartUp.autocompleteNum = 0
         UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0
+        UIStartUp.shallBuyBoosters = false
 
         this.configStartUp()
     }
@@ -158,8 +161,7 @@ export class UIStartUp
                 UIStartUp.checkBuyBoosters()
             }
             else
-            {
-                UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
+            {                
                 UIStartUp.uiCallback.hideAllWindows()
                 UICallback.dappClientSocket.join()                
             }
@@ -170,12 +172,17 @@ export class UIStartUp
         }
     }
 
-    private static buyBoosters(): void
+    public static buyBoosters(): void
     {
-        const sendAutocomplete = executeTask(async () =>
+        if (!UIStartUp.shallBuyBoosters)
         {
-            UIStartUp.uiCallback.showHourglass()
-            UICallback.dappClientSocket.join()
+            return
+        }
+
+        const sendAutocomplete = executeTask(async () =>
+        {           
+            UIStartUp.uiCallback.showHourglass()   
+            UIStartUp.uiCallback.showCheckMetamask()      
 
             await matic.sendMana(DappClientSocket.myWallet, UIStartUp.boostersToBuyValue, true, DappClientSocket.network).then(() => 
             {
@@ -190,10 +197,12 @@ export class UIStartUp
 
                 UIStartUp.uiCallback.hideAllWindows()
                 UIStartUp.uiCallback.showTick(8)
+                UIStartUp.shallBuyBoosters = false
             }).catch((e) => 
             {
                 UIStartUp.uiCallback.hideHourglass()
                 UIStartUp.uiCallback.hideAllWindows()
+                UIStartUp.shallBuyBoosters = false
             })
         })
 
@@ -207,10 +216,9 @@ export class UIStartUp
             UIStartUp.uiCallback.showNotEnoughManaFundsError()
         }
         else
-        {
-            UICallback.properties.getComponent(UIPropertiesComponent).canJoin = false
-            UIStartUp.buyBoosters()
-            UIStartUp.uiCallback.showCheckMetamask()            
+        {        
+            UIStartUp.shallBuyBoosters = true
+            UICallback.dappClientSocket.join()                           
         }
     }
 
@@ -256,6 +264,7 @@ export class UIStartUp
 
     public reopen(): void
     {
+        UIStartUp.shallBuyBoosters = false
         UIStartUp.autocompleteNum = 0
         UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0

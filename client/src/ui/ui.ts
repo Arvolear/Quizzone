@@ -359,4 +359,9 @@ export class UI extends UICallback
     {
         return UI.properties
     }
+
+    public buyBoostersIfShould(): void
+    {
+        UIStartUp.buyBoosters()
+    }
 }

@@ -15,6 +15,11 @@ public class PartyMessagesHandler
         this.party = party;
     }
 
+    public String getSuccessfulJoinMessage()
+    {
+        return "successful_join";
+    }
+
     public String getLockedMessage()
     {
         return "bad_connected";

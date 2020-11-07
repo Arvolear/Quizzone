@@ -132,7 +132,7 @@ public class Controller implements IStopWatchCallback
         }
         else
         {
-            Party party = new Party();
+            Party party = new Party(this);
             party.loadCategory();
             party.connectPlayer(player);
 

@@ -256,28 +256,37 @@ export class DappClientSocket
             case "bad_connected":
                 {
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
-
+                    
                     uiComp.canJoin = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
                     uiComp.timeToQuizStart = ""
 
+                    centralComp.hasStarted = true
+
+                    break
+                }
+            case "successful_join":
+                {
+                    uiComp.canJoin = false
+                    uiComp.canLeave = true
+                    uiComp.freeLeave = true
+
+                    DappClientSocket.sceneCallback.setColliderAndTeleport()
+                    lifetimeBestScreenMain.removeComponent(BlockComponent)
+
+                    DappClientSocket.sceneCallback.buyBoostersIfShould()
+
                     break
                 }
             case "countdown":
                 {
-                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
-
-                    uiComp.canJoin = false
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1) 
+                    
                     uiComp.beforeTimed = false
-                    uiComp.canLeave = true
-                    uiComp.freeLeave = true
 
                     centralComp.connected = actualMessage
-                    centralComp.connectedLoaded = true
-
-                    DappClientSocket.sceneCallback.setColliderAndTeleport()
-                    lifetimeBestScreenMain.removeComponent(BlockComponent)
+                    centralComp.connectedLoaded = true                              
 
                     sounds.playJoinMusic()
                     sounds.playJoinQuiz()
@@ -479,6 +488,8 @@ export class DappClientSocket
 
                     centralComp.answerStatistics = answerStatistics
                     centralComp.answerStatisticsLoaded = true
+
+                    sounds.muteMusic()
 
                     break
                 }

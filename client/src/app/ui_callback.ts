@@ -46,4 +46,5 @@ export abstract class UICallback
     abstract updateAutocutLeft(): void
     abstract updateLeaveMessage(): void
     abstract updateCanJoinTimer(): void
+    abstract buyBoostersIfShould(): void
 }
