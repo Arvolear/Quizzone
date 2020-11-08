@@ -2,7 +2,7 @@ package party_related;
 
 public class TimedPartyMessagesHandler extends PartyMessagesHandler
 {
-    TimedPartyMessagesHandler(Party party)
+    TimedPartyMessagesHandler(AbstractParty party)
     {
         super(party);
     }
@@ -11,16 +11,15 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     public String getJoinableMessage(String topic)
     {
         return "join_connected\n" +
-                Party.AUTOCOMPLETE_PRICE + "\n" +
-                Party.AUTOCUT_PRICE + "\n" +
+                RandomParty.AUTOCOMPLETE_PRICE + "\n" +
+                RandomParty.AUTOCUT_PRICE + "\n" +
                 "Welcome to the special quiz registration!\n" +
                 "Today special quiz topic - " + topic + "\n" +
                 "Please click the check in button to join!\n" +
                 "<--------------------------------------------->";
     }
 
-    @Override
-    public String getHostMessage()
+    public String getAwaitMessage()
     {
         return "awaiting_connected\n" +
                 "Get ready and call your friends!\n" +
@@ -82,7 +81,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
 
             response += "\nTopic: " + topic;
         }
-        else if (party.isLocked())
+        else if (party.isStarted())
         {
             response += "The special quiz\n" +
                     "has started!";

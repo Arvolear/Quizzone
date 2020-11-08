@@ -20,8 +20,8 @@ export class DappClientSocket
     public static network = "mainnet"
     // public static network = "goerli"
 
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -146,6 +146,18 @@ export class DappClientSocket
         partyTop += tmpMessage
 
         return partyTop
+    }
+
+    private static getLifetimeBestFrom(lines: string[], index: number): Array<String>
+    {
+        var actualMessage: Array<String> = []
+
+        for (var i = index; i < lines.length; i++)
+        {
+            actualMessage.push(lines[i])
+        }
+
+        return actualMessage
     }
 
     // Be careful, different this! 
@@ -552,7 +564,7 @@ export class DappClientSocket
                 }
             case "lifetime_best":
                 {
-                    var allBest = DappClientSocket.readToTheEndFrom(lines, 1, false)
+                    var allBest = DappClientSocket.getLifetimeBestFrom(lines, 1)
 
                     bestComp.lifetimeBest = allBest
                     bestComp.lifetimeBestLoaded = true

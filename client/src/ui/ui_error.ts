@@ -120,7 +120,8 @@ export class UIError
     {        
         UIError.fundsError.close()
         UIError.universalError.close()
-        UIError.waitEndError.close()        
+        UIError.waitEndError.close()    
+        UIError.waitStartError.close()        
     }
 
     public showNotEnoughManaFundsError(): void

@@ -257,7 +257,7 @@ public class SQLAccess
                 String nick = result.getString("nick");
                 int score = result.getInt("score");
 
-                allLifetimeBest.add(nick + " ----- " + score);
+                allLifetimeBest.add(nick + " " + score);
             }
         }
         catch (Exception ex)
@@ -268,9 +268,9 @@ public class SQLAccess
         return allLifetimeBest;
     }
 
-    public String getLifetimeBest(String nick)
+    public String getLifetimeBestScore(String nick)
     {
-        String lifetimeBest = "";
+        String lifetimeBestScore = "";
 
         try
         {
@@ -281,9 +281,7 @@ public class SQLAccess
 
             if (result.next())
             {
-                int score = result.getInt("score");
-
-                lifetimeBest = nick + " ----- " + score;
+                lifetimeBestScore = String.valueOf(result.getInt("score"));
             }
         }
         catch (Exception ex)
@@ -291,6 +289,6 @@ public class SQLAccess
             ex.printStackTrace();
         }
 
-        return lifetimeBest;
+        return lifetimeBestScore;
     }
 }

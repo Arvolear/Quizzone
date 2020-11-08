@@ -8,9 +8,9 @@ import java.util.Random;
 
 public class PartyMessagesHandler
 {
-    protected Party party;
+    protected AbstractParty party;
 
-    public PartyMessagesHandler(Party party)
+    public PartyMessagesHandler(AbstractParty party)
     {
         this.party = party;
     }
@@ -34,8 +34,8 @@ public class PartyMessagesHandler
     public String getJoinableMessage(String topic)
     {
         return "join_connected\n" +
-                Party.AUTOCOMPLETE_PRICE + "\n" +
-                Party.AUTOCUT_PRICE + "\n" +
+                RandomParty.AUTOCOMPLETE_PRICE + "\n" +
+                RandomParty.AUTOCUT_PRICE + "\n" +
                 "You can join a random quiz now!\n" +
                 "Randomly chosen topic - " + topic + "\n" +
                 "Please click the check in button to join\n" +
@@ -45,8 +45,8 @@ public class PartyMessagesHandler
     public String getHostMessage()
     {
         return "host_connected\n" +
-                Party.AUTOCOMPLETE_PRICE + "\n" +
-                Party.AUTOCUT_PRICE + "\n" +
+                RandomParty.AUTOCOMPLETE_PRICE + "\n" +
+                RandomParty.AUTOCUT_PRICE + "\n" +
                 "Special quiz registration is not open yet...\n" +
                 "However, you may call your friends to play a random quiz!\n" +
                 "You all will have to click the check in button\n" +
@@ -268,7 +268,7 @@ public class PartyMessagesHandler
 
             for (var pair : topParty)
             {
-                if (place > Party.PARTY_TOP_LIMIT)
+                if (place > RandomParty.PARTY_TOP_LIMIT)
                 {
                     break;
                 }
@@ -321,7 +321,7 @@ public class PartyMessagesHandler
 
         for (var pair : topParty)
         {
-            if (place > Party.PARTY_TOP_LIMIT)
+            if (place > RandomParty.PARTY_TOP_LIMIT)
             {
                 break;
             }
@@ -374,22 +374,32 @@ public class PartyMessagesHandler
     public String getLifetimeBestResponse(ArrayList<String> allLifetimeBest, Client player)
     {
         StringBuilder builder = new StringBuilder();
-        String lifetimeBest = party.sqlAccess.getLifetimeBest(player.getNick());
+        String lifetimeBestScore = party.sqlAccess.getLifetimeBestScore(player.getNick());
 
         builder.append("lifetime_best\n");
 
-        for (int i = 0; i < allLifetimeBest.size() && i < Party.LIFETIME_BEST_LIMIT; i++)
+        for (int i = 0; i < allLifetimeBest.size() && i < RandomParty.LIFETIME_BEST_LIMIT; i++)
         {
             builder.append(i + 1).append(") ").append(allLifetimeBest.get(i)).append("\n");
         }
 
         builder.append("------------------------------------\n");
 
-        int place = allLifetimeBest.indexOf(lifetimeBest);
+        int place = -1;
+
+        for (var line : allLifetimeBest)
+        {
+            place = line.indexOf(player.getNick());
+
+            if (place > -1)
+            {
+                break;
+            }
+        }
 
         if (place > -1)
         {
-            builder.append(place + 1).append(") ").append(lifetimeBest);
+            builder.append(place + 1).append(") ").append(player.getNick()).append(" ").append(lifetimeBestScore);
         }
         else
         {
