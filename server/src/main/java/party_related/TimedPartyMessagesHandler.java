@@ -10,7 +10,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     @Override
     public String getJoinableMessage(String topic)
     {
-        return "connected\n" +
+        return "join_connected\n" +
                 Party.AUTOCOMPLETE_PRICE + "\n" +
                 Party.AUTOCUT_PRICE + "\n" +
                 "Welcome to the special quiz registration!\n" +
@@ -22,9 +22,9 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
     @Override
     public String getHostMessage()
     {
-        return "awaiting_connection\n" +
+        return "awaiting_connected\n" +
                 "Get ready and call your friends!\n" +
-                "The special quiz starts very soon!";
+                "The special quiz registration opens very soon!";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
 
         if (timeLeft > 0)
         {
-            response += "Special quiz starts in\n";
+            response += "Special quiz registration in\n";
 
             int seconds = timeLeft % 60;
             timeLeft /= 60;
@@ -64,8 +64,8 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
             timeLeft /= 24;
             int days = timeLeft;
 
-            int[] timeArray = new int[] {days, hours, minutes, seconds};
-            String[] aliasArray = new String[] {"d", "h", "m", "s"};
+            int[] timeArray = new int[]{days, hours, minutes, seconds};
+            String[] aliasArray = new String[]{"d", "h", "m", "s"};
 
             for (int i = 0; i < timeArray.length; i++)
             {
@@ -82,10 +82,15 @@ public class TimedPartyMessagesHandler extends PartyMessagesHandler
 
             response += "\nTopic: " + topic;
         }
-        else
+        else if (party.isLocked())
         {
             response += "The special quiz\n" +
                     "has started!";
+        }
+        else
+        {
+            response += "The special quiz\n" +
+                    "registration is in progress";
         }
 
         return response;

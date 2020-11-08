@@ -9,6 +9,7 @@ public class QuizLogger
     private static final String DIR_NAME = "log";
     private static final String LOG_NAME = "log";
     private static final int FILE_SIZE = 1024 * 1024; // 1 MB
+    private static final int FILE_NUM = 4;
 
     private Logger logger;
 
@@ -38,7 +39,7 @@ public class QuizLogger
                 directory.mkdir();
             }
 
-            fileTxt = new FileHandler(DIR_NAME + "/" + LOG_NAME, FILE_SIZE, 2, true);
+            fileTxt = new FileHandler(DIR_NAME + "/" + LOG_NAME, FILE_SIZE, FILE_NUM, true);
 
             formatterTxt = new SimpleFormatter();
 

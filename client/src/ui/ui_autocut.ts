@@ -4,6 +4,7 @@ import { UICallback } from '../app/ui_callback'
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
+import { Sounds } from "../app/sounds"
 
 export class UIAutocut
 {
@@ -11,8 +12,11 @@ export class UIAutocut
 
     private static uiCallback: UICallback
 
+    private static sounds: Sounds
+
     constructor(ui: UICallback)
     {
+        UIAutocut.sounds = Sounds.getInstance()
         UIAutocut.uiCallback = ui
 
         this.configAutocomplete()
@@ -56,6 +60,8 @@ export class UIAutocut
 
     private static activateAutocut(): void
     {
+        UIAutocut.sounds.playUseBooster()
+
         var toSend = "use_autocut\n" +
             DappClientSocket.playerWallet
 

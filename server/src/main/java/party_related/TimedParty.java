@@ -8,18 +8,17 @@ import java.util.*;
 
 public class TimedParty extends Party
 {
-    private final Controller controller;
-
     private final StopWatch<TimedParty> countdownTimer;
     private Calendar startTime;
 
     private int blockOtherPartiesTimeout;
+    private boolean sendHost;
 
     public TimedParty(Controller controller)
     {
-        super();
+        super(controller);
 
-        this.controller = controller;
+        sendHost = true;
         countdownTimer = new StopWatch<>(this, "timedQuizTimer");
     }
 
@@ -27,6 +26,7 @@ public class TimedParty extends Party
     {
         ready = false;
         category = null;
+        sendHost = true;
         countdownTimer.updateTime(-1);
 
         TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
@@ -98,6 +98,7 @@ public class TimedParty extends Party
             return;
         }
 
+        sendHost = true;
         category = categories.get(leastIndex);
         startTime = categories.get(leastIndex).getStartTime();
 
@@ -149,6 +150,7 @@ public class TimedParty extends Party
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
+        send(player, messagesHandler.getSuccessfulJoinMessage());
         send(player, messagesHandler.getHideMessage("control_buttons"));
 
         String response;
@@ -173,8 +175,7 @@ public class TimedParty extends Party
         {
             locked = true;
 
-            response = messagesHandler.getLockedMessage();
-            broadcast(idlePlayers, response);
+            broadcast(idlePlayers, messagesHandler.getFullMessage());
         }
     }
 
@@ -234,15 +235,19 @@ public class TimedParty extends Party
         if (timeLeft <= blockOtherPartiesTimeout)
         {
             controller.timedPartyIsWaiting();
-            broadcast(idlePlayers, messagesHandler.getHostMessage());
-        }
 
-        TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
+            if (sendHost)
+            {
+                broadcast(idlePlayers, messagesHandler.getHostMessage());
+                sendHost = false;
+            }
+        }
 
         if (category != null)
         {
-            String response = timedMessagesHandler.getTimedQuizTimerResponse(timeLeft, category.getAlias());
-            controller.broadcastAll(response);
+            TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
+
+            controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(timeLeft, category.getAlias()));
         }
     }
 
@@ -263,6 +268,19 @@ public class TimedParty extends Party
             questionnaire.loadQuestions(category.getCategory());
             controller.timedPartyIsJoinable();
             setJoinable();
+        }
+    }
+
+    @Override
+    synchronized protected void sendStartMessages()
+    {
+        super.sendStartMessages();
+
+        if (category != null)
+        {
+            TimedPartyMessagesHandler timedMessagesHandler = (TimedPartyMessagesHandler) messagesHandler;
+
+            controller.broadcastAll(timedMessagesHandler.getTimedQuizTimerResponse(-1, category.getAlias()));
         }
     }
 

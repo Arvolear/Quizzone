@@ -45,13 +45,20 @@ function getCategory($category)
     $DB_OUTPUT .= "</tr>";
 
     while ($row = mysqli_fetch_array($result)) {
+        $answer = (int)$row['answer'];
+
         $DB_OUTPUT .= "<tr>";
         $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
         $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
-        $DB_OUTPUT .= "<td>" . $row['variant1'] . "</td>";
-        $DB_OUTPUT .= "<td>" . $row['variant2'] . "</td>";
-        $DB_OUTPUT .= "<td>" . $row['variant3'] . "</td>";
-        $DB_OUTPUT .= "<td>" . $row['variant4'] . "</td>";
+
+        for ($i = 1; $i < 5; $i++) {
+            if ($answer == $i) {
+                $DB_OUTPUT .= "<td class=\"green_td\">" . $row['variant' . $i] . "</td>";
+            } else {
+                $DB_OUTPUT .= "<td>" . $row['variant' . $i] . "</td>";
+            }
+        }
+
         $DB_OUTPUT .= "<td>" . $row['answer'] . "</td>";
         $DB_OUTPUT .= "</tr>";
     }

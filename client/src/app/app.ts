@@ -7,6 +7,7 @@ import { ScreenDistanceSystem } from "../systems/screen_distance_system"
 import { ResultsSystem } from "../systems/results_system"
 import { TimerSystem } from "../systems/timer_system"
 import { UISystem } from "../systems/ui_system"
+import { SoundsTrackerSystem } from "../systems/sounds_tracker_system"
 
 export class App
 {    
@@ -15,7 +16,7 @@ export class App
     public static dappClientSocket: DappClientSocket   
 
     constructor()
-    {
+    {        
         this.configureScene()
         this.configureSocket()
         this.configureSystems()
@@ -43,5 +44,6 @@ export class App
         engine.addSystem(new ScreenDistanceSystem(App.dappClientSocket))
         engine.addSystem(new TimerSystem())
         engine.addSystem(new UISystem(this.scene.getUI()))
+        engine.addSystem(new SoundsTrackerSystem())
     }  
 }

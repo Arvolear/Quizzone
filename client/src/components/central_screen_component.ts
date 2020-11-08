@@ -10,6 +10,10 @@ export class CentralScreenComponent
 
     answerStatistics: AnswerStatistics
 
+    hasStarted: boolean
+    nowQuestion: boolean
+    nowAnswer: boolean
+
     connectedLoaded: boolean    
     nextQuestionLoaded: boolean
     answerLoaded: boolean
@@ -27,6 +31,10 @@ export class CentralScreenComponent
         this.connected = ""        
         this.question = null
         this.answer = ""        
+
+        this.hasStarted = false
+        this.nowQuestion = false
+        this.nowAnswer = false
 
         this.connectedLoaded = false        
         this.nextQuestionLoaded = false

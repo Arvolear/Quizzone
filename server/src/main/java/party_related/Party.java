@@ -1,6 +1,7 @@
 package party_related;
 
 import game.Client;
+import game.Controller;
 import game.IStopWatchCallback;
 import game.StopWatch;
 import log.QuizLogger;
@@ -14,6 +15,8 @@ import java.util.function.Function;
 
 public class Party implements IStopWatchCallback
 {
+    protected final Controller controller;
+
     public static final int LIFETIME_BEST_LIMIT = 9;
     public static final int PARTY_TOP_LIMIT = 5;
 
@@ -58,8 +61,10 @@ public class Party implements IStopWatchCallback
 
     protected boolean muteConnection = false;
 
-    public Party()
+    public Party(Controller controller)
     {
+        this.controller = controller;
+
         logger = QuizLogger.getInstance();
 
         idlePlayers = new ConcurrentHashMap<>();
@@ -123,7 +128,14 @@ public class Party implements IStopWatchCallback
             {
                 if (locked)
                 {
-                    send(player, messagesHandler.getLockedMessage());
+                    if (!started)
+                    {
+                        send(player, messagesHandler.getFullMessage());
+                    }
+                    else
+                    {
+                        send(player, messagesHandler.getLockedMessage());
+                    }
 
                     if (nowQuestion)
                     {
@@ -166,6 +178,7 @@ public class Party implements IStopWatchCallback
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
+        send(player, messagesHandler.getSuccessfulJoinMessage());
         send(player, messagesHandler.getHideMessage("control_buttons"));
 
         String response;
@@ -199,8 +212,7 @@ public class Party implements IStopWatchCallback
             locked = true;
             joinable = false;
 
-            response = messagesHandler.getLockedMessage();
-            broadcast(idlePlayers, response);
+            broadcast(idlePlayers, messagesHandler.getFullMessage());
         }
     }
 
@@ -272,8 +284,7 @@ public class Party implements IStopWatchCallback
             locked = true;
             nowQuestion = true;
 
-            broadcast(playingPlayers, messagesHandler.getStartPlayingMessage());
-            broadcast(idlePlayers, messagesHandler.getStartIdleMessage());
+            sendStartMessages();
             handleBoostersMessages();
 
             questionTimer.updateTime(questionDuration);
@@ -352,6 +363,8 @@ public class Party implements IStopWatchCallback
             {
                 currentQuestionAnswers.add(0);
             }
+
+            broadcast(idlePlayers, messagesHandler.getAnswerStatisticsSoundMessage());
         }
 
         int questionNum = Integer.parseInt(lines[1]);
@@ -526,6 +539,12 @@ public class Party implements IStopWatchCallback
         }
     }
 
+    synchronized protected void sendStartMessages()
+    {
+        broadcast(playingPlayers, messagesHandler.getStartPlayingMessage());
+        broadcast(idlePlayers, messagesHandler.getStartIdleMessage());
+    }
+
     synchronized private void sendFinishMessages()
     {
         for (var player: playingPlayers.values())
@@ -540,11 +559,13 @@ public class Party implements IStopWatchCallback
         for (var player: playingPlayers.values())
         {
             send(player, messagesHandler.getTopPartyResponse(player, false));
+            send(player, messagesHandler.getApplauds(player, false));
         }
 
         for (var player: idlePlayers.values())
         {
             send(player, messagesHandler.getTopPartyResponse(player, true));
+            send(player, messagesHandler.getApplauds(player, true));
         }
     }
 
@@ -584,7 +605,10 @@ public class Party implements IStopWatchCallback
 
             try
             {
-                player.getSession().getRemote().sendString(messagesHandler.getClearMessage());
+                if (player.getSession().isOpen())
+                {
+                    player.getSession().getRemote().sendString(messagesHandler.getClearMessage());
+                }
             }
             catch (Exception ex)
             {

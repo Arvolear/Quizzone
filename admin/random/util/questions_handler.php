@@ -63,13 +63,20 @@ function getCategory($category)
         $DB_OUTPUT .= "</tr>";
 
         while ($row = mysqli_fetch_array($result)) {
+            $answer = (int)$row['answer'];
+
             $DB_OUTPUT .= "<tr>";
             $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
             $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
-            $DB_OUTPUT .= "<td>" . $row['variant1'] . "</td>";
-            $DB_OUTPUT .= "<td>" . $row['variant2'] . "</td>";
-            $DB_OUTPUT .= "<td>" . $row['variant3'] . "</td>";
-            $DB_OUTPUT .= "<td>" . $row['variant4'] . "</td>";
+            
+            for ($i = 1; $i < 5; $i++) {
+                if ($answer == $i) {
+                    $DB_OUTPUT .= "<td class=\"green_td\">" . $row['variant' . $i] . "</td>";
+                } else {
+                    $DB_OUTPUT .= "<td>" . $row['variant' . $i] . "</td>";
+                }
+            }
+
             $DB_OUTPUT .= "<td>" . $row['answer'] . "</td>";
 
             $DB_OUTPUT .= "<td class=\"tableButton\">" . getDeleteCell($row['id']) . "</td>";
@@ -203,6 +210,7 @@ function deleteQuestion($category, $id)
 function importQuestions($file, $shuffle)
 {
     global $QUESTION_LIMIT;
+    global $DELIMITER;
 
     if (!checkFileSize($file)) {
         getFileSizeError();
@@ -222,7 +230,17 @@ function importQuestions($file, $shuffle)
         }
     }
 
-    $csv = array_map('str_getcsv', file($file['tmp_name']));
+    // $csv = array_map('str_getcsv', file($file['tmp_name']));
+
+    $tempFile = tmpfile();
+    fwrite($tempFile, file_get_contents($file['tmp_name']));
+    fseek($tempFile, 0);
+
+    $csv = array();
+
+    while (($csvColumns = fgetcsv($tempFile, 0, $DELIMITER)) !== false) {
+        $csv[] = $csvColumns;
+    }
 
     if (!empty($shuffle)) {
         shuffle($csv);

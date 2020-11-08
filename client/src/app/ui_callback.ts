@@ -37,6 +37,7 @@ export abstract class UICallback
     abstract hideAllWindows(): void
     abstract showUniversalError(message: string): void
     abstract showNotEnoughManaFundsError(): void
+    abstract showWaitStartError(message: string): void
     abstract showWaitEndError(message: string): void
     abstract hideError(): void
     abstract updateAutocompletePrice(): void
@@ -45,4 +46,5 @@ export abstract class UICallback
     abstract updateAutocutLeft(): void
     abstract updateLeaveMessage(): void
     abstract updateCanJoinTimer(): void
+    abstract buyBoostersIfShould(): void
 }

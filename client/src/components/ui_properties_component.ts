@@ -1,7 +1,8 @@
 @Component("uiPropertiesComponent")
 export class UIPropertiesComponent
 {
-    canJoin: boolean    
+    canJoin: boolean
+    beforeTimed: boolean 
     canLeave: boolean
     freeLeave: boolean
     member: boolean
@@ -29,8 +30,10 @@ export class UIPropertiesComponent
     public clear(): void
     {
         this.canJoin = false
+        this.beforeTimed = false
         this.canLeave = false
         this.freeLeave = true
+
         this.controlVisible = true
         this.autocompleteVisible = false
         this.autocutVisible = false   

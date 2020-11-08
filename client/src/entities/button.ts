@@ -18,7 +18,7 @@ export class Button
                 position: position,
                 rotation: rotation,
                 scale: scale
-        })
+            })
 
         let gltfShapePurple = new GLTFShape("models/tiles/tile_purple.glb")
         gltfShapePurple.withCollisions = true

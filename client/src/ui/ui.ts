@@ -11,12 +11,15 @@ import { UIAutocut } from './ui_autocut'
 import { UIMember } from './ui_member'
 import { UILeave } from './ui_leave'
 import { UIError } from './ui_error'
+import { Sounds } from '../app/sounds'
 
 export class UI extends UICallback
 {
     private static sceneCallback: SceneCallback
 
     private static ui: UI
+
+    private static sounds: Sounds
     
     private static uiCheckMetamask: UICheckMetamask
     private static uiStartUp: UIStartUp
@@ -32,6 +35,7 @@ export class UI extends UICallback
     {
         super()
 
+        UI.sounds = Sounds.getInstance()
         UI.canvas = new UICanvas()        
 
         this.configureProperties()
@@ -92,12 +96,16 @@ export class UI extends UICallback
     
     public showTopUp(): void
     {
+        UI.sounds.playOpenWindow()
+
         UI.ui.hideAllWindows()
         UI.uiTopUp.reopen()
     }
 
     public hideTopUp(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiBottom.hideHourglass()
         UI.uiCheckMetamask.close()
         UI.uiTopUp.close()
@@ -105,12 +113,16 @@ export class UI extends UICallback
 
     public showMember(): void
     {
+        UI.sounds.playOpenWindow()
+
         UI.ui.hideAllWindows()
         UI.uiMember.reopen()
     }
 
     public hideMember(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiBottom.hideHourglass()
         UI.uiCheckMetamask.close()
         UI.uiMember.close()
@@ -118,6 +130,8 @@ export class UI extends UICallback
 
     public showCheckMetamask(): void
     {
+        UI.sounds.playOpenWindow()
+
         UI.ui.hideAllWindows()
         UI.uiBottom.showHourglass()
         UI.uiCheckMetamask.reopen()
@@ -125,6 +139,8 @@ export class UI extends UICallback
 
     public hideCheckMetamask(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiCheckMetamask.close()
         UI.uiStartUp.close()
         UI.uiTopUp.close()
@@ -132,12 +148,16 @@ export class UI extends UICallback
 
     public showStartUp(): void
     {
+        UI.sounds.playOpenWindow()
+
         UI.ui.hideAllWindows()
         UI.uiStartUp.reopen()
     }
 
     public hideStartUp(): void
     {        
+        UI.sounds.playCloseWindow()
+
         UI.uiStartUp.close()
     }
 
@@ -148,12 +168,16 @@ export class UI extends UICallback
 
     public showAutocompleteWindow(): void
     {
+        UI.sounds.playOpenWindow()
+
         UI.ui.hideAllWindows()
         UI.uiAutocomplete.reopen()
     }
 
     public hideAutocompleteWindow(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiAutocomplete.close()
     }
 
@@ -170,12 +194,16 @@ export class UI extends UICallback
 
     public showAutocutWindow(): void
     {
+        UI.sounds.playOpenWindow()
+
         UI.ui.hideAllWindows()
         UI.uiAutocut.reopen()
     }
 
     public hideAutocutWindow(): void
     {
+        UI.sounds.playCloseWindow()
+        
         UI.uiAutocut.close()
     }
 
@@ -192,12 +220,16 @@ export class UI extends UICallback
 
     public showLeaveWindow(): void
     {
+        UI.sounds.playAlert()
+
         UI.ui.hideAllWindows()
         UI.uiLeave.reopen()
     }
 
     public hideLeaveWindow(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiLeave.close()
     }
 
@@ -251,24 +283,40 @@ export class UI extends UICallback
 
     public showUniversalError(message: string): void
     {
+        UI.sounds.playError()
+
         UI.ui.hideAllWindows()
         UI.uiError.showUniversalError(message)
     }
 
     public showNotEnoughManaFundsError(): void
     {
+        UI.sounds.playError()
+
         UI.ui.hideAllWindows()
         UI.uiError.showNotEnoughManaFundsError()
     }
 
+    public showWaitStartError(message: string): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showWaitStartError(message)
+    }   
+
     public showWaitEndError(message: string): void
     {
+        UI.sounds.playError()
+
         UI.ui.hideAllWindows()
         UI.uiError.showWaitEndError(message)
     }    
 
     public hideError(): void
     {
+        UI.sounds.playCloseWindow()
+
         UI.uiError.close()
     }
 
@@ -301,7 +349,7 @@ export class UI extends UICallback
     {
         if (!UI.properties.getComponent(UIPropertiesComponent).canJoin)
         {
-            UI.ui.hideStartUp()
+            UI.uiStartUp.close()
         }
         
         UI.uiStartUp.updateTimer()
@@ -310,5 +358,10 @@ export class UI extends UICallback
     public getProperties(): Entity
     {
         return UI.properties
+    }
+
+    public buyBoostersIfShould(): void
+    {
+        UIStartUp.buyBoosters()
     }
 }
