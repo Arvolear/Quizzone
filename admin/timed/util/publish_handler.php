@@ -35,7 +35,7 @@ function getCategory($category)
 
     $DB_OUTPUT .= "<table>";
     $DB_OUTPUT .= "<tr>";
-    $DB_OUTPUT .= "<th class=\"tableId\">Id</th>";
+    $DB_OUTPUT .= "<th class=\"tableId\">Ind</th>";
     $DB_OUTPUT .= "<th>Question</th>";
     $DB_OUTPUT .= "<th>Variant1</th>";
     $DB_OUTPUT .= "<th>Variant2</th>";
@@ -44,11 +44,15 @@ function getCategory($category)
     $DB_OUTPUT .= "<th>Answer</th>";
     $DB_OUTPUT .= "</tr>";
 
+    $index = 0;
+
     while ($row = mysqli_fetch_array($result)) {
+        $index++;
+
         $answer = (int)$row['answer'];
 
         $DB_OUTPUT .= "<tr>";
-        $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
+        $DB_OUTPUT .= "<td class=\"tableId\">" . $index . "</td>";
         $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
 
         for ($i = 1; $i < 5; $i++) {
@@ -98,10 +102,11 @@ function publish($category, $alias, $year, $month, $day, $hour, $minute, $second
     $sqlAdd = "INSERT INTO $DB.$MAIN_CATEGORIES VALUES (NULL, '$category', '$alias', '$date')";
     $sqlDelEdit = "DELETE FROM $DB.$EDIT_CATEGORIES WHERE category='$category'";
 
-    mysqli_query($conn, $sqlAdd);
-    mysqli_query($conn, $sqlDelEdit);
-
-    $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully published</p>";
+    if (mysqli_query($conn, $sqlAdd) && mysqli_query($conn, $sqlDelEdit)) {
+        $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully published</p>";
+    } else {
+        getSomethingWentWrongError();
+    }
 
     header("Location: timed_main.php", true, 303);
     exit();
@@ -134,10 +139,11 @@ function republish($category, $alias, $year, $month, $day, $hour, $minute, $seco
     $sqlAdd = "INSERT INTO $DB.$MAIN_CATEGORIES VALUES (NULL, '$category', '$alias', '$date')";
     $sqlDelSub = "DELETE FROM $DB.$FINISHED_CATEGORIES WHERE category='$category'";
 
-    mysqli_query($conn, $sqlAdd);
-    mysqli_query($conn, $sqlDelSub);
-
-    $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully republished</p>";
+    if (mysqli_query($conn, $sqlAdd) && mysqli_query($conn, $sqlDelSub)) {
+        $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully republished</p>";
+    } else {
+        getSomethingWentWrongError();
+    }
 
     header("Location: timed_main.php", true, 303);
     exit();
@@ -176,10 +182,11 @@ function unpublish($category)
     $sqlAddSub = "INSERT INTO $DB.$EDIT_CATEGORIES VALUES(NULL, '$category')";
     $sqlDel = "DELETE FROM $DB.$MAIN_CATEGORIES WHERE category='$category'";
 
-    mysqli_query($conn, $sqlAddSub);
-    mysqli_query($conn, $sqlDel);
-
-    $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully unpublished</p>";
+    if (mysqli_query($conn, $sqlAddSub) && mysqli_query($conn, $sqlDel)) {
+        $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully unpublished</p>";
+    } else {
+        getSomethingWentWrongError();
+    }
 
     header("Location: timed_main.php", true, 303);
     exit();

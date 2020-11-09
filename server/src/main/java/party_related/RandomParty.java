@@ -23,6 +23,7 @@ public class RandomParty extends AbstractParty
     protected boolean canJoin = false;
     protected boolean full = false;
     protected boolean started = false;
+    protected boolean reconnecting = false;
 
     protected boolean nowQuestion = false;
     protected boolean nowAnswer = false;
@@ -369,6 +370,11 @@ public class RandomParty extends AbstractParty
 
     synchronized public void finish()
     {
+        if (!started)
+        {
+            return;
+        }
+
         nowQuestion = false;
         nowAnswer = false;
         restart = false;
@@ -397,8 +403,10 @@ public class RandomParty extends AbstractParty
         questionsLoaded = false;
         canHost = true;
         canJoin = false;
-
         full = false;
+        started = false;
+
+        reconnecting = true;
 
         for (var player : tmpPlayers.keySet())
         {
@@ -419,7 +427,7 @@ public class RandomParty extends AbstractParty
             connectPlayer(player);
         }
 
-        started = false;
+        reconnecting = false;
     }
 
     @Override
@@ -438,5 +446,10 @@ public class RandomParty extends AbstractParty
     public boolean isStarted()
     {
         return started;
+    }
+
+    public boolean isReconnecting()
+    {
+        return reconnecting;
     }
 }

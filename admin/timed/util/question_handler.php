@@ -29,8 +29,7 @@ function getQuestion($category, $id)
     }
 
     $DB_OUTPUT .= "<table>";
-    $DB_OUTPUT .= "<tr>";
-    $DB_OUTPUT .= "<th class=\"tableId\">Id</th>";
+    $DB_OUTPUT .= "<tr>";    
     $DB_OUTPUT .= "<th>Question</th>";
     $DB_OUTPUT .= "<th>Variant1</th>";
     $DB_OUTPUT .= "<th>Variant2</th>";
@@ -44,8 +43,7 @@ function getQuestion($category, $id)
     
     $answer = (int)$row['answer'];
 
-    $DB_OUTPUT .= "<tr>";
-    $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
+    $DB_OUTPUT .= "<tr>";    
     $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
     
     for ($i = 1; $i < 5; $i++) {
@@ -88,9 +86,11 @@ function editQuestion($category, $id, $question, $variant1, $variant2, $variant3
                 answer=$answer
                 WHERE id=$id";
 
-    mysqli_query($conn, $sqlEdit);
-
-    $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Question successfully edited</p>";    
+    if (mysqli_query($conn, $sqlEdit)) {
+        $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Question successfully edited</p>";    
+    } else {
+        getSomethingWentWrongError();
+    }
 
     header("Location: timed_questions.php", true, 303);
     exit();

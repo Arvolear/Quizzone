@@ -362,6 +362,6 @@ export class UI extends UICallback
 
     public buyBoostersIfShould(): void
     {
-        UIStartUp.buyBoosters()
+        UI.uiStartUp.buyBoosters()
     }
 }

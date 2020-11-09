@@ -25,7 +25,7 @@ export class LifetimeBestScreen extends Screen
 
         this.right.addComponent(new Transform(
             {
-                position: new Vector3(position.x, position.y, position.z + 9),
+                position: new Vector3(position.x, position.y, position.z + 7.9),
                 rotation: rotation,
                 scale: scale
             }
@@ -37,7 +37,7 @@ export class LifetimeBestScreen extends Screen
         textShape.font = new Font(Fonts.SanFrancisco_Heavy)
         textShape.fontSize = 1
         textShape.color = Color3.White()
-        textShape.hTextAlign = "right"
+        textShape.hTextAlign = "left"
 
         this.right.addComponent(textShape)
         this.right.addComponent(new LifetimeBestScreenComponent())
@@ -49,7 +49,7 @@ export class LifetimeBestScreen extends Screen
 
         this.dash.addComponent(new Transform(
             {
-                position: new Vector3(position.x, position.y, position.z + 7.1),
+                position: new Vector3(position.x, position.y, position.z + 7.2),
                 rotation: rotation,
                 scale: scale
             }

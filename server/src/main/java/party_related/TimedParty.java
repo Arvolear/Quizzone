@@ -492,6 +492,11 @@ public class TimedParty extends AbstractParty
 
     synchronized public void finish()
     {
+        if (!started)
+        {
+            return;
+        }
+
         mute();
         finishLoadCategory();
 
@@ -525,6 +530,15 @@ public class TimedParty extends AbstractParty
         playingPlayers.clear();
         totalCorrect.clear();
 
+        canAwait = false;
+        canJoin = false;
+
+        full = false;
+        started = false;
+
+        shouldConnect = false;
+        shouldJoin = false;
+
         for (var player : tmpPlayers.keySet())
         {
             player.clear();
@@ -543,15 +557,6 @@ public class TimedParty extends AbstractParty
 
             connectPlayer(player);
         }
-
-        canAwait = false;
-        canJoin = false;
-
-        full = false;
-        started = false;
-
-        shouldConnect = false;
-        shouldJoin = false;
 
         controller.reconnectEveryoneFromTimed();
 

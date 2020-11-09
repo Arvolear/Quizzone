@@ -49,7 +49,7 @@ function getCategory($category)
     if (mysqli_num_rows($result) > 0) {
         $DB_OUTPUT .= "<table>";
         $DB_OUTPUT .= "<tr>";
-        $DB_OUTPUT .= "<th class=\"tableId\">Id</th>";
+        $DB_OUTPUT .= "<th class=\"tableId\">Ind</th>";
         $DB_OUTPUT .= "<th>Question</th>";
         $DB_OUTPUT .= "<th>Variant1</th>";
         $DB_OUTPUT .= "<th>Variant2</th>";
@@ -62,11 +62,15 @@ function getCategory($category)
 
         $DB_OUTPUT .= "</tr>";
 
+        $index = 0;
+
         while ($row = mysqli_fetch_array($result)) {
+            $index++;
+
             $answer = (int)$row['answer'];
 
             $DB_OUTPUT .= "<tr>";
-            $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
+            $DB_OUTPUT .= "<td class=\"tableId\">" . $index . "</td>";
             $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
             
             for ($i = 1; $i < 5; $i++) {
@@ -122,17 +126,19 @@ function addQuestion($category, $question, $variant1, $variant2, $variant3, $var
 
     $sqlIns = "INSERT INTO $DB.$category VALUES (NULL, '$question', '$variant4', '$variant3', '$variant2', '$variant1', $answer)";
 
-    mysqli_query($conn, $sqlIns);
+    if (mysqli_query($conn, $sqlIns)) {
+        $types = ['question', 'variant1', 'variant2', 'variant3', 'variant4', 'answer'];
 
-    $types = ['question', 'variant1', 'variant2', 'variant3', 'variant4', 'answer'];
+        for ($j = 0; $j < count($types); $j++) {
+            unset($_SESSION[$types[$j] . $index]);
+        }        
 
-    for ($j = 0; $j < count($types); $j++) {
-        unset($_SESSION[$types[$j] . $index]);
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question succesfully added</p>";
+    } else {
+        getSomethingWentWrongError();
     }
 
     $_SESSION['CLEAR_IMPORTED'] = false;
-
-    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question succesfully added</p>";
 
     getAll();
 }
@@ -198,9 +204,11 @@ function deleteQuestion($category, $id)
 
     $sqlDel = "DELETE FROM $DB.$category WHERE id='$id'";
 
-    mysqli_query($conn, $sqlDel);
-
-    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question successfully deleted</p>";
+    if (mysqli_query($conn, $sqlDel)) {
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question successfully deleted</p>";
+    } else {
+        getSomethingWentWrongError();
+    }
 
     $_SESSION['CLEAR_IMPORTED'] = false;
 

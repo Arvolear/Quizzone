@@ -14,12 +14,7 @@ import { AnswerStatistics } from "../entities_utils/answer_statistics"
 import { Sounds } from "./sounds"
 
 export class DappClientSocket
-{
-    public static playerWallet
-    public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
-    public static network = "mainnet"
-    // public static network = "goerli"
-
+{    
     // private static location = "wss://quiz-service.dapp-craft.com:8444"
     private static location = "ws://localhost:8080"
 

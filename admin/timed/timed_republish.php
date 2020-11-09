@@ -29,6 +29,8 @@ if (isDisplayEmpty()) {
 </head>
 
 <body>
+    <script src="js/utc_time.js"></script>
+
     <div class="other_header">
         <span class="back_page">
             <a href="timed_main.php">Back</a>
@@ -56,7 +58,10 @@ if (isDisplayEmpty()) {
                     <label for="republish_alias">Ingame name:</label>
                     <input class="blue_text" type="text" name="republish_alias">
 
-                    <p class="subtitle">Quiz UTC start time (all numbers):</p>
+                    <div class="time">
+                        <div class="subtitle time_left">Quiz UTC start time (all numbers):</div>
+                        <div class="subtitle time_right" id="utc_time">UTC time:</div>
+                    </div>
                     <div class="publish_columns">
                         <div class="column_left">
                             <label for="republish_year">Year:</label>
@@ -99,6 +104,10 @@ if (isDisplayEmpty()) {
         </div>
     </div>
 
+    <script>
+        displayTime();
+        setInterval(displayTime, 1000);
+    </script>
 </body>
 
 </html>

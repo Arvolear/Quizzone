@@ -1,12 +1,12 @@
 import { UICallback } from "../app/ui_callback"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
-import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { UIPropertiesComponent } from "../components/ui_properties_component";
-import { DappClientSocket } from "../app/dapp_client_socket";
 import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
 import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
-import { UIMember } from './ui_member';
 import { Sounds } from "../app/sounds";
+import { Membership } from "../blockchain/membership";
+import { General } from "../blockchain/general";
+import { BoostersBuy } from "../blockchain/boosters_buy";
 
 export class UIStartUp
 {
@@ -23,6 +23,10 @@ export class UIStartUp
 
     private static shallBuyBoosters: boolean
 
+    private static membership: Membership
+    private static general: General
+    private static boostersBuy: BoostersBuy
+
     constructor(ui: UICallback)
     {
         UIStartUp.sounds = Sounds.getInstance()
@@ -33,6 +37,10 @@ export class UIStartUp
         UIStartUp.autocutNum = 0
         UIStartUp.boostersToBuyValue = 0
         UIStartUp.shallBuyBoosters = false
+
+        UIStartUp.membership = Membership.getInstance(ui)
+        UIStartUp.general = General.getInstance()
+        UIStartUp.boostersBuy = BoostersBuy.getInstance(ui)
 
         this.configStartUp()
     }
@@ -158,7 +166,7 @@ export class UIStartUp
         {
             if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
             {
-                UIStartUp.checkBuyBoosters()
+                this.checkBuyBoosters()
             }
             else
             {                
@@ -172,44 +180,17 @@ export class UIStartUp
         }
     }
 
-    public static buyBoosters(): void
+    public buyBoosters(): void
     {
         if (!UIStartUp.shallBuyBoosters)
         {
             return
         }
 
-        const sendAutocomplete = executeTask(async () =>
-        {           
-            UIStartUp.uiCallback.showHourglass()   
-            UIStartUp.uiCallback.showCheckMetamask()      
-
-            await matic.sendMana(DappClientSocket.myWallet, UIStartUp.boostersToBuyValue, true, DappClientSocket.network).then(() => 
-            {
-                var toSend = "buy_boosters\n" +
-                    UIStartUp.autocompleteNum + "\n" +
-                    UIStartUp.autocutNum + "\n" +
-                    DappClientSocket.playerWallet
-
-                UICallback.dappClientSocket.send(toSend)
-
-                UIStartUp.sounds.playBuyBooster()
-
-                UIStartUp.uiCallback.hideAllWindows()
-                UIStartUp.uiCallback.showTick(8)
-                UIStartUp.shallBuyBoosters = false
-            }).catch((e) => 
-            {
-                UIStartUp.uiCallback.hideHourglass()
-                UIStartUp.uiCallback.hideAllWindows()
-                UIStartUp.shallBuyBoosters = false
-            })
-        })
-
-        sendAutocomplete.then()
+        UIStartUp.boostersBuy.buyBoosters(UIStartUp.boostersToBuyValue, UIStartUp.autocompleteNum, UIStartUp.autocutNum)
     }
 
-    private static checkBuyBoosters(): void
+    private checkBuyBoosters(): void
     {
         if (UIStartUp.maticBalance < UIStartUp.boostersToBuyValue)
         {
@@ -277,15 +258,12 @@ export class UIStartUp
 
         this.updateButtonText()
 
-        UIMember.checkMembership()
+        UIStartUp.membership.checkMembership()
 
         const balancePromise = executeTask(async () =>
         {
-            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
-        })
+            const balance = await UIStartUp.general.getMaticBalance()
 
-        balancePromise.then((balance) => 
-        {
             let valueMaticText = UIStartUp.startUp.elements[4] as CustomPromptText
 
             let balanceMaticStr = balance.l2.toString()
@@ -294,6 +272,8 @@ export class UIStartUp
             UIStartUp.maticBalance = balance.l2
             valueMaticText.text.value = "Your matic balance:  " + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + "  MANA"
         })
+
+        balancePromise.then()
 
         UIStartUp.startUp.reopen()
     }

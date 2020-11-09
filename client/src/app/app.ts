@@ -8,17 +8,21 @@ import { ResultsSystem } from "../systems/results_system"
 import { TimerSystem } from "../systems/timer_system"
 import { UISystem } from "../systems/ui_system"
 import { SoundsTrackerSystem } from "../systems/sounds_tracker_system"
+import { General } from "../blockchain/general"
 
 export class App
 {    
     private scene: Scene  
 
-    public static dappClientSocket: DappClientSocket   
+    private dappClientSocket: DappClientSocket
+    
+    private general: General
 
     constructor()
     {        
         this.configureScene()
         this.configureSocket()
+        this.configureBlockchain()
         this.configureSystems()
     }  
 
@@ -31,17 +35,22 @@ export class App
 
     private configureSocket(): void
     {
-        App.dappClientSocket = new DappClientSocket(this.scene)
+        this.dappClientSocket = new DappClientSocket(this.scene)
         
-        UI.setClientSocket(App.dappClientSocket)
+        UI.setClientSocket(this.dappClientSocket)
+    }
+
+    private configureBlockchain(): void
+    {
+        this.general = General.getInstance()    
     }
 
     private configureSystems(): void
     {
         engine.addSystem(new ButtonStandTrackerSystem(this.scene.getButtons()))
-        engine.addSystem(new QuestionsSystem(App.dappClientSocket))
+        engine.addSystem(new QuestionsSystem(this.dappClientSocket))
         engine.addSystem(new ResultsSystem())
-        engine.addSystem(new ScreenDistanceSystem(App.dappClientSocket))
+        engine.addSystem(new ScreenDistanceSystem(this.dappClientSocket))
         engine.addSystem(new TimerSystem())
         engine.addSystem(new UISystem(this.scene.getUI()))
         engine.addSystem(new SoundsTrackerSystem())

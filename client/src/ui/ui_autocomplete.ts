@@ -1,10 +1,10 @@
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import { UICallback } from '../app/ui_callback'
-import { DappClientSocket } from "../app/dapp_client_socket"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { Sounds } from "../app/sounds"
+import { General } from "../blockchain/general"
 
 export class UIAutocomplete
 {
@@ -63,7 +63,7 @@ export class UIAutocomplete
         UIAutocomplete.sounds.playUseBooster()
 
         var toSend = "use_autocomplete\n" +            
-            DappClientSocket.playerWallet
+            General.playerWallet
 
         UICallback.dappClientSocket.send(toSend)    
     }

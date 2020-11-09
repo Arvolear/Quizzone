@@ -121,6 +121,14 @@ function getFileExtensionError()
     Error: file extension must be either .txt or .csv</p>";
 }
 
+function getSomethingWentWrongError()
+{
+    global $ERROR;
+
+    $ERROR = "<p style=\"font-size:30px; text-align:center;\">
+    Error: something went wrong</p>";
+}
+
 function debug($message)
 {
     global $ERROR;
