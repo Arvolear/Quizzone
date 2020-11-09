@@ -385,19 +385,22 @@ public class PartyMessagesHandler
 
         builder.append("------------------------------------\n");
 
-        int place = -1;
+        int place = 0;
+        int index = -1;
 
         for (var line : allLifetimeBest)
         {
-            place = line.indexOf(player.getNick());
+            index = line.indexOf(player.getNick());
 
-            if (place > -1)
+            if (index > -1)
             {
                 break;
             }
+
+            place++;
         }
 
-        if (place > -1)
+        if (index > -1)
         {
             builder.append(place + 1).append(") ").append(player.getNick()).append(" ").append(lifetimeBestScore);
         }

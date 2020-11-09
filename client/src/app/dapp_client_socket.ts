@@ -15,8 +15,8 @@ import { Sounds } from "./sounds"
 
 export class DappClientSocket
 {    
-    // private static location = "wss://quiz-service.dapp-craft.com:8444"
-    private static location = "ws://localhost:8080"
+    private static location = "wss://quiz-service.dapp-craft.com:8444"
+    // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -288,7 +288,7 @@ export class DappClientSocket
                 }
             case "countdown":
                 {
-                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1) 
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
                     
                     uiComp.beforeTimed = false
 

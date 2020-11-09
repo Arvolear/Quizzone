@@ -223,7 +223,6 @@ public class TimedParty extends AbstractParty
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
-        send(player, timedMessagesHandler.getSuccessfulJoinMessage());
         send(player, timedMessagesHandler.getHideMessage("control_buttons"));
 
         if (playingPlayers.size() == startGameThreshold)
@@ -248,6 +247,8 @@ public class TimedParty extends AbstractParty
 
             broadcast(idlePlayers, timedMessagesHandler.getFullMessage());
         }
+
+        send(player, timedMessagesHandler.getSuccessfulJoinMessage());
     }
 
     @Override
@@ -260,38 +261,26 @@ public class TimedParty extends AbstractParty
         idlePlayers.remove(player);
         blackList.remove(player);
 
-        if (!canAwait || started)
+        if (canAwait || started)
         {
             return;
         }
 
         full = false;
+        canJoin = true;
 
         if (playingPlayers.size() >= startGameThreshold)
         {
-            canAwait = false;
-            canJoin = true;
-
             broadcast(playingPlayers, timedMessagesHandler.getCountdownStartMessage(category.getAlias()));
         }
         else
         {
-            canAwait = true;
-            canJoin = false;
-
             quizTimer.updateTime(-1);
 
             broadcast(playingPlayers, timedMessagesHandler.getCountdownWaitMessage(category.getAlias()));
         }
 
-        if (canJoin)
-        {
-            broadcast(idlePlayers, timedMessagesHandler.getJoinableMessage(category.getAlias()));
-        }
-        else if (canAwait)
-        {
-            broadcast(idlePlayers, timedMessagesHandler.getAwaitMessage());
-        }
+        broadcast(idlePlayers, timedMessagesHandler.getJoinableMessage(category.getAlias()));
     }
 
     @Override

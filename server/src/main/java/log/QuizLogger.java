@@ -64,6 +64,6 @@ public class QuizLogger
 
     public void log(String message)
     {
-        logger.info(message);
+        logger.info(message + "\n");
     }
 }

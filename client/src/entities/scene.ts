@@ -412,7 +412,7 @@ export class Scene extends SceneCallback
 
     private configButtonsCollisionTrigger(): void
     {
-        this.buttonsColliderTrigger = new ButtonsColliderTrigger(this.ui, new Vector3(16, 4, 19.1), new Quaternion(0, 0, 0, 1), new Vector3(15.1, 8, 15.1))
+        this.buttonsColliderTrigger = new ButtonsColliderTrigger(this.ui, new Vector3(16, 4, 19.1), new Quaternion(0, 0, 0, 1), new Vector3(15.1, 8, 15.15))
 
         this.buttonsColliderTrigger.addToEngine()
     }

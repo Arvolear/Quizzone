@@ -128,7 +128,6 @@ public class RandomParty extends AbstractParty
         idlePlayers.remove(player);
         totalCorrect.put(player, 0);
 
-        send(player, messagesHandler.getSuccessfulJoinMessage());
         send(player, messagesHandler.getHideMessage("control_buttons"));
 
         if (playingPlayers.size() == 1)
@@ -145,6 +144,7 @@ public class RandomParty extends AbstractParty
         if (playingPlayers.size() >= startGameThreshold)
         {
             quizTimer.updateTime(startTimeout);
+
             broadcast(playingPlayers, messagesHandler.getCountdownStartMessage(category.getAlias()));
         }
         else
@@ -160,6 +160,8 @@ public class RandomParty extends AbstractParty
 
             broadcast(idlePlayers, messagesHandler.getFullMessage());
         }
+
+        send(player, messagesHandler.getSuccessfulJoinMessage());
     }
 
     synchronized public void disconnectPlayer(Client player)
@@ -200,6 +202,7 @@ public class RandomParty extends AbstractParty
         else
         {
             quizTimer.updateTime(-1);
+
             broadcast(playingPlayers, messagesHandler.getCountdownWaitMessage(category.getAlias()));
         }
     }
