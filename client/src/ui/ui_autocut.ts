@@ -5,6 +5,7 @@ import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { Sounds } from "../app/sounds"
 import { General } from "../blockchain/general"
+import { AppCallback } from '../app/app_callback'
 
 export class UIAutocut
 {
@@ -65,7 +66,7 @@ export class UIAutocut
         var toSend = "use_autocut\n" +
             General.playerWallet
 
-        UICallback.dappClientSocket.send(toSend)
+        AppCallback.dappClientSocket.send(toSend)
     }
 
     public updateAutocutLeft(): void

@@ -1,6 +1,5 @@
 import { UICallback } from '../app/ui_callback'
 import { SceneCallback } from '../app/scene_callback'
-import { DappClientSocket } from "../app/dapp_client_socket"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UIStartUp } from "./ui_start_up"
 import { UICheckMetamask } from "./ui_check_metamask"
@@ -39,12 +38,7 @@ export class UI extends UICallback
         UI.canvas = new UICanvas()        
 
         this.configureProperties()
-    }
-
-    public static setClientSocket(dappClientSocket: DappClientSocket): void
-    {
-        UICallback.dappClientSocket = dappClientSocket
-    }
+    }    
 
     public static setSceneCallback(sceneCallback: SceneCallback)
     {

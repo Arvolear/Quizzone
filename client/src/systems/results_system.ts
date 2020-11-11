@@ -62,6 +62,7 @@ export class ResultsSystem
         let textRight = this.lifetimeBestScreenRight.getComponent(TextShape)
         let textDash = this.lifetimeBestScreenDash.getComponent(TextShape)
 
+        var isPlayer = bestComp.isPlayer
         var allBest: Array<String> = bestComp.lifetimeBest 
 
         var maxLength = 0
@@ -77,6 +78,11 @@ export class ResultsSystem
                 continue
             }
 
+            if (!isPlayer && i == allBest.length - 1)
+            {
+                continue
+            }
+
             maxLength = Math.max(maxLength, allBest[i].substr(0, allBest[i].lastIndexOf(" ")).length)
         }
 
@@ -87,6 +93,15 @@ export class ResultsSystem
                 mainRes += allBest[i] + "\n"       
                 rightRes += "\n"
                 dashRes += "\n"
+
+                continue
+            }
+
+            if (!isPlayer && i == allBest.length - 1)
+            {
+                mainRes += "   " + allBest[i]
+                rightRes += "\n"
+                dashRes += "\n"                
 
                 continue
             }

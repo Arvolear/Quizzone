@@ -1,9 +1,6 @@
-import { DappClientSocket } from "./dapp_client_socket"
-
 export abstract class UICallback
 {
-    public static properties: Entity
-    public static dappClientSocket: DappClientSocket
+    public static properties: Entity    
     public static canvas: UICanvas
 
     abstract showInfo(): void

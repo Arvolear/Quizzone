@@ -2,6 +2,7 @@ import { UICallback } from "../app/ui_callback"
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { Sounds } from "../app/sounds";
 import { General } from "../blockchain/general";
+import { AppCallback } from "../app/app_callback";
 
 export class BoostersBuy
 {
@@ -40,7 +41,7 @@ export class BoostersBuy
                     autocutNum + "\n" +
                     General.playerWallet
 
-                UICallback.dappClientSocket.send(toSend)
+                AppCallback.dappClientSocket.send(toSend)
 
                 BoostersBuy.sounds.playBuyBooster()
 

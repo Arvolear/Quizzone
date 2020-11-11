@@ -9,17 +9,18 @@ import { TimerSystem } from "../systems/timer_system"
 import { UISystem } from "../systems/ui_system"
 import { SoundsTrackerSystem } from "../systems/sounds_tracker_system"
 import { General } from "../blockchain/general"
+import { AppCallback } from "./app_callback"
 
-export class App
+export class App extends AppCallback
 {    
-    private scene: Scene  
-
-    private dappClientSocket: DappClientSocket
+    private scene: Scene      
     
     private general: General
 
     constructor()
     {        
+        super()
+
         this.configureScene()
         this.configureSocket()
         this.configureBlockchain()
@@ -35,9 +36,7 @@ export class App
 
     private configureSocket(): void
     {
-        this.dappClientSocket = new DappClientSocket(this.scene)
-        
-        UI.setClientSocket(this.dappClientSocket)
+        AppCallback.dappClientSocket = new DappClientSocket(this.scene)        
     }
 
     private configureBlockchain(): void
@@ -48,9 +47,9 @@ export class App
     private configureSystems(): void
     {
         engine.addSystem(new ButtonStandTrackerSystem(this.scene.getButtons()))
-        engine.addSystem(new QuestionsSystem(this.dappClientSocket))
+        engine.addSystem(new QuestionsSystem(AppCallback.dappClientSocket))
         engine.addSystem(new ResultsSystem())
-        engine.addSystem(new ScreenDistanceSystem(this.dappClientSocket))
+        engine.addSystem(new ScreenDistanceSystem(AppCallback.dappClientSocket))
         engine.addSystem(new TimerSystem())
         engine.addSystem(new UISystem(this.scene.getUI()))
         engine.addSystem(new SoundsTrackerSystem())

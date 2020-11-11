@@ -5,6 +5,7 @@ import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { Sounds } from "../app/sounds"
 import { General } from "../blockchain/general"
+import { AppCallback } from "../app/app_callback"
 
 export class UIAutocomplete
 {
@@ -65,7 +66,7 @@ export class UIAutocomplete
         var toSend = "use_autocomplete\n" +            
             General.playerWallet
 
-        UICallback.dappClientSocket.send(toSend)    
+        AppCallback.dappClientSocket.send(toSend)    
     }
 
     public updateAutocompleteLeft(): void

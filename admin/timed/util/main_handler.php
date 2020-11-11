@@ -160,9 +160,13 @@ function addCategory($category)
 
     $sqlAdd = "INSERT INTO $DB.$EDIT_CATEGORIES VALUES (NULL, '$category')";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlCreate) && mysqli_query($conn, $sqlAdd)) {
-        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully added</p>";
+        mysqli_commit($conn);
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully added</p>";        
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 
@@ -207,12 +211,16 @@ function deleteCategory($category)
     $sqlDelFinished = "DELETE FROM $DB.$FINISHED_CATEGORIES WHERE category='$category'";
     $sqlDrop = "DROP TABLE $DB.$category";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlDel) &&
     mysqli_query($conn, $sqlDelEdit) &&
     mysqli_query($conn, $sqlDelFinished) &&
     mysqli_query($conn, $sqlDrop)) {
+        mysqli_commit($conn);
         $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully deleted</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 

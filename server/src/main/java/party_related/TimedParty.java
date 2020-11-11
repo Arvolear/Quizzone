@@ -261,7 +261,7 @@ public class TimedParty extends AbstractParty
         idlePlayers.remove(player);
         blackList.remove(player);
 
-        if (canAwait || started)
+        if (category == null || canAwait || started)
         {
             return;
         }

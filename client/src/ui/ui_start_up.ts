@@ -7,6 +7,7 @@ import { Sounds } from "../app/sounds";
 import { Membership } from "../blockchain/membership";
 import { General } from "../blockchain/general";
 import { BoostersBuy } from "../blockchain/boosters_buy";
+import { AppCallback } from "../app/app_callback";
 
 export class UIStartUp
 {
@@ -171,7 +172,7 @@ export class UIStartUp
             else
             {                
                 UIStartUp.uiCallback.hideAllWindows()
-                UICallback.dappClientSocket.join()                
+                AppCallback.dappClientSocket.join()                
             }
         }
         else
@@ -199,7 +200,7 @@ export class UIStartUp
         else
         {        
             UIStartUp.shallBuyBoosters = true
-            UICallback.dappClientSocket.join()                           
+            AppCallback.dappClientSocket.join()                           
         }
     }
 

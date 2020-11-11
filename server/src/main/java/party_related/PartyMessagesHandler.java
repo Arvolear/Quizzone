@@ -378,13 +378,6 @@ public class PartyMessagesHandler
 
         builder.append("lifetime_best\n");
 
-        for (int i = 0; i < allLifetimeBest.size() && i < RandomParty.LIFETIME_BEST_LIMIT; i++)
-        {
-            builder.append(i + 1).append(") ").append(allLifetimeBest.get(i)).append("\n");
-        }
-
-        builder.append("------------------------------------\n");
-
         int place = 0;
         int index = -1;
 
@@ -402,11 +395,27 @@ public class PartyMessagesHandler
 
         if (index > -1)
         {
+            builder.append("true\n");
+        }
+        else
+        {
+            builder.append("false\n");
+        }
+
+        for (int i = 0; i < allLifetimeBest.size() && i < RandomParty.LIFETIME_BEST_LIMIT; i++)
+        {
+            builder.append(i + 1).append(") ").append(allLifetimeBest.get(i)).append("\n");
+        }
+
+        builder.append("------------------------------------\n");
+
+        if (index > -1)
+        {
             builder.append(place + 1).append(") ").append(player.getNick()).append(" ").append(lifetimeBestScore);
         }
         else
         {
-            builder.append("Complete a quiz to see your place!");
+            builder.append("You haven't played any quizzes");
         }
 
         return builder.toString();

@@ -86,9 +86,13 @@ function editQuestion($category, $id, $question, $variant1, $variant2, $variant3
                 answer=$answer
                 WHERE id=$id";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlEdit)) {
+        mysqli_commit($conn);
         $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Question successfully edited</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 

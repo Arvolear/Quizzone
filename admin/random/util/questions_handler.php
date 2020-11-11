@@ -126,15 +126,19 @@ function addQuestion($category, $question, $variant1, $variant2, $variant3, $var
 
     $sqlIns = "INSERT INTO $DB.$category VALUES (NULL, '$question', '$variant4', '$variant3', '$variant2', '$variant1', $answer)";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlIns)) {
         $types = ['question', 'variant1', 'variant2', 'variant3', 'variant4', 'answer'];
 
         for ($j = 0; $j < count($types); $j++) {
             unset($_SESSION[$types[$j] . $index]);
-        }        
+        }
 
+        mysqli_commit($conn);
         $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question succesfully added</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 
@@ -204,9 +208,13 @@ function deleteQuestion($category, $id)
 
     $sqlDel = "DELETE FROM $DB.$category WHERE id='$id'";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlDel)) {
+        mysqli_commit($conn);
         $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question successfully deleted</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 

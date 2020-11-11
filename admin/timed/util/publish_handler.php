@@ -102,9 +102,13 @@ function publish($category, $alias, $year, $month, $day, $hour, $minute, $second
     $sqlAdd = "INSERT INTO $DB.$MAIN_CATEGORIES VALUES (NULL, '$category', '$alias', '$date')";
     $sqlDelEdit = "DELETE FROM $DB.$EDIT_CATEGORIES WHERE category='$category'";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlAdd) && mysqli_query($conn, $sqlDelEdit)) {
+        mysqli_commit($conn);
         $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully published</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 
@@ -139,9 +143,13 @@ function republish($category, $alias, $year, $month, $day, $hour, $minute, $seco
     $sqlAdd = "INSERT INTO $DB.$MAIN_CATEGORIES VALUES (NULL, '$category', '$alias', '$date')";
     $sqlDelSub = "DELETE FROM $DB.$FINISHED_CATEGORIES WHERE category='$category'";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlAdd) && mysqli_query($conn, $sqlDelSub)) {
+        mysqli_commit($conn);
         $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully republished</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 
@@ -182,9 +190,13 @@ function unpublish($category)
     $sqlAddSub = "INSERT INTO $DB.$EDIT_CATEGORIES VALUES(NULL, '$category')";
     $sqlDel = "DELETE FROM $DB.$MAIN_CATEGORIES WHERE category='$category'";
 
+    mysqli_begin_transaction($conn);
+
     if (mysqli_query($conn, $sqlAddSub) && mysqli_query($conn, $sqlDel)) {
+        mysqli_commit($conn);
         $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully unpublished</p>";
     } else {
+        mysqli_rollback($conn);
         getSomethingWentWrongError();
     }
 

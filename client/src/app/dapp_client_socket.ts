@@ -15,8 +15,8 @@ import { Sounds } from "./sounds"
 
 export class DappClientSocket
 {    
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private socket: WebSocket
@@ -559,9 +559,11 @@ export class DappClientSocket
                 }
             case "lifetime_best":
                 {
-                    var allBest = DappClientSocket.getLifetimeBestFrom(lines, 1)
-
+                    var allBest = DappClientSocket.getLifetimeBestFrom(lines, 2)
+                    var isPlayer = (lines[1] == "true")
+                    
                     bestComp.lifetimeBest = allBest
+                    bestComp.isPlayer = isPlayer
                     bestComp.lifetimeBestLoaded = true
 
                     break
