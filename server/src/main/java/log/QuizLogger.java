@@ -6,7 +6,8 @@ import java.util.logging.*;
 public class QuizLogger
 {
     private static QuizLogger quizLogger;
-    private static final String DIR_NAME = "log";
+
+    public static final String DIR_NAME = "log";
     private static final String LOG_NAME = "log";
     private static final int FILE_SIZE = 1024 * 1024; // 1 MB
     private static final int FILE_NUM = 4;
@@ -62,7 +63,7 @@ public class QuizLogger
         return quizLogger;
     }
 
-    public void log(String message)
+    synchronized public void log(String message)
     {
         logger.info(message + "\n");
     }

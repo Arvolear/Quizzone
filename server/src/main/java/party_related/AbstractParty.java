@@ -3,10 +3,12 @@ package party_related;
 import game.Client;
 import game.IStopWatchCallback;
 import game.StopWatch;
+import log.ElasticLogger;
 import log.QuizLogger;
 import sql.SQLAccess;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -18,7 +20,8 @@ abstract public class AbstractParty implements IStopWatchCallback
     public static final int AUTOCOMPLETE_PRICE = 0;
     public static final int AUTOCUT_PRICE = 0;
 
-    protected final QuizLogger logger;
+    protected final QuizLogger quizLogger;
+    protected final ElasticLogger elasticLogger;
 
     protected final Questionnaire questionnaire;
     protected final SQLAccess sqlAccess;
@@ -44,7 +47,8 @@ abstract public class AbstractParty implements IStopWatchCallback
 
     public AbstractParty()
     {
-        logger = QuizLogger.getInstance();
+        quizLogger = QuizLogger.getInstance();
+        elasticLogger = ElasticLogger.getInstance();
 
         idlePlayers = new ConcurrentHashMap<>();
         playingPlayers = new ConcurrentHashMap<>();
@@ -59,6 +63,39 @@ abstract public class AbstractParty implements IStopWatchCallback
 
         quizTimer = new StopWatch<>(this, "quizTimer");
     }
+
+    public String getPartyBestSorted()
+    {
+        StringBuilder builder = new StringBuilder();
+        ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(totalCorrect.entrySet());
+
+        topParty.sort((left, right) ->
+        {
+            int res = right.getValue() - left.getValue();
+
+            return res == 0 ?
+                    playingPlayers.get(left.getKey()).getNick().compareTo(playingPlayers.get(right.getKey()).getNick()) :
+                    res;
+        });
+
+        int place = 1;
+
+        for (var pair : topParty)
+        {
+            builder.append(place).append(") ").
+                    append(pair.getKey().getNick()).
+                    append(" -----> ").append(pair.getValue()).
+                    append("/").
+                    append(getQuestionnaire().getTotalNumber()).
+                    append("\n");
+
+            place++;
+        }
+
+        return builder.toString();
+    }
+
+    abstract public void logResults();
 
     @Override
     abstract public void updateTimer(String name, int timeLeft);
@@ -114,7 +151,7 @@ abstract public class AbstractParty implements IStopWatchCallback
             {
                 player.getSession().getRemote().sendString(message);
 
-                logger.log("SENT: " + message + " TO: " +
+                quizLogger.log("SENT: " + message + " TO: " +
                         (idlePlayers.get(player) == null ?
                                 playingPlayers.get(player).getNick() :
                                 idlePlayers.get(player).getNick()));

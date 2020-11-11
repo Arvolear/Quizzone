@@ -415,7 +415,7 @@ public class PartyMessagesHandler
         }
         else
         {
-            builder.append("You haven't played any quizzes");
+            builder.append("You've played no special quizzes");
         }
 
         return builder.toString();

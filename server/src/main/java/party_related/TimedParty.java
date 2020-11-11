@@ -3,7 +3,14 @@ package party_related;
 import game.Client;
 import game.Controller;
 import game.StopWatch;
+import log.QuizLogger;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -153,6 +160,36 @@ public class TimedParty extends AbstractParty
     }
 
     @Override
+    synchronized public void logResults()
+    {
+        File directory = new File(QuizLogger.DIR_NAME + "/" + "timed_quiz_results");
+
+        if (!directory.exists())
+        {
+            directory.mkdir();
+        }
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        File results = new File(directory.getPath() + "/" + now.toString());
+
+        String partyBest = getPartyBestSorted();
+
+        try
+        {
+            PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(results)));
+            writer.write(partyBest);
+            writer.close();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        elasticLogger.log("timed_quiz_results", partyBest);
+    }
+
+    @Override
     synchronized public void connectPlayer(Client player)
     {
         if (idlePlayers.containsKey(player))
@@ -257,11 +294,10 @@ public class TimedParty extends AbstractParty
         updateBestFor(player);
 
         playingPlayers.remove(player);
-        totalCorrect.remove(player);
         idlePlayers.remove(player);
         blackList.remove(player);
 
-        if (category == null || canAwait || started)
+        if (!questionsLoaded || canAwait || started)
         {
             return;
         }
@@ -485,6 +521,8 @@ public class TimedParty extends AbstractParty
         {
             return;
         }
+
+        logResults();
 
         mute();
         finishLoadCategory();

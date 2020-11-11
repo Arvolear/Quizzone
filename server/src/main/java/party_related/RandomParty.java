@@ -1,10 +1,15 @@
 package party_related;
 
 import game.Client;
+import log.QuizLogger;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.TreeMap;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RandomParty extends AbstractParty
@@ -64,6 +69,37 @@ public class RandomParty extends AbstractParty
         messagesHandler = new PartyMessagesHandler(this);
     }
 
+    @Override
+    synchronized public void logResults()
+    {
+        File directory = new File(QuizLogger.DIR_NAME + "/" + "random_quiz_results");
+
+        if (!directory.exists())
+        {
+            directory.mkdir();
+        }
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        File results = new File(directory.getPath() + "/" + now.toString());
+
+        String partyBest = getPartyBestSorted();
+
+        try
+        {
+            PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(results)));
+            writer.write(partyBest);
+            writer.close();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        elasticLogger.log("random_quiz_results", partyBest);
+    }
+
+    @Override
     synchronized public void connectPlayer(Client player)
     {
         if (idlePlayers.containsKey(player))
@@ -117,6 +153,7 @@ public class RandomParty extends AbstractParty
         }
     }
 
+    @Override
     synchronized public void joinPlayer(Client player)
     {
         if (full || started || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
@@ -164,12 +201,12 @@ public class RandomParty extends AbstractParty
         send(player, messagesHandler.getSuccessfulJoinMessage());
     }
 
+    @Override
     synchronized public void disconnectPlayer(Client player)
     {
         player.clear();
 
         playingPlayers.remove(player);
-        totalCorrect.remove(player);
         idlePlayers.remove(player);
         blackList.remove(player);
 
@@ -377,6 +414,8 @@ public class RandomParty extends AbstractParty
         {
             return;
         }
+
+        logResults();
 
         nowQuestion = false;
         nowAnswer = false;

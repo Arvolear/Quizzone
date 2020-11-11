@@ -651,6 +651,8 @@ export class DappClientSocket
         let leftScreenMain = engine.getComponentGroup(LeftScreenComponent).entities[0]
         let topPartyScreenMain = engine.getComponentGroup(TopPartyScreenComponent).entities[0]
         let lifetimeBestScreenMain = engine.getComponentGroup(LifetimeBestScreenComponent).entities[0]
+        let lifetimeBestScreenRight = engine.getComponentGroup(LifetimeBestScreenComponent).entities[1]
+        let lifetimeBestScreenDash = engine.getComponentGroup(LifetimeBestScreenComponent).entities[2]
         let timedQuizScreenMain = engine.getComponentGroup(TimedQuizScreenComponent).entities[0]
 
         let uiProperties = engine.getComponentGroup(UIPropertiesComponent).entities[0]
@@ -665,6 +667,8 @@ export class DappClientSocket
         rightScreenMain.getComponent(RightScreenComponent).clear()
         topPartyScreenMain.getComponent(TopPartyScreenComponent).clear()
         lifetimeBestScreenMain.getComponent(LifetimeBestScreenComponent).clear()
+        lifetimeBestScreenRight.getComponent(LifetimeBestScreenComponent).clear()
+        lifetimeBestScreenDash.getComponent(LifetimeBestScreenComponent).clear()
         timedQuizScreenMain.getComponent(TimedQuizScreenComponent).clear()
 
         if (event.code != DappClientSocket.DISTANCE_CODE &&
@@ -688,6 +692,8 @@ export class DappClientSocket
         rightScreenMain.getComponent(TextShape).value = ""
         topPartyScreenMain.getComponent(TextShape).value = ""
         lifetimeBestScreenMain.getComponent(TextShape).value = ""
+        lifetimeBestScreenRight.getComponent(TextShape).value = ""
+        lifetimeBestScreenDash.getComponent(TextShape).value = ""
         timedQuizScreenMain.getComponent(TextShape).value = ""
 
         DappClientSocket.sceneCallback.turnOffButtonCollisions()

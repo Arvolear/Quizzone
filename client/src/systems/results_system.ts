@@ -95,13 +95,13 @@ export class ResultsSystem
                 dashRes += "\n"
 
                 continue
-            }
+            }   
 
             if (!isPlayer && i == allBest.length - 1)
             {
-                mainRes += "   " + allBest[i]
+                mainRes += "  " + allBest[i]
                 rightRes += "\n"
-                dashRes += "\n"                
+                dashRes += "\n"           
 
                 continue
             }

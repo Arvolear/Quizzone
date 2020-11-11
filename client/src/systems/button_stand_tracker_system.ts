@@ -16,7 +16,7 @@ export class ButtonStandTrackerSystem implements ISystem
     private topPartyScreenMain: IEntity
     private centralScreenMain: IEntity
 
-    private static DISTANCE: number = 4.7
+    private static DISTANCE: number = 4.6
 
     constructor(buttonsGroup: Array<Button>)
     {
