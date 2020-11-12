@@ -84,6 +84,8 @@ abstract public class AbstractParty implements IStopWatchCallback
         {
             builder.append(place).append(") ").
                     append(pair.getKey().getNick()).
+                    append(" ").
+                    append(pair.getKey().getWallet()).
                     append(" -----> ").append(pair.getValue()).
                     append("/").
                     append(getQuestionnaire().getTotalNumber()).

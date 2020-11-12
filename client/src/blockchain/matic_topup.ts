@@ -1,5 +1,5 @@
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import { General } from '../blockchain/general'
 
 export class MaticTopUp

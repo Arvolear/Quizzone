@@ -29,39 +29,44 @@ public class ElasticLogger
 
     synchronized public void log(String action, String message)
     {
-        try
+        Thread logger = new Thread(() ->
         {
-            URL url = new URL(URL);
-            URLConnection con = url.openConnection();
-            HttpURLConnection http = (HttpURLConnection) con;
-            http.setRequestMethod("POST");
-            http.setDoOutput(true);
-
-            byte[] out = ("{\n" +
-                    "\"action\"" + ":" + "\"" + action.trim() + "\"" +
-                    ",\n" +
-                    "\"time\"" + ":" + "\"" + Instant.now() + "\"" +
-                    ",\n" +
-                    "\"message\"" + ":" + "\"" + message.trim() + "\"" +
-                    "\n}"
-            ).getBytes(StandardCharsets.UTF_8);
-
-            int length = out.length;
-
-            http.setFixedLengthStreamingMode(length);
-            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            http.connect();
-
-            try (OutputStream os = http.getOutputStream())
+            try
             {
-                os.write(out);
-            }
+                URL url = new URL(URL);
+                URLConnection con = url.openConnection();
+                HttpURLConnection http = (HttpURLConnection) con;
+                http.setRequestMethod("POST");
+                http.setDoOutput(true);
 
-            http.disconnect();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
+                byte[] out = ("{\n" +
+                        "\"action\"" + ":" + "\"" + action.trim() + "\"" +
+                        ",\n" +
+                        "\"results\"" + ":" + "\"" + message.trim() + "\"" +
+                        ",\n" +
+                        "\"time\"" + ":" + "\"" + Instant.now() + "\"" +
+                        "\n}"
+                ).getBytes(StandardCharsets.UTF_8);
+
+                int length = out.length;
+
+                http.setFixedLengthStreamingMode(length);
+                http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                http.connect();
+
+                try (OutputStream os = http.getOutputStream())
+                {
+                    os.write(out);
+                }
+
+                http.disconnect();
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+        });
+
+        logger.start();
     }
 }

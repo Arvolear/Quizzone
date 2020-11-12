@@ -1,5 +1,5 @@
-import { UICallback } from '../app/ui_callback'
-import { SceneCallback } from '../app/scene_callback'
+import { UICallback } from '../callbacks/ui_callback'
+import { SceneCallback } from '../callbacks/scene_callback'
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UIStartUp } from "./ui_start_up"
 import { UICheckMetamask } from "./ui_check_metamask"

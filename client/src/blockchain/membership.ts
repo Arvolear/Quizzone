@@ -3,9 +3,10 @@ import { abi as abiBuy } from '../../../ethereum/contracts/abi_opensea_buy'
 import { abi as abiToken } from '../../../ethereum/contracts/abi_opensea_token'
 import { getProvider } from '@decentraland/web3-provider'
 import { delay } from '../../node_modules/@dcl/l2-utils/utils/index'
-import { UICallback } from '../app/ui_callback'
+import { UICallback } from '../callbacks/ui_callback'
 import { UIPropertiesComponent } from '../components/ui_properties_component'
 import { General } from './general'
+import { ElasticLogger } from '../log/elastic_logger'
 
 export class Membership
 {
@@ -16,10 +17,12 @@ export class Membership
     private static TOKEN_ID = 42 // opensea
 
     private static uiCallback: UICallback
+    private static elasticLogger: ElasticLogger
 
     private constructor(ui: UICallback)
     {
         Membership.uiCallback = ui
+        Membership.elasticLogger = ElasticLogger.getInstance()
 
         this.configurePlayerData()
     }
@@ -73,6 +76,16 @@ export class Membership
         membershipPromise.then()
     }
 
+    private logBuyMembership(membershipPrice: number, receipt: string)
+    {
+        let message = {}
+
+        message['membership_price'] = membershipPrice
+        message['tx_id'] = receipt
+
+        Membership.elasticLogger.log("buy_membership", message)
+    }
+
     public buyMembership(): void
     {
         const buyMembershipPromise = executeTask(async () =>
@@ -104,6 +117,8 @@ export class Membership
 
                 UICallback.properties.getComponent(UIPropertiesComponent).member = true
                 Membership.uiCallback.showTick(8)
+
+                this.logBuyMembership(price, receipt)
             }
             catch (exception)
             {

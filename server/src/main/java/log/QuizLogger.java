@@ -1,6 +1,11 @@
 package log;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.logging.*;
 
 public class QuizLogger
@@ -66,5 +71,31 @@ public class QuizLogger
     synchronized public void log(String message)
     {
         logger.info(message + "\n");
+    }
+
+    synchronized public void logResults(String partyName, String message)
+    {
+        File directory = new File(QuizLogger.DIR_NAME + "/" + partyName);
+
+        if (!directory.exists())
+        {
+            directory.mkdir();
+        }
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        File results = new File(directory.getPath() + "/" + now.toString());
+
+        try
+        {
+            PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(results)));
+            writer.write(message);
+            writer.close();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
     }
 }

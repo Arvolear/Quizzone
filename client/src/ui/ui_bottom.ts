@@ -1,6 +1,6 @@
 import { setSection } from "../../node_modules/@dcl/ui-utils/utils/resources"
 import { Delay } from "../../node_modules/@dcl/ui-utils/utils/timerComponents"
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 
 export class UIBottom
 {

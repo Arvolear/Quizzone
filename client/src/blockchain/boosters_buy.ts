@@ -1,8 +1,9 @@
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { Sounds } from "../app/sounds";
 import { General } from "../blockchain/general";
-import { AppCallback } from "../app/app_callback";
+import { AppCallback } from "../callbacks/app_callback";
+import { ElasticLogger } from "../log/elastic_logger";
 
 export class BoostersBuy
 {
@@ -11,20 +12,34 @@ export class BoostersBuy
     private static uiCallback: UICallback
     private static sounds: Sounds    
 
-    private constructor(uiCallback: UICallback, sounds: Sounds)
+    private static elasticLogger: ElasticLogger
+
+    private constructor(uiCallback: UICallback)
     {
         BoostersBuy.uiCallback = uiCallback
-        BoostersBuy.sounds = sounds
+        BoostersBuy.sounds = Sounds.getInstance()
+        BoostersBuy.elasticLogger = ElasticLogger.getInstance()
     }
 
     public static getInstance(ui: UICallback): BoostersBuy
     {
         if (BoostersBuy.boostersBuy == null)
         {
-            BoostersBuy.boostersBuy = new BoostersBuy(ui, Sounds.getInstance())
+            BoostersBuy.boostersBuy = new BoostersBuy(ui)
         }
 
         return BoostersBuy.boostersBuy
+    }
+
+    private logBuyBoosters(boostersToBuyValue: number, autocompleteNum: number, autocutNum: number)
+    {
+        let message = {}
+
+        message['price_mana'] = boostersToBuyValue
+        message['autocomplete_num'] = autocompleteNum
+        message['50/50_num'] = autocutNum
+
+        BoostersBuy.elasticLogger.log("buy_boosters", message)
     }
 
     public buyBoosters(boostersToBuyValue: number, autocompleteNum: number, autocutNum: number): void
@@ -46,7 +61,9 @@ export class BoostersBuy
                 BoostersBuy.sounds.playBuyBooster()
 
                 BoostersBuy.uiCallback.hideAllWindows()
-                BoostersBuy.uiCallback.showTick(8)                
+                BoostersBuy.uiCallback.showTick(8)
+                
+                this.logBuyBoosters(boostersToBuyValue, autocompleteNum, autocutNum)
             }).catch(() => 
             {
                 BoostersBuy.uiCallback.hideHourglass()

@@ -9,7 +9,7 @@ import { TopPartyScreenComponent } from "../components/top_party_screen_componen
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { SceneCallback } from "./scene_callback"
+import { SceneCallback } from "../callbacks/scene_callback"
 import { AnswerStatistics } from "../entities_utils/answer_statistics"
 import { Sounds } from "./sounds"
 

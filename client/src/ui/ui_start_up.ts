@@ -1,4 +1,4 @@
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import { UIPropertiesComponent } from "../components/ui_properties_component";
 import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
@@ -7,7 +7,7 @@ import { Sounds } from "../app/sounds";
 import { Membership } from "../blockchain/membership";
 import { General } from "../blockchain/general";
 import { BoostersBuy } from "../blockchain/boosters_buy";
-import { AppCallback } from "../app/app_callback";
+import { AppCallback } from "../callbacks/app_callback";
 
 export class UIStartUp
 {

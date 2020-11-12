@@ -9,7 +9,7 @@ import { TimerSystem } from "../systems/timer_system"
 import { UISystem } from "../systems/ui_system"
 import { SoundsTrackerSystem } from "../systems/sounds_tracker_system"
 import { General } from "../blockchain/general"
-import { AppCallback } from "./app_callback"
+import { AppCallback } from "../callbacks/app_callback"
 
 export class App extends AppCallback
 {    
@@ -21,11 +21,16 @@ export class App extends AppCallback
     {        
         super()
 
-        this.configureScene()
-        this.configureSocket()
         this.configureBlockchain()
+        this.configureScene()
+        this.configureSocket()        
         this.configureSystems()
     }  
+
+    private configureBlockchain(): void
+    {
+        this.general = General.getInstance()
+    }
 
     private configureScene(): void
     {
@@ -37,12 +42,7 @@ export class App extends AppCallback
     private configureSocket(): void
     {
         AppCallback.dappClientSocket = new DappClientSocket(this.scene)        
-    }
-
-    private configureBlockchain(): void
-    {
-        this.general = General.getInstance()    
-    }
+    }    
 
     private configureSystems(): void
     {

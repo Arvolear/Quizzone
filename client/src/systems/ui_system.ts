@@ -1,5 +1,5 @@
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 
 export class UISystem implements ISystem
 {

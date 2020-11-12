@@ -162,30 +162,9 @@ public class TimedParty extends AbstractParty
     @Override
     synchronized public void logResults()
     {
-        File directory = new File(QuizLogger.DIR_NAME + "/" + "timed_quiz_results");
-
-        if (!directory.exists())
-        {
-            directory.mkdir();
-        }
-
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-
-        File results = new File(directory.getPath() + "/" + now.toString());
-
         String partyBest = getPartyBestSorted();
 
-        try
-        {
-            PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(results)));
-            writer.write(partyBest);
-            writer.close();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-
+        quizLogger.logResults("timed_quiz_results", partyBest);
         elasticLogger.log("timed_quiz_results", partyBest);
     }
 

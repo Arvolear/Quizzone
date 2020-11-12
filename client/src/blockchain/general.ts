@@ -8,6 +8,7 @@ export class General
     private static general: General
 
     public static playerWallet
+    public static playerNick
     public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
     public static network = "mainnet"
     // public static network = "goerli"
@@ -18,6 +19,7 @@ export class General
         {
             let data = await getUserData()
             General.playerWallet = data.publicKey;
+            General.playerNick = data.displayName
         })
 
         playerDataPromise.then()
