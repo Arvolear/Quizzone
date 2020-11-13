@@ -45,7 +45,7 @@ export class Membership
             {
                 await delay(100)
             }
-        })        
+        })
 
         playerDataPromise.then(() => 
         {
@@ -76,11 +76,11 @@ export class Membership
         membershipPromise.then()
     }
 
-    private logBuyMembership(membershipPrice: number, receipt: string)
+    private logBuyMembership(membershipPrice: number, receipt: string): void
     {
         let message = {}
 
-        message['membership_price'] = membershipPrice
+        message['membership_price_eth'] = membershipPrice
         message['tx_id'] = receipt
 
         Membership.elasticLogger.log("buy_membership", message)

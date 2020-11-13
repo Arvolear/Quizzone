@@ -31,7 +31,7 @@ export class BoostersBuy
         return BoostersBuy.boostersBuy
     }
 
-    private logBuyBoosters(boostersToBuyValue: number, autocompleteNum: number, autocutNum: number)
+    private logBuyBoosters(boostersToBuyValue: number, autocompleteNum: number, autocutNum: number): void
     {
         let message = {}
 

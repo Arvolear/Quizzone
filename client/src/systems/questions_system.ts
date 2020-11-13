@@ -157,7 +157,7 @@ export class QuestionsSystem implements ISystem
     private displayQuestion(): void
     {
         this.topPartyScreenMain.getComponent(TopPartyScreenComponent).selectedButton = -1;
-        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton = -1;  
+        this.topPartyScreenMain.getComponent(TopPartyScreenComponent).mustSelectedButton = -1;
         
         let centralComp = this.centralScreenMain.getComponent(CentralScreenComponent)
         var question = centralComp.question
@@ -170,7 +170,7 @@ export class QuestionsSystem implements ISystem
         {
             i = actualQuestion.indexOf(" ", i);
 
-            if (i >= actualQuestion.length || i == 0)
+            if (i >= actualQuestion.length || i <= 0)
             {
                 break
             }

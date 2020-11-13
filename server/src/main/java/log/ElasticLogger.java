@@ -12,6 +12,7 @@ public class ElasticLogger
     private static ElasticLogger elasticLogger;
 
     private static final String URL = "https://api.dapp-craft.com/dcllog/_doc/";
+    private static final String METHOD = "POST";
 
     private ElasticLogger()
     {
@@ -36,7 +37,7 @@ public class ElasticLogger
                 URL url = new URL(URL);
                 URLConnection con = url.openConnection();
                 HttpURLConnection http = (HttpURLConnection) con;
-                http.setRequestMethod("POST");
+                http.setRequestMethod(METHOD);
                 http.setDoOutput(true);
 
                 byte[] out = ("{\n" +
