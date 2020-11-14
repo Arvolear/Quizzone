@@ -57,7 +57,7 @@ export class Sounds
         let idleClip = new AudioClip("sounds/music/idle.mp3")
         this.idleSource = new AudioSource(idleClip)
         this.idleSource.loop = true
-        this.idleSource.volume = 1.0        
+        this.idleSource.volume = 1.0
 
         let joinClip = new AudioClip("sounds/music/join.mp3")
         this.joinSource = new AudioSource(joinClip)

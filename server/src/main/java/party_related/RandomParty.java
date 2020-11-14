@@ -1,15 +1,10 @@
 package party_related;
 
 import game.Client;
-import log.QuizLogger;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RandomParty extends AbstractParty
@@ -72,7 +67,7 @@ public class RandomParty extends AbstractParty
     @Override
     synchronized public void logResults()
     {
-        String partyBest = getPartyBestSorted();
+        String partyBest = getPartyBestSortedJson();
 
         quizLogger.logResults("random_quiz_results", partyBest);
         elasticLogger.log("random_quiz_results", partyBest);
@@ -183,11 +178,11 @@ public class RandomParty extends AbstractParty
     @Override
     synchronized public void disconnectPlayer(Client player)
     {
-        player.clear();
-
         playingPlayers.remove(player);
         idlePlayers.remove(player);
         blackList.remove(player);
+
+        player.clear();
 
         if (!questionsLoaded || started)
         {

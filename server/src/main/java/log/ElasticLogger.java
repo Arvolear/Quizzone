@@ -41,11 +41,11 @@ public class ElasticLogger
                 http.setDoOutput(true);
 
                 byte[] out = ("{\n" +
-                        "\"action\"" + ":" + "\"" + action.trim() + "\"" +
+                        "\"action\"" + ": " + "\"" + action.trim() + "\"" +
                         ",\n" +
-                        "\"results\"" + ":" + "\"" + message.trim() + "\"" +
+                        "\"quiz_results\"" + ": " + message.trim() +
                         ",\n" +
-                        "\"time\"" + ":" + "\"" + Instant.now() + "\"" +
+                        "\"time\"" + ": " + "\"" + Instant.now() + "\"" +
                         "\n}"
                 ).getBytes(StandardCharsets.UTF_8);
 

@@ -3,14 +3,7 @@ package party_related;
 import game.Client;
 import game.Controller;
 import game.StopWatch;
-import log.QuizLogger;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -162,7 +155,7 @@ public class TimedParty extends AbstractParty
     @Override
     synchronized public void logResults()
     {
-        String partyBest = getPartyBestSorted();
+        String partyBest = getPartyBestSortedJson();
 
         quizLogger.logResults("timed_quiz_results", partyBest);
         elasticLogger.log("timed_quiz_results", partyBest);

@@ -17,8 +17,8 @@ abstract public class AbstractParty implements IStopWatchCallback
     public static final int LIFETIME_BEST_LIMIT = 9;
     public static final int PARTY_TOP_LIMIT = 5;
 
-    public static final int AUTOCOMPLETE_PRICE = 0;
-    public static final int AUTOCUT_PRICE = 0;
+    public static final int AUTOCOMPLETE_PRICE = 50;
+    public static final int AUTOCUT_PRICE = 25;
 
     protected final QuizLogger quizLogger;
     protected final ElasticLogger elasticLogger;
@@ -64,7 +64,7 @@ abstract public class AbstractParty implements IStopWatchCallback
         quizTimer = new StopWatch<>(this, "quizTimer");
     }
 
-    public String getPartyBestSorted()
+    synchronized public String getPartyBestSortedJson()
     {
         StringBuilder builder = new StringBuilder();
         ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(totalCorrect.entrySet());
@@ -74,25 +74,35 @@ abstract public class AbstractParty implements IStopWatchCallback
             int res = right.getValue() - left.getValue();
 
             return res == 0 ?
-                    playingPlayers.get(left.getKey()).getNick().compareTo(playingPlayers.get(right.getKey()).getNick()) :
+                    left.getKey().getNick().compareTo(right.getKey().getNick()) :
                     res;
         });
 
         int place = 1;
 
+        builder.append("{\n");
+
         for (var pair : topParty)
         {
-            builder.append(place).append(") ").
+            builder.append("\"").append(place).append("\": ").
+                    append("\"").
                     append(pair.getKey().getNick()).
                     append(" ").
                     append(pair.getKey().getWallet()).
                     append(" -----> ").append(pair.getValue()).
                     append("/").
                     append(getQuestionnaire().getTotalNumber()).
-                    append("\n");
+                    append("\"");
+
+            if (place < topParty.size())
+            {
+                builder.append(",\n");
+            }
 
             place++;
         }
+
+        builder.append("\n}");
 
         return builder.toString();
     }
@@ -109,7 +119,7 @@ abstract public class AbstractParty implements IStopWatchCallback
     abstract public void joinPlayer(Client player);
     abstract public void disconnectPlayer(Client player);
 
-    protected void updateBestFor(Client player)
+    synchronized protected void updateBestFor(Client player)
     {
         if (playingPlayers.containsKey(player))
         {
