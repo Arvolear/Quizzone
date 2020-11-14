@@ -111,7 +111,10 @@ public class RandomParty extends AbstractParty
 
             if (nowQuestion)
             {
-                send(player, messagesHandler.getNextMessage());
+                if (!questionnaire.isFinished())
+                {
+                    send(player, messagesHandler.getNextMessage());
+                }
             }
             else if (nowAnswer)
             {

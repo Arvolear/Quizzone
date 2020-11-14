@@ -204,7 +204,10 @@ public class TimedParty extends AbstractParty
 
             if (nowQuestion)
             {
-                send(player, timedMessagesHandler.getNextMessage());
+                if (!questionnaire.isFinished())
+                {
+                    send(player, timedMessagesHandler.getNextMessage());
+                }
             }
             else if (nowAnswer)
             {

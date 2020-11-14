@@ -190,12 +190,12 @@ abstract public class AbstractParty implements IStopWatchCallback
         return playingPlayers;
     }
 
-    public void mute()
+    synchronized public void mute()
     {
         this.muted = true;
     }
 
-    public void unMute()
+    synchronized public void unMute()
     {
         this.muted = false;
     }
