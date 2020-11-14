@@ -305,7 +305,15 @@ export class UI extends UICallback
 
         UI.ui.hideAllWindows()
         UI.uiError.showWaitEndError(message)
-    }    
+    }
+
+    public showReconnectError(): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showReconnectError()
+    }
 
     public hideError(): void
     {

@@ -10,6 +10,7 @@ import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { SceneCallback } from "../callbacks/scene_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import { AnswerStatistics } from "../entities_utils/answer_statistics"
 import { Sounds } from "./sounds"
 
@@ -19,6 +20,8 @@ export class DappClientSocket
     // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
+    private static uiCallback: UICallback
+
     private socket: WebSocket
 
     private static centralScreenMain: IEntity
@@ -26,9 +29,11 @@ export class DappClientSocket
     private static DISTANCE_CODE: number = 3001
     private static LEAVE_CODE: number = 3002
 
-    constructor(sceneCallback: SceneCallback)
+    constructor(sceneCallback: SceneCallback, uiCallback: UICallback)
     {
         DappClientSocket.sceneCallback = sceneCallback
+        DappClientSocket.uiCallback = uiCallback
+
         DappClientSocket.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
     }
 
@@ -282,7 +287,7 @@ export class DappClientSocket
                     DappClientSocket.sceneCallback.setColliderAndTeleport()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
 
-                    DappClientSocket.sceneCallback.buyBoostersIfShould()
+                    DappClientSocket.uiCallback.buyBoostersIfShould()
 
                     break
                 }
@@ -676,6 +681,8 @@ export class DappClientSocket
         {
             centralScreenMain.getComponent(TextShape).value = "Disconnected remotely\n\nPlease consider reconnecting"
             centralScreenMain.getComponent(TextShape).fontSize = 1
+
+            DappClientSocket.uiCallback.showReconnectError()
         }
         else
         {

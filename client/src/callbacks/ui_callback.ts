@@ -36,6 +36,7 @@ export abstract class UICallback
     abstract showNotEnoughManaFundsError(): void
     abstract showWaitStartError(message: string): void
     abstract showWaitEndError(message: string): void
+    abstract showReconnectError(): void
     abstract hideError(): void
     abstract updateAutocompletePrice(): void
     abstract updateAutocutPrice(): void

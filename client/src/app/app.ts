@@ -41,7 +41,7 @@ export class App extends AppCallback
 
     private configureSocket(): void
     {
-        AppCallback.dappClientSocket = new DappClientSocket(this.scene)        
+        AppCallback.dappClientSocket = new DappClientSocket(this.scene, this.scene.getUI())        
     }    
 
     private configureSystems(): void
