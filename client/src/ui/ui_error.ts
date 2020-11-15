@@ -1,4 +1,4 @@
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import { ButtonStyles, PromptStyles } from '../../node_modules/@dcl/ui-utils/utils/types';
 import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/customPrompt/index';
@@ -9,6 +9,7 @@ export class UIError
     private static universalError: ui.CustomPrompt
     private static waitStartError: ui.CustomPrompt
     private static waitEndError: ui.CustomPrompt
+    private static reconnectError: ui.CustomPrompt
 
     private static uiCallback: UICallback
 
@@ -20,6 +21,7 @@ export class UIError
         this.configUniversalError()
         this.configWaitStartError()
         this.configWaitEndError()
+        this.configReconnectError()
     }
 
     private configFundsError(): void
@@ -116,11 +118,39 @@ export class UIError
         UIError.waitEndError.close()
     }
 
+    private configReconnectError(): void
+    {
+        UIError.reconnectError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIError.reconnectError.background.isPointerBlocker = true
+
+        UIError.reconnectError.addText('Error', 0, 153, Color4.Black(), 30)
+        UIError.reconnectError.addText('You were disconnected', 0, 93, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UIError.reconnectError.addText('Please contact the Quizzone', 0, 40, new Color4(0.24, 0.22, 0.25, 1.0), 22)
+        UIError.reconnectError.addText('so we could fix the issue', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 22)
+        UIError.reconnectError.addText('You may need to join', 0, -25, new Color4(0.24, 0.22, 0.25, 1.0), 22)
+        UIError.reconnectError.addText('the quiz once again', 0, -50, new Color4(0.24, 0.22, 0.25, 1.0), 22)
+
+        UIError.reconnectError.addButton(
+            'Sure',
+            -0,
+            -130,
+            () =>
+            {
+                UIError.uiCallback.hideError()
+            },
+            ButtonStyles.F
+        )
+
+        UIError.reconnectError.close()
+    }
+
     public close(): void
     {        
         UIError.fundsError.close()
         UIError.universalError.close()
-        UIError.waitEndError.close()        
+        UIError.waitEndError.close()    
+        UIError.waitStartError.close()    
+        UIError.reconnectError.close()    
     }
 
     public showNotEnoughManaFundsError(): void
@@ -150,5 +180,10 @@ export class UIError
         text.text.value = value
 
         UIError.waitEndError.reopen()
+    }
+
+    public showReconnectError(): void
+    {        
+        UIError.reconnectError.reopen()
     }
 }

@@ -35,7 +35,7 @@ function getCategory($category)
 
     $DB_OUTPUT .= "<table>";
     $DB_OUTPUT .= "<tr>";
-    $DB_OUTPUT .= "<th class=\"tableId\">Id</th>";
+    $DB_OUTPUT .= "<th class=\"tableId\">Ind</th>";
     $DB_OUTPUT .= "<th>Question</th>";
     $DB_OUTPUT .= "<th>Variant1</th>";
     $DB_OUTPUT .= "<th>Variant2</th>";
@@ -44,11 +44,15 @@ function getCategory($category)
     $DB_OUTPUT .= "<th>Answer</th>";
     $DB_OUTPUT .= "</tr>";
 
+    $index = 0;
+
     while ($row = mysqli_fetch_array($result)) {
+        $index++;
+
         $answer = (int)$row['answer'];
 
         $DB_OUTPUT .= "<tr>";
-        $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
+        $DB_OUTPUT .= "<td class=\"tableId\">" . $index . "</td>";
         $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
         
         for ($i = 1; $i < 5; $i++) {
@@ -90,10 +94,15 @@ function publish($category, $alias)
     $sqlAdd = "INSERT INTO $DB.$MAIN_CATEGORIES VALUES (NULL, '$category', '$alias')";
     $sqlDelEdit = "DELETE FROM $DB.$EDIT_CATEGORIES WHERE category='$category'";
 
-    mysqli_query($conn, $sqlAdd);
-    mysqli_query($conn, $sqlDelEdit);
+    mysqli_begin_transaction($conn);
 
-    $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully published</p>";
+    if (mysqli_query($conn, $sqlAdd) && mysqli_query($conn, $sqlDelEdit)) {
+        mysqli_commit($conn);
+        $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully published</p>";
+    } else {
+        mysqli_rollback($conn);
+        getSomethingWentWrongError();
+    }
 
     header("Location: random_main.php", true, 303);
     exit();
@@ -132,10 +141,15 @@ function unpublish($category)
     $sqlAddSub = "INSERT INTO $DB.$EDIT_CATEGORIES VALUES(NULL, '$category')";
     $sqlDel = "DELETE FROM $DB.$MAIN_CATEGORIES WHERE category='$category'";
 
-    mysqli_query($conn, $sqlAddSub);
-    mysqli_query($conn, $sqlDel);
+    mysqli_begin_transaction($conn);
 
-    $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully unpublished</p>";
+    if (mysqli_query($conn, $sqlAddSub) && mysqli_query($conn, $sqlDel)) {
+        mysqli_commit($conn);
+        $_SESSION['SUCCESS'] = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully unpublished</p>";
+    } else {
+        mysqli_rollback($conn);
+        getSomethingWentWrongError();
+    }
 
     header("Location: random_main.php", true, 303);
     exit();

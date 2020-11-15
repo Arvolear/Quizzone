@@ -1,7 +1,8 @@
 @Component("lifetimeBestScreenComponent")
 export class LifetimeBestScreenComponent
 {
-    lifetimeBest: string
+    isPlayer: Boolean
+    lifetimeBest: Array<String>
     lifetimeBestLoaded: boolean
 
     constructor()
@@ -10,8 +11,9 @@ export class LifetimeBestScreenComponent
     }
 
     clear(): void
-    {
-        this.lifetimeBest = ""
+    {        
+        this.lifetimeBest = []
+        this.isPlayer = false
         this.lifetimeBestLoaded = false
     }
 }

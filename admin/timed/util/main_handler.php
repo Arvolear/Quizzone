@@ -52,14 +52,14 @@ function getCategories($table, $alias, $what)
     global $DB_OUTPUT;
 
     $sql = "SELECT * FROM $DB.$table";
-    $result = mysqli_query($conn, $sql);
+    $result = mysqli_query($conn, $sql);    
 
     if (mysqli_num_rows($result) > 0) {
         $DB_OUTPUT .= "<p style=\"font-size:24px;text-align:center;\">$alias:</p>";
 
         $DB_OUTPUT .= "<table>";
         $DB_OUTPUT .= "<tr>";
-        $DB_OUTPUT .= "<th class=\"tableId\">Id</th>";
+        $DB_OUTPUT .= "<th class=\"tableId\">Ind</th>";
         $DB_OUTPUT .= "<th>Quiz system name</th>";
 
         if ($what == "production") {
@@ -80,9 +80,13 @@ function getCategories($table, $alias, $what)
 
         $DB_OUTPUT .= "</tr>";
 
+        $index = 0;
+
         while ($row = mysqli_fetch_array($result)) {
+            $index++;
+
             $DB_OUTPUT .= "<tr>";
-            $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
+            $DB_OUTPUT .= "<td class=\"tableId\">" . $index . "</td>";
             $DB_OUTPUT .= "<td>" . $row['category'] . "</td>";
 
             if ($what == "production") {
@@ -156,10 +160,15 @@ function addCategory($category)
 
     $sqlAdd = "INSERT INTO $DB.$EDIT_CATEGORIES VALUES (NULL, '$category')";
 
-    mysqli_query($conn, $sqlCreate);
-    mysqli_query($conn, $sqlAdd);
+    mysqli_begin_transaction($conn);
 
-    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully added</p>";
+    if (mysqli_query($conn, $sqlCreate) && mysqli_query($conn, $sqlAdd)) {
+        mysqli_commit($conn);
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully added</p>";        
+    } else {
+        mysqli_rollback($conn);
+        getSomethingWentWrongError();
+    }
 
     getAll();
 }
@@ -202,12 +211,18 @@ function deleteCategory($category)
     $sqlDelFinished = "DELETE FROM $DB.$FINISHED_CATEGORIES WHERE category='$category'";
     $sqlDrop = "DROP TABLE $DB.$category";
 
-    mysqli_query($conn, $sqlDel);
-    mysqli_query($conn, $sqlDelEdit);
-    mysqli_query($conn, $sqlDelFinished);
-    mysqli_query($conn, $sqlDrop);
+    mysqli_begin_transaction($conn);
 
-    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully deleted</p>";
+    if (mysqli_query($conn, $sqlDel) &&
+    mysqli_query($conn, $sqlDelEdit) &&
+    mysqli_query($conn, $sqlDelFinished) &&
+    mysqli_query($conn, $sqlDrop)) {
+        mysqli_commit($conn);
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Quiz successfully deleted</p>";
+    } else {
+        mysqli_rollback($conn);
+        getSomethingWentWrongError();
+    }
 
     getAll();
 }

@@ -1,9 +1,9 @@
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
-import * as matic from '../../node_modules/@dcl/l2-utils/matic/index'
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import { CustomPromptText, CustomPromptTextBox } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
-import { DappClientSocket } from "../app/dapp_client_socket"
+import { General } from '../blockchain/general'
+import { MaticTopUp } from '../blockchain/matic_topup'
 
 export class UITopUp
 {
@@ -11,10 +11,15 @@ export class UITopUp
 
     private static uiCallback: UICallback
 
+    private static maticTopUp: MaticTopUp
+    private static general: General
+
     constructor(ui: UICallback)
     {
         UITopUp.uiCallback = ui
-     
+        UITopUp.maticTopUp = MaticTopUp.getInstance(ui)
+        UITopUp.general = General.getInstance()
+
         this.configTopUp()
     }
 
@@ -45,7 +50,7 @@ export class UITopUp
             -175,
             () =>
             {
-                UITopUp.transferToMatic()
+                this.transferToMatic()
             },
             ButtonStyles.E
         )
@@ -66,13 +71,10 @@ export class UITopUp
 
     public reopen(): void
     {        
-        const balancePromise = executeTask(async () =>
+        const balancePromise = executeTask(async () => 
         {
-            return await matic.balance(DappClientSocket.playerWallet, DappClientSocket.network)
-        })
-
-        balancePromise.then((balance) => 
-        {
+            const balance = await UITopUp.general.getMaticBalance()
+        
             let valueMainText = UITopUp.topUpMatic.elements[5] as CustomPromptText
             let valueMaticText = UITopUp.topUpMatic.elements[6] as CustomPromptText
 
@@ -85,6 +87,8 @@ export class UITopUp
             valueMainText.text.value = 'Main balance:  ' + balanceMainStr.substr(0, dotMainIndex > 0 ? dotMainIndex : balanceMainStr.length) + '  MANA'
             valueMaticText.text.value = 'Matic balance:  ' + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + '  MANA'
         })
+
+        balancePromise.then()
                 
         UITopUp.topUpMatic.reopen()
     }
@@ -94,7 +98,7 @@ export class UITopUp
         UITopUp.topUpMatic.close()        
     }
 
-    private static transferToMatic(): void
+    private transferToMatic(): void
     {
         let valueText = UITopUp.topUpMatic.elements[5] as CustomPromptText
         let valueTextBox = UITopUp.topUpMatic.elements[8] as CustomPromptTextBox
@@ -105,32 +109,6 @@ export class UITopUp
         let amount = parseFloat(valueTextBox.currentText)
         let balance = parseFloat(valueText.text.value.substr(firstSpace + 2, lastSpace - firstSpace))        
 
-        if (isNaN(amount) || amount <= 0)
-        {
-            UITopUp.uiCallback.showUniversalError("Wrong input")
-            return
-        }
-
-        if (amount > balance)
-        {
-            UITopUp.uiCallback.showUniversalError("Not enough funds")
-            return
-        }
-
-        const topUp = executeTask(async () =>
-        {
-            UITopUp.uiCallback.showCheckMetamask()            
-
-            await matic.depositMana(amount, DappClientSocket.network).then(() => 
-            {
-                UITopUp.uiCallback.showTick(16)
-            }).catch(() => 
-            {
-                UITopUp.uiCallback.hideHourglass()
-                UITopUp.uiCallback.hideAllWindows()
-            })
-        })
-
-        topUp.then()
+        UITopUp.maticTopUp.transferToMatic(balance, amount)
     }   
 }

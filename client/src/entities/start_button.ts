@@ -1,4 +1,4 @@
-import { SceneCallback } from "../app/scene_callback"
+import { SceneCallback } from "../callbacks/scene_callback"
 
 export class StartButton
 {

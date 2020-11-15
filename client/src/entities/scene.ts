@@ -1,6 +1,6 @@
 import utils from "../../node_modules/decentraland-ecs-utils/index"
-import { SceneCallback } from '../app/scene_callback'
-import { UICallback } from "../app/ui_callback"
+import { SceneCallback } from '../callbacks/scene_callback'
+import { UICallback } from "../callbacks/ui_callback"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UI } from '../ui/ui'
 import { Button } from "./button"
@@ -61,7 +61,7 @@ export class Scene extends SceneCallback
         super()
 
         this.configScene()
-        this.configBanner()
+        // this.configBanner()
         this.configBecomeAMember()
         this.configAlreadyAMember()           
         this.configGrass()
@@ -114,26 +114,26 @@ export class Scene extends SceneCallback
         quizzone.addComponentOrReplace(transform6)
     }
 
-    private configBanner(): void
-    {         
-        const bannerShape = new GLTFShape("models/banner/banner.glb")
-        bannerShape.withCollisions = true
-        bannerShape.isPointerBlocker = false
-        bannerShape.visible = true
+    // private configBanner(): void
+    // {         
+    //     const bannerShape = new GLTFShape("models/banner/banner.glb")
+    //     bannerShape.withCollisions = true
+    //     bannerShape.isPointerBlocker = false
+    //     bannerShape.visible = true
 
-        this.banner = new Entity('banner')
-        engine.addEntity(this.banner)
-        this.banner.setParent(this.scene)
-        this.banner.addComponentOrReplace(bannerShape)
+    //     this.banner = new Entity('banner')
+    //     engine.addEntity(this.banner)
+    //     this.banner.setParent(this.scene)
+    //     this.banner.addComponentOrReplace(bannerShape)
 
-        const transform = new Transform(
-            {
-                position: new Vector3(16.5, -0.4, 15.8),
-                rotation: new Quaternion(0, 0, 0, 1),
-                scale: new Vector3(1, 1, 1)
-            })
-        this.banner.addComponentOrReplace(transform)
-    }
+    //     const transform = new Transform(
+    //         {
+    //             position: new Vector3(16.5, -0.4, 15.8),
+    //             rotation: new Quaternion(0, 0, 0, 1),
+    //             scale: new Vector3(1, 1, 1)
+    //         })
+    //     this.banner.addComponentOrReplace(transform)
+    // }
 
     private configBecomeAMember(): void
     {
@@ -387,7 +387,7 @@ export class Scene extends SceneCallback
         this.leftScreen.configMain(new Vector3(16, 6.4, 30.4), Quaternion.Euler(0, 0, 0), new Vector3(4.9, 4.9, 4.9))
         this.rightScreen.configMain(new Vector3(9.9, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(8, 8, 8))
         this.topPartyScreen.configMain(new Vector3(16, 3.8, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(6, 6, 6))
-        this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.3, 20.1), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
+        this.lifetimeBestScreen.configMain(new Vector3(0.9, 6.25, 15.2), Quaternion.Euler(0, -90, 0), new Vector3(5.5, 5.5, 5.5))
         this.timedQuizScreen.configMain(new Vector3(22.1, 9.9, 30.8), Quaternion.Euler(0, 0, 0), new Vector3(7, 7, 7))
 
         this.centralScreen.addToEngine()
@@ -412,7 +412,7 @@ export class Scene extends SceneCallback
 
     private configButtonsCollisionTrigger(): void
     {
-        this.buttonsColliderTrigger = new ButtonsColliderTrigger(this.ui, new Vector3(16, 4, 19.1), new Quaternion(0, 0, 0, 1), new Vector3(15.1, 8, 15.1))
+        this.buttonsColliderTrigger = new ButtonsColliderTrigger(this.ui, new Vector3(16, 4, 19.1), new Quaternion(0, 0, 0, 1), new Vector3(15.1, 8, 15.15))
 
         this.buttonsColliderTrigger.addToEngine()
     }
@@ -517,12 +517,7 @@ export class Scene extends SceneCallback
     public turnOnSpecialCaseCollision(): void
     {
         this.buttonsColliderTrigger.turnOnSpecialCaseCollision()
-    }
-
-    public buyBoostersIfShould(): void
-    {
-        this.ui.buyBoostersIfShould()
-    }
+    }    
 
     public getButtons(): Array<Button>
     {

@@ -49,7 +49,7 @@ function getCategory($category)
     if (mysqli_num_rows($result) > 0) {
         $DB_OUTPUT .= "<table>";
         $DB_OUTPUT .= "<tr>";
-        $DB_OUTPUT .= "<th class=\"tableId\">Id</th>";
+        $DB_OUTPUT .= "<th class=\"tableId\">Ind</th>";
         $DB_OUTPUT .= "<th>Question</th>";
         $DB_OUTPUT .= "<th>Variant1</th>";
         $DB_OUTPUT .= "<th>Variant2</th>";
@@ -62,11 +62,15 @@ function getCategory($category)
 
         $DB_OUTPUT .= "</tr>";
 
+        $index = 0;
+
         while ($row = mysqli_fetch_array($result)) {
+            $index++;
+
             $answer = (int)$row['answer'];
 
             $DB_OUTPUT .= "<tr>";
-            $DB_OUTPUT .= "<td class=\"tableId\">" . $row['id'] . "</td>";
+            $DB_OUTPUT .= "<td class=\"tableId\">" . $index . "</td>";
             $DB_OUTPUT .= "<td>" . $row['question'] . "</td>";
 
             for ($i = 1; $i < 5; $i++) {
@@ -122,17 +126,23 @@ function addQuestion($category, $question, $variant1, $variant2, $variant3, $var
 
     $sqlIns = "INSERT INTO $DB.$category VALUES (NULL, '$question', '$variant4', '$variant3', '$variant2', '$variant1', $answer)";
 
-    mysqli_query($conn, $sqlIns);
+    mysqli_begin_transaction($conn);
 
-    $types = ['question', 'variant1', 'variant2', 'variant3', 'variant4', 'answer'];
+    if (mysqli_query($conn, $sqlIns)) {
+        $types = ['question', 'variant1', 'variant2', 'variant3', 'variant4', 'answer'];
 
-    for ($j = 0; $j < count($types); $j++) {
-        unset($_SESSION[$types[$j] . $index]);
+        for ($j = 0; $j < count($types); $j++) {
+            unset($_SESSION[$types[$j] . $index]);
+        }
+
+        mysqli_commit($conn);
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question succesfully added</p>";
+    } else {
+        mysqli_rollback($conn);
+        getSomethingWentWrongError();
     }
-
+    
     $_SESSION['CLEAR_IMPORTED'] = false;
-
-    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question succesfully added</p>";
 
     getAll();
 }
@@ -198,9 +208,15 @@ function deleteQuestion($category, $id)
 
     $sqlDel = "DELETE FROM $DB.$category WHERE id='$id'";
 
-    mysqli_query($conn, $sqlDel);
+    mysqli_begin_transaction($conn);
 
-    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question successfully deleted</p>";
+    if (mysqli_query($conn, $sqlDel)) {
+        mysqli_commit($conn);
+        $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Question successfully deleted</p>";
+    } else {
+        mysqli_rollback($conn);
+        getSomethingWentWrongError();
+    }
 
     $_SESSION['CLEAR_IMPORTED'] = false;
 
@@ -231,9 +247,9 @@ function importQuestions($file, $shuffle)
     }
 
     // $csv = array_map('str_getcsv', file($file['tmp_name']));    
-    
-    $tempFile = tmpfile();    
-    fwrite($tempFile, file_get_contents($file['tmp_name']));    
+
+    $tempFile = tmpfile();
+    fwrite($tempFile, file_get_contents($file['tmp_name']));
     fseek($tempFile, 0);
 
     $csv = array();
@@ -247,16 +263,15 @@ function importQuestions($file, $shuffle)
     }
 
     for ($i = 0; $i < min(count($csv), $QUESTION_LIMIT); $i++) {
-        $answer = count($csv[$i]) == 6 ? (int)$csv[$i][5] : 1;      
-        $localAnswer = -1;  
+        $answer = count($csv[$i]) == 6 ? (int)$csv[$i][5] : 1;
+        $localAnswer = -1;
 
-        if ($answer < 1 || $answer > 4)
-        {
+        if ($answer < 1 || $answer > 4) {
             $answer = 1;
         }
 
         if (!empty($shuffle)) {
-            $variants = [];                        
+            $variants = [];
 
             for ($j = 1; $j < min(5, count($csv[$i])); $j++) {
                 array_push($variants, $csv[$i][$j]);
@@ -264,21 +279,21 @@ function importQuestions($file, $shuffle)
 
             shuffle($variants);
 
-            for ($j = 0; $j < count($variants); $j++) {                
+            for ($j = 0; $j < count($variants); $j++) {
                 if ($csv[$i][$answer] == $variants[$j]) {
-                    $localAnswer = ($j + 1);                   
+                    $localAnswer = ($j + 1);
                 }
             }
 
-            for ($j = 0; $j < count($variants); $j++) {                
+            for ($j = 0; $j < count($variants); $j++) {
                 $csv[$i][($j + 1)] = $variants[$j];
             }
         }
 
         for ($j = 0; $j < min(count($csv[$i]), count($types)); $j++) {
             $_SESSION[$types[$j] . $i] = htmlspecialchars((trim($csv[$i][$j])));
-        }   
-        
+        }
+
         $_SESSION['answer' . $i] = empty($shuffle) ? $answer : $localAnswer;
     }
 

@@ -1,5 +1,5 @@
 import utils from "../../node_modules/decentraland-ecs-utils/index"
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 
 export class ButtonsColliderTrigger
 {

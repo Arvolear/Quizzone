@@ -1,3 +1,19 @@
+.time {
+    display: flex;
+    padding: 15px 0 20px 0;
+}
+
+.time_left {
+    flex: 75%;
+    display: inline;
+}
+
+.time_right {
+    flex: 20%;    
+    text-align: end;
+    display: inline;
+}
+
 .add_columns {
     display: flex;
     padding-bottom: 10px;

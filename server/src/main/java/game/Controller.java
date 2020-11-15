@@ -1,7 +1,7 @@
 package game;
 
 import org.eclipse.jetty.websocket.api.Session;
-import party_related.Party;
+import party_related.RandomParty;
 import party_related.TimedParty;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,10 +15,7 @@ public class Controller implements IStopWatchCallback
 
     private final TimedParty timedParty;
 
-    private boolean canJoinTimedParty;
-    private boolean canConnectToTimedParty;
-
-    private final ConcurrentHashMap<String, Party> realmToParties;
+    private final ConcurrentHashMap<String, RandomParty> realmToParties;
     private final ConcurrentHashMap<Session, Client> sessionToPlayer;
 
     public static Controller getInstance()
@@ -33,9 +30,6 @@ public class Controller implements IStopWatchCallback
 
     private Controller()
     {
-        canJoinTimedParty = false;
-        canConnectToTimedParty = false;
-
         timedPartyStatusTimer = new StopWatch<>(this, "timedPartyStatusUpdater", 10000);
         timedPartyStatusTimer.updateTime(STATUS_TIMER_DURATION);
 
@@ -67,7 +61,7 @@ public class Controller implements IStopWatchCallback
 
                     Client player = new Client(session, realm, wallet, nick);
 
-                    if (canConnectToTimedParty)
+                    if (timedParty.isShouldConnect())
                     {
                         if (!sessionToPlayer.containsKey(session))
                         {
@@ -78,7 +72,7 @@ public class Controller implements IStopWatchCallback
                     }
                     else
                     {
-                        connectToParty(player);
+                        connectToRandomParty(player);
                     }
                 }
 
@@ -86,13 +80,13 @@ public class Controller implements IStopWatchCallback
             }
             case "join":
             {
-                if (canJoinTimedParty)
+                if (timedParty.isShouldJoin())
                 {
                     timedParty.joinPlayer(sessionToPlayer.get(session));
                 }
-                else if (!canConnectToTimedParty)
+                else if (!timedParty.isShouldConnect())
                 {
-                    joinParty(session);
+                    joinRandomParty(session);
                 }
 
                 break;
@@ -103,7 +97,7 @@ public class Controller implements IStopWatchCallback
                 {
                     Client player = sessionToPlayer.get(session);
 
-                    if (canJoinTimedParty)
+                    if (timedParty.isShouldJoin())
                     {
                         timedParty.receive(player, message);
                     }
@@ -118,7 +112,7 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized private void connectToParty(Client player)
+    synchronized private void connectToRandomParty(Client player)
     {
         if (!sessionToPlayer.containsKey(player.getSession()))
         {
@@ -127,12 +121,12 @@ public class Controller implements IStopWatchCallback
 
         if (realmToParties.containsKey(player.getRealm()))
         {
-            Party party = realmToParties.get(player.getRealm());
+            RandomParty party = realmToParties.get(player.getRealm());
             party.connectPlayer(player);
         }
         else
         {
-            Party party = new Party(this);
+            RandomParty party = new RandomParty();
             party.loadCategory();
             party.connectPlayer(player);
 
@@ -140,34 +134,36 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized private void joinParty(Session session)
+    synchronized private void joinRandomParty(Session session)
     {
-        if (sessionToPlayer.containsKey(session))
+        if (!sessionToPlayer.containsKey(session))
         {
-            Client player = sessionToPlayer.get(session);
-            Party party = realmToParties.get(player.getRealm());
-
-            party.joinPlayer(player);
+            return;
         }
+
+        Client player = sessionToPlayer.get(session);
+        RandomParty party = realmToParties.get(player.getRealm());
+
+        party.joinPlayer(player);
     }
 
-    synchronized private void disconnectFromParty(Client player)
+    synchronized private void disconnectFromRandomParty(Client player)
     {
         if (player != null)
         {
             sessionToPlayer.remove(player.getSession());
-            Party party = realmToParties.get(player.getRealm());
+            RandomParty party = realmToParties.get(player.getRealm());
 
             if (party != null)
             {
                 party.disconnectPlayer(player);
 
-                if (party.isReady() && party.isPlayingEmpty())
+                if (party.isStarted() && party.isPlayingEmpty())
                 {
                     party.finish();
                 }
 
-                if (party.isEmpty())
+                if (!party.isReconnecting() && party.isCompletelyEmpty())
                 {
                     party.close();
                     realmToParties.remove(player.getRealm());
@@ -180,21 +176,21 @@ public class Controller implements IStopWatchCallback
 
     synchronized public void disconnect(Session session)
     {
-        disconnectFromParty(sessionToPlayer.get(session));
+        disconnectFromRandomParty(sessionToPlayer.get(session));
 
-        if (timedParty.isLocked() && timedParty.isPlayingEmpty())
+        if (timedParty.isStarted() && timedParty.isPlayingEmpty())
         {
             timedParty.finish();
         }
     }
 
-    synchronized private void reconnectEveryoneToTimed()
+    synchronized public void reconnectEveryoneToTimed()
     {
         for (var party : realmToParties.values())
         {
             party.mute();
 
-            if (!party.isFinished())
+            if (party.isStarted())
             {
                 continue;
             }
@@ -208,7 +204,7 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized private void reconnectEveryoneFromTimed()
+    synchronized public void reconnectEveryoneFromTimed()
     {
         for (var party : realmToParties.values())
         {
@@ -218,7 +214,7 @@ public class Controller implements IStopWatchCallback
 
         for (var player : timedParty.getIdlePlayers().values())
         {
-            connectToParty(player);
+            connectToRandomParty(player);
         }
 
         timedParty.clear();
@@ -237,29 +233,10 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized public void timedPartyIsWaiting()
-    {
-        canConnectToTimedParty = true;
-        reconnectEveryoneToTimed();
-    }
-
-    synchronized public void timedPartyIsJoinable()
-    {
-        canJoinTimedParty = true;
-    }
-
-    synchronized public void timedPartyIsFinished()
-    {
-        canConnectToTimedParty = false;
-        canJoinTimedParty = false;
-
-        reconnectEveryoneFromTimed();
-    }
-
     @Override
     public void updateTimer(String name, int timeLeft)
     {
-        if (timedParty != null && !timedParty.isReady())
+        if (timedParty != null && !timedParty.isQuestionsLoaded())
         {
             timedParty.loadCategory();
         }

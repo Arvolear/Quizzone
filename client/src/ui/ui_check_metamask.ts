@@ -1,6 +1,6 @@
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
-import { UICallback } from "../app/ui_callback"
+import { UICallback } from "../callbacks/ui_callback"
 
 export class UICheckMetamask
 {

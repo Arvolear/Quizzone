@@ -1,9 +1,10 @@
 import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
-import { UICallback } from '../app/ui_callback'
+import { UICallback } from '../callbacks/ui_callback'
 import { DappClientSocket } from "../app/dapp_client_socket"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
+import { AppCallback } from "../callbacks/app_callback"
 
 export class UILeave
 {
@@ -56,8 +57,8 @@ export class UILeave
 
     private static leave(): void
     {
-        UICallback.dappClientSocket.close(DappClientSocket.getLeaveCode())
-        UICallback.dappClientSocket.connect()
+        AppCallback.dappClientSocket.close(DappClientSocket.getLeaveCode())
+        AppCallback.dappClientSocket.connect()
     }
 
     public updateMessage(): void

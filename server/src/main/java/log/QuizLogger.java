@@ -1,12 +1,18 @@
 package log;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.logging.*;
 
 public class QuizLogger
 {
     private static QuizLogger quizLogger;
-    private static final String DIR_NAME = "log";
+
+    public static final String DIR_NAME = "log";
     private static final String LOG_NAME = "log";
     private static final int FILE_SIZE = 1024 * 1024; // 1 MB
     private static final int FILE_NUM = 4;
@@ -62,8 +68,34 @@ public class QuizLogger
         return quizLogger;
     }
 
-    public void log(String message)
+    synchronized public void log(String message)
     {
-        logger.info(message);
+        logger.info(message + "\n");
+    }
+
+    synchronized public void logResults(String partyName, String message)
+    {
+        File directory = new File(QuizLogger.DIR_NAME + "/" + partyName);
+
+        if (!directory.exists())
+        {
+            directory.mkdir();
+        }
+
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        File results = new File(directory.getPath() + "/" + now.toString());
+
+        try
+        {
+            PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(results)));
+            writer.write(message);
+            writer.close();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
     }
 }

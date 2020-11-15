@@ -1,6 +1,5 @@
-import { UICallback } from '../app/ui_callback'
-import { SceneCallback } from '../app/scene_callback'
-import { DappClientSocket } from "../app/dapp_client_socket"
+import { UICallback } from '../callbacks/ui_callback'
+import { SceneCallback } from '../callbacks/scene_callback'
 import { UIPropertiesComponent } from "../components/ui_properties_component"
 import { UIStartUp } from "./ui_start_up"
 import { UICheckMetamask } from "./ui_check_metamask"
@@ -39,12 +38,7 @@ export class UI extends UICallback
         UI.canvas = new UICanvas()        
 
         this.configureProperties()
-    }
-
-    public static setClientSocket(dappClientSocket: DappClientSocket): void
-    {
-        UICallback.dappClientSocket = dappClientSocket
-    }
+    }    
 
     public static setSceneCallback(sceneCallback: SceneCallback)
     {
@@ -311,7 +305,15 @@ export class UI extends UICallback
 
         UI.ui.hideAllWindows()
         UI.uiError.showWaitEndError(message)
-    }    
+    }
+
+    public showReconnectError(): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showReconnectError()
+    }
 
     public hideError(): void
     {
@@ -362,6 +364,6 @@ export class UI extends UICallback
 
     public buyBoostersIfShould(): void
     {
-        UIStartUp.buyBoosters()
+        UI.uiStartUp.buyBoosters()
     }
 }

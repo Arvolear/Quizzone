@@ -9,21 +9,19 @@ import { TopPartyScreenComponent } from "../components/top_party_screen_componen
 import { LifetimeBestScreenComponent } from "../components/lifetime_best_screen_component"
 import { TimedQuizScreenComponent } from "../components/timed_quiz_screen_component"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { SceneCallback } from "./scene_callback"
+import { SceneCallback } from "../callbacks/scene_callback"
+import { UICallback } from "../callbacks/ui_callback"
 import { AnswerStatistics } from "../entities_utils/answer_statistics"
 import { Sounds } from "./sounds"
 
 export class DappClientSocket
-{
-    public static playerWallet
-    public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
-    public static network = "mainnet"
-    // public static network = "goerli"
-
+{    
     private static location = "wss://quiz-service.dapp-craft.com:8444"
     // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
+    private static uiCallback: UICallback
+
     private socket: WebSocket
 
     private static centralScreenMain: IEntity
@@ -31,9 +29,11 @@ export class DappClientSocket
     private static DISTANCE_CODE: number = 3001
     private static LEAVE_CODE: number = 3002
 
-    constructor(sceneCallback: SceneCallback)
+    constructor(sceneCallback: SceneCallback, uiCallback: UICallback)
     {
         DappClientSocket.sceneCallback = sceneCallback
+        DappClientSocket.uiCallback = uiCallback
+
         DappClientSocket.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
     }
 
@@ -146,6 +146,18 @@ export class DappClientSocket
         partyTop += tmpMessage
 
         return partyTop
+    }
+
+    private static getLifetimeBestFrom(lines: string[], index: number): Array<String>
+    {
+        var actualMessage: Array<String> = []
+
+        for (var i = index; i < lines.length; i++)
+        {
+            actualMessage.push(lines[i])
+        }
+
+        return actualMessage
     }
 
     // Be careful, different this! 
@@ -275,13 +287,13 @@ export class DappClientSocket
                     DappClientSocket.sceneCallback.setColliderAndTeleport()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
 
-                    DappClientSocket.sceneCallback.buyBoostersIfShould()
+                    DappClientSocket.uiCallback.buyBoostersIfShould()
 
                     break
                 }
             case "countdown":
                 {
-                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1) 
+                    var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
                     
                     uiComp.beforeTimed = false
 
@@ -552,9 +564,11 @@ export class DappClientSocket
                 }
             case "lifetime_best":
                 {
-                    var allBest = DappClientSocket.readToTheEndFrom(lines, 1, false)
-
+                    var allBest = DappClientSocket.getLifetimeBestFrom(lines, 2)
+                    var isPlayer = (lines[1] == "true")
+                    
                     bestComp.lifetimeBest = allBest
+                    bestComp.isPlayer = isPlayer
                     bestComp.lifetimeBestLoaded = true
 
                     break
@@ -642,6 +656,8 @@ export class DappClientSocket
         let leftScreenMain = engine.getComponentGroup(LeftScreenComponent).entities[0]
         let topPartyScreenMain = engine.getComponentGroup(TopPartyScreenComponent).entities[0]
         let lifetimeBestScreenMain = engine.getComponentGroup(LifetimeBestScreenComponent).entities[0]
+        let lifetimeBestScreenRight = engine.getComponentGroup(LifetimeBestScreenComponent).entities[1]
+        let lifetimeBestScreenDash = engine.getComponentGroup(LifetimeBestScreenComponent).entities[2]
         let timedQuizScreenMain = engine.getComponentGroup(TimedQuizScreenComponent).entities[0]
 
         let uiProperties = engine.getComponentGroup(UIPropertiesComponent).entities[0]
@@ -656,6 +672,8 @@ export class DappClientSocket
         rightScreenMain.getComponent(RightScreenComponent).clear()
         topPartyScreenMain.getComponent(TopPartyScreenComponent).clear()
         lifetimeBestScreenMain.getComponent(LifetimeBestScreenComponent).clear()
+        lifetimeBestScreenRight.getComponent(LifetimeBestScreenComponent).clear()
+        lifetimeBestScreenDash.getComponent(LifetimeBestScreenComponent).clear()
         timedQuizScreenMain.getComponent(TimedQuizScreenComponent).clear()
 
         if (event.code != DappClientSocket.DISTANCE_CODE &&
@@ -663,6 +681,8 @@ export class DappClientSocket
         {
             centralScreenMain.getComponent(TextShape).value = "Disconnected remotely\n\nPlease consider reconnecting"
             centralScreenMain.getComponent(TextShape).fontSize = 1
+
+            DappClientSocket.uiCallback.showReconnectError()
         }
         else
         {
@@ -679,6 +699,8 @@ export class DappClientSocket
         rightScreenMain.getComponent(TextShape).value = ""
         topPartyScreenMain.getComponent(TextShape).value = ""
         lifetimeBestScreenMain.getComponent(TextShape).value = ""
+        lifetimeBestScreenRight.getComponent(TextShape).value = ""
+        lifetimeBestScreenDash.getComponent(TextShape).value = ""
         timedQuizScreenMain.getComponent(TextShape).value = ""
 
         DappClientSocket.sceneCallback.turnOffButtonCollisions()
