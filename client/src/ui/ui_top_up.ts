@@ -32,7 +32,7 @@ export class UITopUp
         UITopUp.topUpMatic.addText('The whole procedure takes 5-10 minutes', 0, 170, Color4.Black(), 20)
         UITopUp.topUpMatic.addText('You will have to sign TWO transactions', 0, 140, new Color4(1.0, 0.15, 0.3, 1.0), 20)
         UITopUp.topUpMatic.addText('After main MANA is withdrawn,', 0, 110, Color4.Black(), 20)
-        UITopUp.topUpMatic.addText('matic MANA will appear shortly', 0, 90, Color4.Black(), 20)        
+        UITopUp.topUpMatic.addText('matic MANA will appear shortly', 0, 90, Color4.Black(), 20)
         UITopUp.topUpMatic.addText('Main balance:  ...  MANA', 0, 40, new Color4(0.24, 0.22, 0.25, 1.0), 25)
         UITopUp.topUpMatic.addText('Matic balance:  ...  MANA', 0, 10, new Color4(0.24, 0.22, 0.25, 1.0), 25)
 
@@ -70,32 +70,39 @@ export class UITopUp
     }
 
     public reopen(): void
-    {        
-        const balancePromise = executeTask(async () => 
+    {
+        if (General.playerWallet != null)
         {
-            const balance = await UITopUp.general.getMaticBalance()
-        
-            let valueMainText = UITopUp.topUpMatic.elements[5] as CustomPromptText
-            let valueMaticText = UITopUp.topUpMatic.elements[6] as CustomPromptText
+            const balancePromise = executeTask(async () => 
+            {
+                const balance = await UITopUp.general.getMaticBalance()
 
-            let balanceMainStr = balance.l1.toString()
-            let dotMainIndex = balanceMainStr.indexOf(".")
+                let valueMainText = UITopUp.topUpMatic.elements[5] as CustomPromptText
+                let valueMaticText = UITopUp.topUpMatic.elements[6] as CustomPromptText
 
-            let balanceMaticStr = balance.l2.toString()
-            let dotMaticIndex = balanceMaticStr.indexOf(".")
+                let balanceMainStr = balance.l1.toString()
+                let dotMainIndex = balanceMainStr.indexOf(".")
 
-            valueMainText.text.value = 'Main balance:  ' + balanceMainStr.substr(0, dotMainIndex > 0 ? dotMainIndex : balanceMainStr.length) + '  MANA'
-            valueMaticText.text.value = 'Matic balance:  ' + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + '  MANA'
-        })
+                let balanceMaticStr = balance.l2.toString()
+                let dotMaticIndex = balanceMaticStr.indexOf(".")
 
-        balancePromise.then()
-                
-        UITopUp.topUpMatic.reopen()
+                valueMainText.text.value = 'Main balance:  ' + balanceMainStr.substr(0, dotMainIndex > 0 ? dotMainIndex : balanceMainStr.length) + '  MANA'
+                valueMaticText.text.value = 'Matic balance:  ' + balanceMaticStr.substr(0, dotMaticIndex > 0 ? dotMaticIndex : balanceMaticStr.length) + '  MANA'
+            })
+
+            balancePromise.then()
+
+            UITopUp.topUpMatic.reopen()
+        }
+        else
+        {
+            UITopUp.uiCallback.showConnectMetamaskError()
+        }
     }
 
     public close(): void
     {
-        UITopUp.topUpMatic.close()        
+        UITopUp.topUpMatic.close()
     }
 
     private transferToMatic(): void
@@ -103,12 +110,12 @@ export class UITopUp
         let valueText = UITopUp.topUpMatic.elements[5] as CustomPromptText
         let valueTextBox = UITopUp.topUpMatic.elements[8] as CustomPromptTextBox
 
-        let firstSpace = valueText.text.value.indexOf('  ')   
+        let firstSpace = valueText.text.value.indexOf('  ')
         let lastSpace = valueText.text.value.lastIndexOf('  ')
 
         let amount = parseFloat(valueTextBox.currentText)
-        let balance = parseFloat(valueText.text.value.substr(firstSpace + 2, lastSpace - firstSpace))        
+        let balance = parseFloat(valueText.text.value.substr(firstSpace + 2, lastSpace - firstSpace))
 
         UITopUp.maticTopUp.transferToMatic(balance, amount)
-    }   
+    }
 }

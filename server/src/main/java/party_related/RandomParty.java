@@ -107,7 +107,14 @@ public class RandomParty extends AbstractParty
         }
         else
         {
-            send(player, messagesHandler.getLockedMessage());
+            if (full)
+            {
+                send(player, messagesHandler.getStartedFullMessage());
+            }
+            else
+            {
+                send(player, messagesHandler.getStartedJoinableMessage());
+            }
 
             if (nowQuestion)
             {
@@ -133,46 +140,80 @@ public class RandomParty extends AbstractParty
     @Override
     synchronized public void joinPlayer(Client player)
     {
-        if (full || started || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
+        if (full || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
         {
             return;
         }
 
         playingPlayers.put(player, idlePlayers.get(player));
         idlePlayers.remove(player);
-        totalCorrect.put(player, 0);
 
-        send(player, messagesHandler.getHideMessage("control_buttons"));
-
-        if (playingPlayers.size() == 1)
+        if (totalCorrect.get(player) == null)
         {
-            canHost = false;
-            canJoin = true;
-
-            broadcast(idlePlayers, messagesHandler.getJoinableMessage(category.getAlias()));
-
-            questionnaire.loadQuestions(category.getCategory());
-            questionsLoaded = true;
-        }
-
-        if (playingPlayers.size() >= startGameThreshold)
-        {
-            quizTimer.updateTime(startTimeout);
-
-            broadcast(playingPlayers, messagesHandler.getCountdownStartMessage(category.getAlias()));
+            totalCorrect.put(player, 0);
         }
         else
         {
-            broadcast(playingPlayers, messagesHandler.getCountdownWaitMessage(category.getAlias()));
+            int score = totalCorrect.get(player);
+
+            totalCorrect.remove(player);
+            totalCorrect.put(player, score);
+        }
+
+        send(player, messagesHandler.getHideMessage("control_buttons"));
+
+        if (!started)
+        {
+            if (playingPlayers.size() == 1)
+            {
+                canHost = false;
+                canJoin = true;
+
+                broadcast(idlePlayers, messagesHandler.getJoinableMessage(category.getAlias()));
+
+                questionnaire.loadQuestions(category.getCategory());
+                questionsLoaded = true;
+            }
+
+            if (playingPlayers.size() >= startGameThreshold)
+            {
+                quizTimer.updateTime(startTimeout);
+
+                broadcast(playingPlayers, messagesHandler.getCountdownStartMessage(category.getAlias()));
+            }
+            else
+            {
+                broadcast(playingPlayers, messagesHandler.getCountdownWaitMessage(category.getAlias()));
+            }
+        }
+        else
+        {
+            if (nowQuestion)
+            {
+                boostersHandler.handleBoostersMessages();
+            }
+            else if (nowAnswer || restart)
+            {
+                broadcast(playingPlayers, messagesHandler.getHideMessage("autocomplete"));
+                broadcast(playingPlayers, messagesHandler.getHideMessage("autocut"));
+            }
         }
 
         if (playingPlayers.size() >= maxPlayingSize)
         {
             full = true;
-            canHost = false;
-            canJoin = false;
 
-            broadcast(idlePlayers, messagesHandler.getFullMessage());
+            if (!started)
+            {
+                canHost = false;
+                canJoin = false;
+
+                broadcast(idlePlayers, messagesHandler.getFullMessage());
+            }
+            else
+            {
+                broadcast(idlePlayers, messagesHandler.getStartedFullMessage());
+            }
         }
 
         send(player, messagesHandler.getSuccessfulJoinMessage());
@@ -185,39 +226,46 @@ public class RandomParty extends AbstractParty
         idlePlayers.remove(player);
         blackList.remove(player);
 
-        player.clear();
+        player.clearReadyBoosters();
 
-        if (!questionsLoaded || started)
+        if (!questionsLoaded)
         {
             return;
         }
 
         full = false;
 
-        if (playingPlayers.isEmpty())
+        if (!started)
         {
-            canHost = true;
-            canJoin = false;
+            if (playingPlayers.isEmpty())
+            {
+                canHost = true;
+                canJoin = false;
 
-            broadcast(idlePlayers, messagesHandler.getHostMessage());
+                broadcast(idlePlayers, messagesHandler.getHostMessage());
+            }
+            else
+            {
+                canHost = false;
+                canJoin = true;
+
+                broadcast(idlePlayers, messagesHandler.getJoinableMessage(category.getAlias()));
+            }
+
+            if (playingPlayers.size() >= startGameThreshold)
+            {
+                broadcast(playingPlayers, messagesHandler.getCountdownStartMessage(category.getAlias()));
+            }
+            else
+            {
+                quizTimer.updateTime(-1);
+
+                broadcast(playingPlayers, messagesHandler.getCountdownWaitMessage(category.getAlias()));
+            }
         }
         else
         {
-            canHost = false;
-            canJoin = true;
-
-            broadcast(idlePlayers, messagesHandler.getJoinableMessage(category.getAlias()));
-        }
-
-        if (playingPlayers.size() >= startGameThreshold)
-        {
-            broadcast(playingPlayers, messagesHandler.getCountdownStartMessage(category.getAlias()));
-        }
-        else
-        {
-            quizTimer.updateTime(-1);
-
-            broadcast(playingPlayers, messagesHandler.getCountdownWaitMessage(category.getAlias()));
+            send(player, messagesHandler.getStartedJoinableMessage());
         }
     }
 
@@ -429,7 +477,7 @@ public class RandomParty extends AbstractParty
 
         for (var player : tmpPlayers.keySet())
         {
-            player.clear();
+            player.clearBoosters();
 
             try
             {

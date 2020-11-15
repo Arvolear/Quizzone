@@ -291,20 +291,44 @@ export class UI extends UICallback
         UI.uiError.showNotEnoughManaFundsError()
     }
 
-    public showWaitStartError(message: string): void
+    public showWaitStartError(): void
     {
         UI.sounds.playError()
 
         UI.ui.hideAllWindows()
-        UI.uiError.showWaitStartError(message)
+        UI.uiError.showWaitStartError()
     }   
 
-    public showWaitEndError(message: string): void
+    public showFullError(): void
     {
         UI.sounds.playError()
 
         UI.ui.hideAllWindows()
-        UI.uiError.showWaitEndError(message)
+        UI.uiError.showFullError()
+    }
+
+    public showGoConnectError(): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showGoConnectError()
+    }
+
+    public showAlreadyJoinedError(): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showAlreadyJoinedError()
+    }
+
+    public showConnectMetamaskError(): void
+    {
+        UI.sounds.playError()
+
+        UI.ui.hideAllWindows()
+        UI.uiError.showConnectMetamaskError()
     }
 
     public showReconnectError(): void
@@ -340,16 +364,11 @@ export class UI extends UICallback
     public updateAutocutLeft(): void
     {
         UI.uiAutocut.updateAutocutLeft()
-    }
-
-    public updateLeaveMessage(): void
-    {
-        UI.uiLeave.updateMessage()
-    }
+    }    
 
     public updateCanJoinTimer(): void
     {
-        if (!UI.properties.getComponent(UIPropertiesComponent).canJoin)
+        if (UI.properties.getComponent(UIPropertiesComponent).joined)
         {
             UI.uiStartUp.close()
         }

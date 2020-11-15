@@ -32,9 +32,7 @@ export class UISystem implements ISystem
         this.uiCallback.updateAutocutLeft()
 
         this.uiCallback.updateAutocompletePrice()
-        this.uiCallback.updateAutocutPrice()
-
-        this.uiCallback.updateLeaveMessage()
+        this.uiCallback.updateAutocutPrice()        
 
         this.uiCallback.updateCanJoinTimer()
     }

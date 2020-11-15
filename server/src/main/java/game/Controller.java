@@ -204,12 +204,15 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized public void reconnectEveryoneFromTimed()
+    synchronized public void reconnectEveryoneFromTimed(boolean clearRandom)
     {
-        for (var party : realmToParties.values())
+        if (clearRandom)
         {
-            party.unMute();
-            party.clear();
+            for (var party : realmToParties.values())
+            {
+                party.unMute();
+                party.clear();
+            }
         }
 
         for (var player : timedParty.getIdlePlayers().values())

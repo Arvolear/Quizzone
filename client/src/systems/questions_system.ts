@@ -69,6 +69,8 @@ export class QuestionsSystem implements ISystem
         {
             this.displayAnswerStatistics()
 
+            this.topPartyScreenMain.addComponentOrReplace(new BlockComponent())
+
             centralComp.answerStatisticsLoaded = false
         }
         else if (centralComp.finishLoaded)

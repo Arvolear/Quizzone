@@ -5,10 +5,8 @@ import { CustomPromptText } from '../../node_modules/@dcl/ui-utils/prompts/custo
 
 export class UIError
 {    
-    private static fundsError: ui.CustomPrompt
     private static universalError: ui.CustomPrompt
-    private static waitStartError: ui.CustomPrompt
-    private static waitEndError: ui.CustomPrompt
+    private static fourSlotError: ui.CustomPrompt
     private static reconnectError: ui.CustomPrompt
 
     private static uiCallback: UICallback
@@ -17,40 +15,14 @@ export class UIError
     {
         UIError.uiCallback = ui        
 
-        this.configFundsError()    
         this.configUniversalError()
-        this.configWaitStartError()
-        this.configWaitEndError()
+        this.configFourSlotError()
         this.configReconnectError()
-    }
-
-    private configFundsError(): void
-    {
-        UIError.fundsError = new ui.CustomPrompt(PromptStyles.LIGHT)
-        UIError.fundsError.background.isPointerBlocker = true
-
-        UIError.fundsError.addText('Error', 0, 153, Color4.Black(), 30)
-        UIError.fundsError.addText('Not enough funds', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
-        UIError.fundsError.addText('Please consider topping up', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UIError.fundsError.addText('matic MANA', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-
-        UIError.fundsError.addButton(
-            'Close',
-            -0,
-            -120,
-            () =>
-            {
-                UIError.uiCallback.hideError()
-            },
-            ButtonStyles.F
-        )
-
-        UIError.fundsError.close()
     }
 
     private configUniversalError(): void
     {
-        UIError.universalError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIError.universalError = new ui.CustomPrompt(PromptStyles.LIGHT, 420, 350)
         UIError.universalError.background.isPointerBlocker = true
 
         UIError.universalError.addText('Error', 0, 153, Color4.Black(), 30)
@@ -70,17 +42,17 @@ export class UIError
         UIError.universalError.close()
     }
 
-    private configWaitStartError(): void
+    private configFourSlotError(): void
     {
-        UIError.waitStartError = new ui.CustomPrompt(PromptStyles.LIGHT)
-        UIError.waitStartError.background.isPointerBlocker = true
+        UIError.fourSlotError = new ui.CustomPrompt(PromptStyles.LIGHT, 420, 350)
+        UIError.fourSlotError.background.isPointerBlocker = true
 
-        UIError.waitStartError.addText('Error', 0, 153, Color4.Black(), 30)
-        UIError.waitStartError.addText('', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
-        UIError.waitStartError.addText('The special quiz', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UIError.waitStartError.addText('registration will open soon', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
+        UIError.fourSlotError.addText('', 0, 153, Color4.Black(), 30)
+        UIError.fourSlotError.addText('', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
+        UIError.fourSlotError.addText('', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 24)
+        UIError.fourSlotError.addText('', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 24)
 
-        UIError.waitStartError.addButton(
+        UIError.fourSlotError.addButton(
             'Ok',
             -0,
             -120,
@@ -91,44 +63,20 @@ export class UIError
             ButtonStyles.F
         )
 
-        UIError.waitStartError.close()
-    }
-
-    private configWaitEndError(): void
-    {
-        UIError.waitEndError = new ui.CustomPrompt(PromptStyles.LIGHT)
-        UIError.waitEndError.background.isPointerBlocker = true
-
-        UIError.waitEndError.addText('Error', 0, 153, Color4.Black(), 30)
-        UIError.waitEndError.addText('', 0, 80, new Color4(1.0, 0.15, 0.3, 1.0), 30)
-        UIError.waitEndError.addText('Quiz has already started', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-        UIError.waitEndError.addText('please wait for it to end', 0, -20, new Color4(0.24, 0.22, 0.25, 1.0), 25)
-
-        UIError.waitEndError.addButton(
-            'Ok',
-            -0,
-            -120,
-            () =>
-            {
-                UIError.uiCallback.hideError()
-            },
-            ButtonStyles.F
-        )
-
-        UIError.waitEndError.close()
-    }
+        UIError.fourSlotError.close()
+    }   
 
     private configReconnectError(): void
     {
-        UIError.reconnectError = new ui.CustomPrompt(PromptStyles.LIGHT)
+        UIError.reconnectError = new ui.CustomPrompt(PromptStyles.LIGHT, 420, 350)
         UIError.reconnectError.background.isPointerBlocker = true
 
         UIError.reconnectError.addText('Error', 0, 153, Color4.Black(), 30)
         UIError.reconnectError.addText('You were disconnected', 0, 93, new Color4(1.0, 0.15, 0.3, 1.0), 30)
-        UIError.reconnectError.addText('Please contact the Quizzone', 0, 40, new Color4(0.24, 0.22, 0.25, 1.0), 22)
-        UIError.reconnectError.addText('so we could fix the issue', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 22)
-        UIError.reconnectError.addText('You may need to join', 0, -25, new Color4(0.24, 0.22, 0.25, 1.0), 22)
-        UIError.reconnectError.addText('the quiz once again', 0, -50, new Color4(0.24, 0.22, 0.25, 1.0), 22)
+        UIError.reconnectError.addText('Please contact the Quizzone', 0, 40, new Color4(0.24, 0.22, 0.25, 1.0), 23)
+        UIError.reconnectError.addText('so we could fix the issue', 0, 15, new Color4(0.24, 0.22, 0.25, 1.0), 23)
+        UIError.reconnectError.addText('You may need to join', 0, -30, new Color4(0.24, 0.22, 0.25, 1.0), 23)
+        UIError.reconnectError.addText('the quiz once again', 0, -55, new Color4(0.24, 0.22, 0.25, 1.0), 23)
 
         UIError.reconnectError.addButton(
             'Sure',
@@ -145,17 +93,23 @@ export class UIError
     }
 
     public close(): void
-    {        
-        UIError.fundsError.close()
+    {                
         UIError.universalError.close()
-        UIError.waitEndError.close()    
-        UIError.waitStartError.close()    
+        UIError.fourSlotError.close()
         UIError.reconnectError.close()    
     }
 
-    public showNotEnoughManaFundsError(): void
-    {     
-        UIError.fundsError.reopen()
+    private updateFourSlotError(one: string, two: string, three: string, four: string)
+    {
+        let text1 = UIError.fourSlotError.elements[0] as CustomPromptText
+        let text2 = UIError.fourSlotError.elements[1] as CustomPromptText
+        let text3 = UIError.fourSlotError.elements[2] as CustomPromptText
+        let text4 = UIError.fourSlotError.elements[3] as CustomPromptText
+        
+        text1.text.value = one
+        text2.text.value = two
+        text3.text.value = three
+        text4.text.value = four
     }
 
     public showUniversalError(value: string): void
@@ -166,20 +120,46 @@ export class UIError
         UIError.universalError.reopen()
     }
 
-    public showWaitStartError(value: string): void
+    public showNotEnoughManaFundsError(): void
     {
-        let text = UIError.waitStartError.elements[1] as CustomPromptText
-        text.text.value = value
+        this.updateFourSlotError("Error", "Not enough funds", "Please consider topping up", "matic MANA")
 
-        UIError.waitStartError.reopen()
+        UIError.fourSlotError.reopen()
     }
 
-    public showWaitEndError(value: string): void
-    {
-        let text = UIError.waitEndError.elements[1] as CustomPromptText
-        text.text.value = value
+    public showWaitStartError(): void
+    {        
+        this.updateFourSlotError("Error", "Can't check in", "The special quiz", "registration will open soon")
 
-        UIError.waitEndError.reopen()
+        UIError.fourSlotError.reopen()
+    }
+
+    public showFullError(): void
+    {        
+        this.updateFourSlotError("Error", "Can't check in", "The quiz is full,", "please wait")
+
+        UIError.fourSlotError.reopen()
+    }
+
+    public showGoConnectError(): void
+    {        
+        this.updateFourSlotError("Shhhh...", "Do not disturb", "If you wish to play,", "click the check in table")
+        
+        UIError.fourSlotError.reopen()
+    }
+
+    public showAlreadyJoinedError(): void
+    {
+        this.updateFourSlotError("Error", "Can't check in", "You've already checked in,", "please enter the playing field")
+
+        UIError.fourSlotError.reopen()
+    }
+
+    public showConnectMetamaskError(): void
+    {
+        this.updateFourSlotError("Error", "No Metamask detected", "You can't use blockchain", "without Metamask connection")
+
+        UIError.fourSlotError.reopen()
     }
 
     public showReconnectError(): void

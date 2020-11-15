@@ -1,10 +1,11 @@
 @Component("uiPropertiesComponent")
 export class UIPropertiesComponent
-{
-    canJoin: boolean
+{        
+    joined: boolean
     beforeTimed: boolean 
+    full: boolean
     canLeave: boolean
-    freeLeave: boolean
+    
     member: boolean
 
     timeToQuizStart: string
@@ -28,11 +29,11 @@ export class UIPropertiesComponent
     }
 
     public clear(): void
-    {
-        this.canJoin = false
+    {        
+        this.joined = false
         this.beforeTimed = false
-        this.canLeave = false
-        this.freeLeave = true
+        this.full = false
+        this.canLeave = false        
 
         this.controlVisible = true
         this.autocompleteVisible = false

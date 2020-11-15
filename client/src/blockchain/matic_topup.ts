@@ -24,7 +24,7 @@ export class MaticTopUp
     }
 
     public transferToMatic(balance: number, amount: number): void
-    {        
+    {
         if (isNaN(amount) || amount <= 0)
         {
             MaticTopUp.uiCallback.showUniversalError("Wrong input")
@@ -39,18 +39,21 @@ export class MaticTopUp
 
         const topUp = executeTask(async () =>
         {
-            MaticTopUp.uiCallback.showCheckMetamask()
+            if (General.playerWallet != null)
+            {
+                MaticTopUp.uiCallback.showCheckMetamask()
 
-            await matic.depositMana(amount, General.network).then(() => 
-            {
-                MaticTopUp.uiCallback.showTick(16)
-            }).catch(() => 
-            {
-                MaticTopUp.uiCallback.hideHourglass()
-                MaticTopUp.uiCallback.hideAllWindows()
-            })
+                await matic.depositMana(amount, General.network).then(() => 
+                {
+                    MaticTopUp.uiCallback.showTick(16)
+                }).catch(() => 
+                {
+                    MaticTopUp.uiCallback.hideHourglass()
+                    MaticTopUp.uiCallback.hideAllWindows()
+                })
+            }
         })
 
         topUp.then()
-    }   
+    }
 }

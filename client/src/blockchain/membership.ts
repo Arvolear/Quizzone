@@ -7,6 +7,7 @@ import { UICallback } from '../callbacks/ui_callback'
 import { UIPropertiesComponent } from '../components/ui_properties_component'
 import { General } from './general'
 import { ElasticLogger } from '../log/elastic_logger'
+import { getUserData } from '@decentraland/Identity'
 
 export class Membership
 {
@@ -41,9 +42,14 @@ export class Membership
     {
         const playerDataPromise = executeTask(async () =>
         {
-            while (General.playerWallet == null)
+            let data = await getUserData()
+
+            if (data.hasConnectedWeb3)
             {
-                await delay(100)
+                while (General.playerWallet == null)
+                {
+                    await delay(100)
+                }
             }
         })
 
@@ -57,15 +63,22 @@ export class Membership
     {
         const membershipPromise = executeTask(async () =>
         {
-            const provider = await getProvider()
-            const requestManager = new EthConnect.RequestManager(provider)
-            const factory = new EthConnect.ContractFactory(requestManager, abiToken)
-            const contract = (await factory.at(Membership.CONTRACT_TOKEN)) as any
-            const amount = await contract.balanceOf(General.playerWallet, Membership.TOKEN_ID) as number
-
-            if (amount > 0)
+            if (General.playerWallet != null)
             {
-                UICallback.properties.getComponent(UIPropertiesComponent).member = true
+                const provider = await getProvider()
+                const requestManager = new EthConnect.RequestManager(provider)
+                const factory = new EthConnect.ContractFactory(requestManager, abiToken)
+                const contract = (await factory.at(Membership.CONTRACT_TOKEN)) as any
+                const amount = await contract.balanceOf(General.playerWallet, Membership.TOKEN_ID) as number
+
+                if (amount > 0)
+                {
+                    UICallback.properties.getComponent(UIPropertiesComponent).member = true
+                }
+                else
+                {
+                    UICallback.properties.getComponent(UIPropertiesComponent).member = false
+                }
             }
             else
             {
@@ -90,42 +103,45 @@ export class Membership
     {
         const buyMembershipPromise = executeTask(async () =>
         {
-            const provider = await getProvider()
-            const requestManager = new EthConnect.RequestManager(provider)
-            const factory = new EthConnect.ContractFactory(requestManager, abiBuy)
-            const contractBuy = (await factory.at(Membership.CONTRACT_BUY)) as any
-            const prices = await contractBuy.getPrices([Membership.TOKEN_ID]);
-            const price = prices[0];
-
-            try
+            if (General.playerWallet != null)
             {
-                let res = await contractBuy.buyNFTForETH(Membership.TOKEN_ID, 1, [],
-                    {
-                        from: General.playerWallet,
-                        value: price
-                    })
+                const provider = await getProvider()
+                const requestManager = new EthConnect.RequestManager(provider)
+                const factory = new EthConnect.ContractFactory(requestManager, abiBuy)
+                const contractBuy = (await factory.at(Membership.CONTRACT_BUY)) as any
+                const prices = await contractBuy.getPrices([Membership.TOKEN_ID]);
+                const price = prices[0];
 
-                let receipt = null
-
-                while (receipt == null)
+                try
                 {
-                    await delay(2000)
-                    receipt = await requestManager.eth_getTransactionReceipt(res.toString())
+                    let res = await contractBuy.buyNFTForETH(Membership.TOKEN_ID, 1, [],
+                        {
+                            from: General.playerWallet,
+                            value: price
+                        })
+
+                    let receipt = null
+
+                    while (receipt == null)
+                    {
+                        await delay(2000)
+                        receipt = await requestManager.eth_getTransactionReceipt(res.toString())
+                    }
+
+                    await delay(5000)
+
+                    UICallback.properties.getComponent(UIPropertiesComponent).member = true
+                    Membership.uiCallback.showTick(8)
+
+                    this.logBuyMembership(price, receipt)
                 }
+                catch (exception)
+                {
+                    log(exception.toString())
 
-                await delay(5000)
-
-                UICallback.properties.getComponent(UIPropertiesComponent).member = true
-                Membership.uiCallback.showTick(8)
-
-                this.logBuyMembership(price, receipt)
-            }
-            catch (exception)
-            {
-                log(exception.toString())
-
-                Membership.uiCallback.hideCheckMetamask()
-                Membership.uiCallback.hideHourglass()
+                    Membership.uiCallback.hideCheckMetamask()
+                    Membership.uiCallback.hideHourglass()
+                }
             }
         })
 
@@ -136,16 +152,23 @@ export class Membership
     {
         const balancePromise = executeTask(async () =>
         {
-            const provider = await getProvider()
-            const requestManager = new EthConnect.RequestManager(provider)
-            const factory = new EthConnect.ContractFactory(requestManager, abiBuy)
-            const contractBuy = (await factory.at(Membership.CONTRACT_BUY)) as any            
-            const prices = await contractBuy.getPrices([Membership.TOKEN_ID]);
-            const price = prices[0];
-        
-            let priceStr = EthConnect.fromWei(price.toNumber(), "ether").toString()            
+            if (General.playerWallet != null)
+            {
+                const provider = await getProvider()
+                const requestManager = new EthConnect.RequestManager(provider)
+                const factory = new EthConnect.ContractFactory(requestManager, abiBuy)
+                const contractBuy = (await factory.at(Membership.CONTRACT_BUY)) as any
+                const prices = await contractBuy.getPrices([Membership.TOKEN_ID]);
+                const price = prices[0];
 
-            return priceStr
+                let priceStr = EthConnect.fromWei(price.toNumber(), "ether").toString()
+
+                return priceStr
+            }
+            else 
+            {
+                return "inf"
+            }
         })
 
         return balancePromise

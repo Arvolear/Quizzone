@@ -16,8 +16,8 @@ import { Sounds } from "./sounds"
 
 export class DappClientSocket
 {    
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private static uiCallback: UICallback
@@ -196,8 +196,8 @@ export class DappClientSocket
                     var autocutPrice = parseInt(lines[2])
 
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
-
-                    uiComp.canJoin = true
+                    
+                    uiComp.full = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
 
@@ -217,8 +217,8 @@ export class DappClientSocket
                     var autocutPrice = parseInt(lines[2])
 
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
-
-                    uiComp.canJoin = true
+                    
+                    uiComp.full = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
 
@@ -236,11 +236,10 @@ export class DappClientSocket
             case "awaiting_connected":
                 {
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
-
-                    uiComp.canJoin = false
+                    
+                    uiComp.full = false
                     uiComp.beforeTimed = true
-                    uiComp.canLeave = false
-                    uiComp.timeToQuizStart = ""
+                    uiComp.canLeave = false                    
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
@@ -256,7 +255,7 @@ export class DappClientSocket
 
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
 
-                    uiComp.canJoin = false
+                    uiComp.full = true
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false                    
 
@@ -265,14 +264,25 @@ export class DappClientSocket
 
                     break
                 }
-            case "bad_connected":
+            case "started_full":
+                {                    
+                    DappClientSocket.sceneCallback.turnOnButtonCollisions()
+
+                    uiComp.full = true
+                    uiComp.beforeTimed = false
+                    uiComp.canLeave = false     
+                    
+                    centralComp.hasStarted = true
+
+                    break
+                }
+            case "started_joinable":
                 {
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
-                    
-                    uiComp.canJoin = false
+                                        
+                    uiComp.full = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
-                    uiComp.timeToQuizStart = ""
 
                     centralComp.hasStarted = true
 
@@ -280,10 +290,10 @@ export class DappClientSocket
                 }
             case "successful_join":
                 {
-                    uiComp.canJoin = false
-                    uiComp.canLeave = true
-                    uiComp.freeLeave = true
+                    uiComp.joined = true
+                    uiComp.canLeave = true                 
 
+                    DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.setColliderAndTeleport()
                     lifetimeBestScreenMain.removeComponent(BlockComponent)
 
@@ -376,8 +386,7 @@ export class DappClientSocket
                     let question = DappClientSocket.getQuestionFrom(lines, 4)
 
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
-
-                    uiComp.canJoin = false
+                    
                     uiComp.timeToQuizStart = ""
 
                     centralComp.hasStarted = true
@@ -400,10 +409,8 @@ export class DappClientSocket
                     var totalQuestions = parseInt(lines[2])
 
                     let question = DappClientSocket.getQuestionFrom(lines, 4)
-
-                    uiComp.canJoin = false
-                    uiComp.canLeave = true
-                    uiComp.freeLeave = false
+                    
+                    uiComp.canLeave = true                    
                     uiComp.timeToQuizStart = ""
 
                     centralComp.hasStarted = true
@@ -424,7 +431,7 @@ export class DappClientSocket
                 {
                     rightComp.timeLeft = lines[1]
 
-                    if (uiComp.canJoin)
+                    if (!centralComp.hasStarted)
                     {
                         uiComp.timeToQuizStart = lines[1]
                     }
@@ -532,8 +539,7 @@ export class DappClientSocket
                 }
             case "finish":
                 {
-                    uiComp.canLeave = false
-                    uiComp.freeLeave = true
+                    uiComp.canLeave = false                    
 
                     centralComp.nowQuestion = false
                     centralComp.nowAnswer = false
@@ -600,6 +606,8 @@ export class DappClientSocket
                     topPartyScreenMain.getComponent(TextShape).value = ""
                     timedQuizScreenMain.getComponent(TextShape).value = ""
 
+                    DappClientSocket.uiCallback.hideStartUp()
+
                     DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.dropCollider()
 
@@ -629,7 +637,12 @@ export class DappClientSocket
 
             let realmName = `${JSON.stringify(realm.displayName)}`
             let nick = data.displayName
-            let wallet = data.publicKey
+            let wallet = "no wallet"
+
+            if (data.hasConnectedWeb3)
+            {
+                wallet = data.publicKey
+            }
 
             response += realmName + "\n" + wallet + "\n" + nick;
 

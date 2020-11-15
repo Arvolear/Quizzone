@@ -20,9 +20,14 @@ public class PartyMessagesHandler
         return "successful_join";
     }
 
-    public String getLockedMessage()
+    public String getStartedJoinableMessage()
     {
-        return "bad_connected";
+        return "started_joinable";
+    }
+
+    public String getStartedFullMessage()
+    {
+        return "started_full";
     }
 
     public String getFullMessage()
@@ -303,7 +308,7 @@ public class PartyMessagesHandler
         }
         else
         {
-            builder.append("Thanks for playing! Now you can leave the field!\n");
+            builder.append("Thanks for playing! You can leave the playing field now!\n");
         }
 
         ArrayList<Map.Entry<Client, Integer>> topParty = new ArrayList<>(party.totalCorrect.entrySet());
