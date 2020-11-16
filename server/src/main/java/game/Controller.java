@@ -184,7 +184,7 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized public void reconnectEveryoneToTimed()
+    synchronized public void reconnectEveryoneToTimed(boolean finishRandom)
     {
         for (var party : realmToParties.values())
         {
@@ -192,7 +192,14 @@ public class Controller implements IStopWatchCallback
 
             if (party.isStarted())
             {
-                continue;
+                if (finishRandom)
+                {
+                    party.finish();
+                }
+                else
+                {
+                    continue;
+                }
             }
 
             for (var player : party.getIdlePlayers().values())

@@ -20,6 +20,7 @@ public class TimedParty extends AbstractParty
     protected BoostersHandler boostersHandler;
 
     protected int blockOtherPartiesTimeout;
+    protected int criticalBlockTime = 60;
 
     protected boolean shouldConnect;
     protected boolean shouldJoin;
@@ -365,7 +366,7 @@ public class TimedParty extends AbstractParty
                 shouldConnect = true;
                 canAwait = true;
 
-                controller.reconnectEveryoneToTimed();
+                controller.reconnectEveryoneToTimed(timeLeft <= criticalBlockTime);
 
                 if (sendAwaitingOnce)
                 {

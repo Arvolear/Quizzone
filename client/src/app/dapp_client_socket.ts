@@ -16,8 +16,8 @@ import { Sounds } from "./sounds"
 
 export class DappClientSocket
 {    
-    // private static location = "wss://quiz-service.dapp-craft.com:8444"
-    private static location = "ws://localhost:8080"
+    private static location = "wss://quiz-service.dapp-craft.com:8444"
+    // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private static uiCallback: UICallback
@@ -547,6 +547,9 @@ export class DappClientSocket
 
                     DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.dropCollider()
+
+                    DappClientSocket.uiCallback.hideStartUp()
+
                     lifetimeBestScreenMain.addComponentOrReplace(new BlockComponent)
 
                     sounds.playCompleteQuiz()
@@ -715,6 +718,8 @@ export class DappClientSocket
         lifetimeBestScreenRight.getComponent(TextShape).value = ""
         lifetimeBestScreenDash.getComponent(TextShape).value = ""
         timedQuizScreenMain.getComponent(TextShape).value = ""
+
+        DappClientSocket.uiCallback.hideAllWindows()
 
         DappClientSocket.sceneCallback.turnOffButtonCollisions()
         DappClientSocket.sceneCallback.dropCollider()
