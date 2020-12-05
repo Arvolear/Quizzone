@@ -144,7 +144,10 @@ public class Controller implements IStopWatchCallback
         Client player = sessionToPlayer.get(session);
         RandomParty party = realmToParties.get(player.getRealm());
 
-        party.joinPlayer(player);
+        if (party != null)
+        {
+            party.joinPlayer(player);
+        }
     }
 
     synchronized private void disconnectFromRandomParty(Client player)
