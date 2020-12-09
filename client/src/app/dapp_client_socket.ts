@@ -16,8 +16,8 @@ import { Sounds } from "./sounds"
 
 export class DappClientSocket
 {    
-    private static location = "wss://quiz-service.dapp-craft.com:8444"
-    // private static location = "ws://localhost:8080"
+    // private static location = "wss://quiz-service.dapp-craft.com:8444"
+    private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private static uiCallback: UICallback
@@ -491,10 +491,11 @@ export class DappClientSocket
                     if (isCorrect)
                     {
                         sounds.playCorrect()
+                        DappClientSocket.sceneCallback.correctAnswerEmote()
                     }
                     else
                     {
-                        sounds.playWrong()
+                        sounds.playWrong()                        
                     }
 
                     sounds.muteMusic()
@@ -565,6 +566,8 @@ export class DappClientSocket
             case "top_party":
                 {
                     var partyTop = DappClientSocket.getPartyTopFrom(lines, 1)
+
+                    DappClientSocket.sceneCallback.clapEmote()
 
                     topComp.topPartyPlayers = partyTop
                     topComp.topPartyPlayersLoaded = true
@@ -665,6 +668,8 @@ export class DappClientSocket
         log("CLOSED!")
         log("REMOTE CLOSE")
 
+        DappClientSocket.uiCallback.hideAllWindows()
+
         let sounds = Sounds.getInstance()
 
         let centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
@@ -695,6 +700,8 @@ export class DappClientSocket
         if (event.code != DappClientSocket.DISTANCE_CODE &&
             event.code != DappClientSocket.LEAVE_CODE)
         {
+            log("AN ERROR OCCURED")
+
             centralScreenMain.getComponent(TextShape).value = "Disconnected remotely\n\nPlease consider reconnecting"
             centralScreenMain.getComponent(TextShape).fontSize = 1
 
@@ -706,6 +713,12 @@ export class DappClientSocket
             {
                 DappClientSocket.sceneCallback.turnOnSpecialCaseCollision()
                 sounds.playLeaveQuiz()
+
+                log("LEAVE QUIZ DISCONNECT")
+            }
+            else
+            {
+                log("DISTANCE DISCONNECT")
             }
 
             centralScreenMain.getComponent(TextShape).value = ""
@@ -717,9 +730,7 @@ export class DappClientSocket
         lifetimeBestScreenMain.getComponent(TextShape).value = ""
         lifetimeBestScreenRight.getComponent(TextShape).value = ""
         lifetimeBestScreenDash.getComponent(TextShape).value = ""
-        timedQuizScreenMain.getComponent(TextShape).value = ""
-
-        DappClientSocket.uiCallback.hideAllWindows()
+        timedQuizScreenMain.getComponent(TextShape).value = ""        
 
         DappClientSocket.sceneCallback.turnOffButtonCollisions()
         DappClientSocket.sceneCallback.dropCollider()

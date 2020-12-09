@@ -1,5 +1,5 @@
 import utils from "../../node_modules/decentraland-ecs-utils/index"
-import { movePlayerTo } from "@decentraland/RestrictedActions"
+import { movePlayerTo, triggerEmote, PredefinedEmote } from "@decentraland/RestrictedActions"
 import { SceneCallback } from '../callbacks/scene_callback'
 import { UICallback } from "../callbacks/ui_callback"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
@@ -493,6 +493,16 @@ export class Scene extends SceneCallback
                 }))
             }
         }
+    }
+
+    public correctAnswerEmote(): void
+    {
+        triggerEmote({ predefined: PredefinedEmote.FIST_PUMP })
+    }
+
+    public clapEmote(): void
+    {
+        triggerEmote({ predefined: PredefinedEmote.CLAP })
     }
 
     public setColliderAndTeleport(): void
