@@ -1,4 +1,5 @@
 import utils from "../../node_modules/decentraland-ecs-utils/index"
+import { movePlayerTo, triggerEmote, PredefinedEmote } from "@decentraland/RestrictedActions"
 import { SceneCallback } from '../callbacks/scene_callback'
 import { UICallback } from "../callbacks/ui_callback"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
@@ -27,7 +28,7 @@ export class Scene extends SceneCallback
     private memberCard: Entity
     private memberButton: Entity
     private memberButtonShape: BoxShape
-    
+
     private infoBecomeButton: Entity
     private infoBecomeButtonShape: BoxShape
     private infoAlreadyButton: Entity
@@ -63,7 +64,7 @@ export class Scene extends SceneCallback
         this.configScene()
         // this.configBanner()
         this.configBecomeAMember()
-        this.configAlreadyAMember()           
+        this.configAlreadyAMember()
         this.configGrass()
         this.configLogo()
         this.configColliders()
@@ -74,7 +75,7 @@ export class Scene extends SceneCallback
         this.configStartButton()
 
         this.configMemberCard()
-        
+
         this.configButtonsCollisionTrigger()
     }
 
@@ -114,26 +115,26 @@ export class Scene extends SceneCallback
         quizzone.addComponentOrReplace(transform6)
     }
 
-    // private configBanner(): void
-    // {         
-    //     const bannerShape = new GLTFShape("models/banner/banner.glb")
-    //     bannerShape.withCollisions = true
-    //     bannerShape.isPointerBlocker = false
-    //     bannerShape.visible = true
+    private configBanner(): void
+    {         
+        const bannerShape = new GLTFShape("models/banner/banner.glb")
+        bannerShape.withCollisions = true
+        bannerShape.isPointerBlocker = false
+        bannerShape.visible = true
 
-    //     this.banner = new Entity('banner')
-    //     engine.addEntity(this.banner)
-    //     this.banner.setParent(this.scene)
-    //     this.banner.addComponentOrReplace(bannerShape)
+        this.banner = new Entity('banner')
+        engine.addEntity(this.banner)
+        this.banner.setParent(this.scene)
+        this.banner.addComponentOrReplace(bannerShape)
 
-    //     const transform = new Transform(
-    //         {
-    //             position: new Vector3(16.5, -0.4, 15.8),
-    //             rotation: new Quaternion(0, 0, 0, 1),
-    //             scale: new Vector3(1, 1, 1)
-    //         })
-    //     this.banner.addComponentOrReplace(transform)
-    // }
+        const transform = new Transform(
+            {
+                position: new Vector3(16.5, -0.4, 15.8),
+                rotation: new Quaternion(0, 0, 0, 1),
+                scale: new Vector3(1, 1, 1)
+            })
+        this.banner.addComponentOrReplace(transform)
+    }
 
     private configBecomeAMember(): void
     {
@@ -196,7 +197,7 @@ export class Scene extends SceneCallback
             () =>
             {
                 this.ui.showInfo()
-            }))     
+            }))
     }
 
     private configAlreadyAMember(): void
@@ -266,9 +267,9 @@ export class Scene extends SceneCallback
         this.memberCard.addComponent(new utils.KeepRotatingComponent(Quaternion.Euler(0, 45, 0)))
 
         this.memberCard.addComponent(new OnPointerDown(() =>
-            {
-                this.ui.showMember()
-            }
+        {
+            this.ui.showMember()
+        }
         ))
     }
 
@@ -300,7 +301,7 @@ export class Scene extends SceneCallback
 
     private configLogo(): void
     {
-        const logoShape = new GLTFShape("models/logo/logo_animation.glb")        
+        const logoShape = new GLTFShape("models/logo/logo_animation.glb")
         logoShape.visible = true
 
         let logo = new Entity('logo')
@@ -327,7 +328,7 @@ export class Scene extends SceneCallback
     }
 
     private configColliders(): void
-    {        
+    {
         const transform = new Transform(
             {
                 position: new Vector3(16.5, -0.5, 14.6),
@@ -353,7 +354,7 @@ export class Scene extends SceneCallback
 
         this.inCollider = new Entity('in_collider')
         engine.addEntity(this.inCollider)
-        this.inCollider.setParent(this.scene)        
+        this.inCollider.setParent(this.scene)
         this.inCollider.addComponentOrReplace(transform)
     }
 
@@ -419,17 +420,21 @@ export class Scene extends SceneCallback
 
     public startGame(): void
     {
-        if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
+        if (UICallback.properties.getComponent(UIPropertiesComponent).joined)
         {
-            this.ui.showStartUp()
+            this.ui.showAlreadyJoinedError()
+        }
+        else if (UICallback.properties.getComponent(UIPropertiesComponent).full)
+        {
+            this.ui.showFullError()
         }
         else if (UICallback.properties.getComponent(UIPropertiesComponent).beforeTimed)
         {
-            this.ui.showWaitStartError("Can\'t check in")
+            this.ui.showWaitStartError()
         }
         else
         {
-            this.ui.showWaitEndError("Can\'t check in")
+            this.ui.showStartUp()
         }
     }
 
@@ -490,6 +495,16 @@ export class Scene extends SceneCallback
         }
     }
 
+    public correctAnswerEmote(): void
+    {
+        triggerEmote({ predefined: PredefinedEmote.FIST_PUMP })
+    }
+
+    public clapEmote(): void
+    {
+        triggerEmote({ predefined: PredefinedEmote.CLAP })
+    }
+
     public setColliderAndTeleport(): void
     {
         movePlayerTo({ x: 16, y: 0, z: 16 }) // teleport
@@ -501,7 +516,7 @@ export class Scene extends SceneCallback
     public dropCollider(): void
     {
         this.inCollider.removeComponent(this.inColliderShape)
-        this.outCollider.addComponentOrReplace(this.outColliderShape)        
+        this.outCollider.addComponentOrReplace(this.outColliderShape)
     }
 
     public turnOnButtonCollisions(): void
@@ -517,7 +532,7 @@ export class Scene extends SceneCallback
     public turnOnSpecialCaseCollision(): void
     {
         this.buttonsColliderTrigger.turnOnSpecialCaseCollision()
-    }    
+    }
 
     public getButtons(): Array<Button>
     {

@@ -228,6 +228,8 @@ function importQuestions($file, $shuffle)
     global $QUESTION_LIMIT;
     global $DELIMITER;
 
+    global $SUCCESS;
+
     if (!checkFileSize($file)) {
         getFileSizeError();
         return;
@@ -262,6 +264,8 @@ function importQuestions($file, $shuffle)
         shuffle($csv);
     }
 
+    $importedCounter = 0;
+
     for ($i = 0; $i < min(count($csv), $QUESTION_LIMIT); $i++) {
         $answer = count($csv[$i]) == 6 ? (int)$csv[$i][5] : 1;
         $localAnswer = -1;
@@ -295,7 +299,11 @@ function importQuestions($file, $shuffle)
         }
 
         $_SESSION['answer' . $i] = empty($shuffle) ? $answer : $localAnswer;
+
+        $importedCounter++;
     }
+
+    $SUCCESS = "<p style=\"font-size:30px; text-align:center;\">Successfully imported " . $importedCounter . " questions</p>";
 
     $_SESSION['CLEAR_IMPORTED'] = false;
 }

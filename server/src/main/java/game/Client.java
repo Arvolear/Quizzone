@@ -1,9 +1,6 @@
 package game;
 
-
 import org.eclipse.jetty.websocket.api.Session;
-
-import java.util.Objects;
 
 public class Client
 {
@@ -25,7 +22,7 @@ public class Client
         this.wallet = wallet;
         this.nick = nick;
 
-        clear();
+        clearBoosters();
     }
 
     @Override
@@ -42,13 +39,13 @@ public class Client
         }
 
         Client client = (Client) o;
-        return Objects.equals(session, client.session);
+        return nick.equals(client.nick);
     }
 
     @Override
     public int hashCode()
     {
-        return session.hashCode();
+        return nick.hashCode();
     }
 
     public void setAutocompleteLeft(int left)
@@ -77,12 +74,18 @@ public class Client
         }
     }
 
-    public void clear()
+    public void clearReadyBoosters()
+    {
+        autocompleteReady = false;
+        autocutReady = false;
+    }
+
+    public void clearBoosters()
     {
         autocompleteLeft = 0;
         autocutLeft = 0;
-        autocompleteReady = false;
-        autocutReady = false;
+
+        clearReadyBoosters();
     }
 
     public Session getSession()

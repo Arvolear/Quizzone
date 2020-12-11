@@ -2,8 +2,6 @@ import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/uti
 import * as ui from '../../node_modules/@dcl/ui-utils/index'
 import { UICallback } from '../callbacks/ui_callback'
 import { DappClientSocket } from "../app/dapp_client_socket"
-import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { AppCallback } from "../callbacks/app_callback"
 
 export class UILeave
@@ -21,18 +19,18 @@ export class UILeave
 
     private configAutocomplete(): void
     {
-        UILeave.leaver = new ui.CustomPrompt(PromptStyles.LIGHT, 420, 300)
+        UILeave.leaver = new ui.CustomPrompt(PromptStyles.LIGHT, 420, 350)
         UILeave.leaver.background.isPointerBlocker = true
 
-        UILeave.leaver.addText('Leave the quiz', 0, 130, Color4.Black(), 30)
-        UILeave.leaver.addText('', 0, 60, new Color4(0.24, 0.22, 0.25, 1.0), 30)
-        UILeave.leaver.addText('', 0, 20, new Color4(0.24, 0.22, 0.25, 1.0), 30)
-        UILeave.leaver.addText('Leave the quiz?', 0, -50, new Color4(0.24, 0.22, 0.25, 1.0), 30)
+        UILeave.leaver.addText('Leave the quiz', 0, 150, Color4.Black(), 30)
+        UILeave.leaver.addText('Unless the quiz has finished', 0, 65, new Color4(0.24, 0.22, 0.25, 1.0), 26)
+        UILeave.leaver.addText('you may join back later', 0, 20, new Color4(0.24, 0.22, 0.25, 1.0), 26)        
+        UILeave.leaver.addText('Leave the quiz?', 0, -60, new Color4(0.24, 0.22, 0.25, 1.0), 28)
 
         UILeave.leaver.addButton(
             'Yeah',
             -95,
-            -110,
+            -130,
             () =>
             {
                 UILeave.leave()
@@ -44,7 +42,7 @@ export class UILeave
         UILeave.leaver.addButton(
             'Nope',
             95,
-            -110,
+            -130,
             () =>
             {
                 UILeave.uiCallback.hideLeaveWindow()
@@ -59,30 +57,10 @@ export class UILeave
     {
         AppCallback.dappClientSocket.close(DappClientSocket.getLeaveCode())
         AppCallback.dappClientSocket.connect()
-    }
-
-    public updateMessage(): void
-    {
-        let valueText1 = UILeave.leaver.elements[1] as CustomPromptText
-        let valueText2 = UILeave.leaver.elements[2] as CustomPromptText
-
-        let uiPropertiesComp = UICallback.properties.getComponent(UIPropertiesComponent)
-        let freeLeave = uiPropertiesComp.freeLeave
-
-        if (freeLeave)
-        {
-            valueText1.text.value = "If you leave now"
-            valueText2.text.value = "you may join back later"
-        }
-        else
-        {
-            valueText1.text.value = "If you leave now"
-            valueText2.text.value = "you won't be able to join"
-        }
-    }
+    }    
 
     public reopen(): void
-    {        
+    {
         UILeave.leaver.reopen()
     }
 

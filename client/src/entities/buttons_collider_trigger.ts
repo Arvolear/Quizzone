@@ -45,10 +45,8 @@ export class ButtonsColliderTrigger
                 () =>
                 {
                     if (!this.specialCase)
-                    {
-                        log("WAIT FOR THE QUIZ TO END")
-
-                        ButtonsColliderTrigger.uiCallback.showWaitEndError("Too late...")
+                    {                        
+                        ButtonsColliderTrigger.uiCallback.showGoConnectError()
                     }
                 },
                 () =>

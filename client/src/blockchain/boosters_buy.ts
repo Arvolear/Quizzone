@@ -10,7 +10,7 @@ export class BoostersBuy
     private static boostersBuy: BoostersBuy
 
     private static uiCallback: UICallback
-    private static sounds: Sounds    
+    private static sounds: Sounds
 
     private static elasticLogger: ElasticLogger
 
@@ -46,29 +46,32 @@ export class BoostersBuy
     {
         const sendAutocomplete = executeTask(async () =>
         {
-            BoostersBuy.uiCallback.showHourglass()
-            BoostersBuy.uiCallback.showCheckMetamask()
-
-            await matic.sendMana(General.myWallet, boostersToBuyValue, true, General.network).then(() => 
+            if (General.playerWallet != null)
             {
-                var toSend = "buy_boosters\n" +
-                    autocompleteNum + "\n" +
-                    autocutNum + "\n" +
-                    General.playerWallet
+                BoostersBuy.uiCallback.showHourglass()
+                BoostersBuy.uiCallback.showCheckMetamask()
 
-                AppCallback.dappClientSocket.send(toSend)
+                await matic.sendMana(General.myWallet, boostersToBuyValue, true, General.network).then(() => 
+                {
+                    var toSend = "buy_boosters\n" +
+                        autocompleteNum + "\n" +
+                        autocutNum + "\n" +
+                        General.playerWallet
 
-                BoostersBuy.sounds.playBuyBooster()
+                    AppCallback.dappClientSocket.send(toSend)
 
-                BoostersBuy.uiCallback.hideAllWindows()
-                BoostersBuy.uiCallback.showTick(8)
-                
-                this.logBuyBoosters(boostersToBuyValue, autocompleteNum, autocutNum)
-            }).catch(() => 
-            {
-                BoostersBuy.uiCallback.hideHourglass()
-                BoostersBuy.uiCallback.hideAllWindows()                
-            })
+                    BoostersBuy.sounds.playBuyBooster()
+
+                    BoostersBuy.uiCallback.hideAllWindows()
+                    BoostersBuy.uiCallback.showTick(8)
+
+                    this.logBuyBoosters(boostersToBuyValue, autocompleteNum, autocutNum)
+                }).catch(() => 
+                {
+                    BoostersBuy.uiCallback.hideHourglass()
+                    BoostersBuy.uiCallback.hideAllWindows()
+                })
+            }
         })
 
         sendAutocomplete.then()

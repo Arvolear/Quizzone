@@ -144,7 +144,10 @@ public class Controller implements IStopWatchCallback
         Client player = sessionToPlayer.get(session);
         RandomParty party = realmToParties.get(player.getRealm());
 
-        party.joinPlayer(player);
+        if (party != null)
+        {
+            party.joinPlayer(player);
+        }
     }
 
     synchronized private void disconnectFromRandomParty(Client player)
@@ -184,7 +187,7 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized public void reconnectEveryoneToTimed()
+    synchronized public void reconnectEveryoneToTimed(boolean finishRandom)
     {
         for (var party : realmToParties.values())
         {
@@ -192,7 +195,14 @@ public class Controller implements IStopWatchCallback
 
             if (party.isStarted())
             {
-                continue;
+                if (finishRandom)
+                {
+                    party.finish();
+                }
+                else
+                {
+                    continue;
+                }
             }
 
             for (var player : party.getIdlePlayers().values())
@@ -204,12 +214,15 @@ public class Controller implements IStopWatchCallback
         }
     }
 
-    synchronized public void reconnectEveryoneFromTimed()
+    synchronized public void reconnectEveryoneFromTimed(boolean clearRandom)
     {
-        for (var party : realmToParties.values())
+        if (clearRandom)
         {
-            party.unMute();
-            party.clear();
+            for (var party : realmToParties.values())
+            {
+                party.unMute();
+                party.clear();
+            }
         }
 
         for (var player : timedParty.getIdlePlayers().values())

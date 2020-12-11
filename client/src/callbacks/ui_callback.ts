@@ -32,17 +32,21 @@ export abstract class UICallback
     abstract showTick(time: number): void
     abstract setMember(member: boolean): void
     abstract hideAllWindows(): void
+
     abstract showUniversalError(message: string): void
     abstract showNotEnoughManaFundsError(): void
-    abstract showWaitStartError(message: string): void
-    abstract showWaitEndError(message: string): void
+    abstract showWaitStartError(): void
+    abstract showFullError(): void
+    abstract showGoConnectError(): void
+    abstract showAlreadyJoinedError(): void
     abstract showReconnectError(): void
+    abstract showConnectMetamaskError(): void
     abstract hideError(): void
+
     abstract updateAutocompletePrice(): void
     abstract updateAutocutPrice(): void
     abstract updateAutocompleteLeft(): void
-    abstract updateAutocutLeft(): void
-    abstract updateLeaveMessage(): void
+    abstract updateAutocutLeft(): void    
     abstract updateCanJoinTimer(): void
     abstract buyBoostersIfShould(): void
 }

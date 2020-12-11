@@ -7,8 +7,8 @@ export class General
 {
     private static general: General
 
-    public static playerWallet
-    public static playerNick
+    public static playerWallet: string
+    public static playerNick: string
     public static myWallet = "0xEd498E75d471C3b874461a87Bb7146453CC8175A"
     public static network = "mainnet"
     // public static network = "goerli"
@@ -18,7 +18,8 @@ export class General
         const playerDataPromise = executeTask(async () =>
         {
             let data = await getUserData()
-            General.playerWallet = data.publicKey;
+            
+            General.playerWallet = data.publicKey
             General.playerNick = data.displayName
         })
 
@@ -39,14 +40,21 @@ export class General
     {
         const balancePromise = executeTask(async () =>
         {
-            const provider = await getProvider()
-            const requestManager = new EthConnect.RequestManager(provider)
-            const blockNum = await requestManager.eth_blockNumber()
-            const playerBalance = await requestManager.eth_getBalance(General.playerWallet, blockNum)
+            if (General.playerWallet != null)
+            {
+                const provider = await getProvider()
+                const requestManager = new EthConnect.RequestManager(provider)
+                const blockNum = await requestManager.eth_blockNumber()
+                const playerBalance = await requestManager.eth_getBalance(General.playerWallet, blockNum)
 
-            let playerBalanceStr = EthConnect.fromWei(playerBalance.toNumber(), "ether").toString()
+                let playerBalanceStr = EthConnect.fromWei(playerBalance.toNumber(), "ether").toString()
 
-            return playerBalanceStr
+                return playerBalanceStr
+            }
+            else
+            {
+                return "0";
+            }
         })
 
         return balancePromise
@@ -56,7 +64,14 @@ export class General
     {
         const balancePromise = executeTask(async () =>
         {
-            return await matic.balance(General.playerWallet, General.network)
+            if (General.playerWallet != null)
+            {
+                return await matic.balance(General.playerWallet, General.network)
+            }
+            else
+            {
+                return {l1: 0, l2: 0}
+            }
         })
 
         return balancePromise

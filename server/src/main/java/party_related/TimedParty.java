@@ -20,6 +20,7 @@ public class TimedParty extends AbstractParty
     protected BoostersHandler boostersHandler;
 
     protected int blockOtherPartiesTimeout;
+    protected int criticalBlockTime = 60;
 
     protected boolean shouldConnect;
     protected boolean shouldJoin;
@@ -171,6 +172,12 @@ public class TimedParty extends AbstractParty
 
         idlePlayers.put(player, player);
 
+        if (!shouldConnect)
+        {
+            controller.reconnectEveryoneFromTimed(false);
+            return;
+        }
+
         send(player, timedMessagesHandler.getLifetimeBestResponse(player));
 
         if (category != null)
@@ -200,7 +207,14 @@ public class TimedParty extends AbstractParty
         }
         else
         {
-            send(player, timedMessagesHandler.getLockedMessage());
+            if (full)
+            {
+                send(player, timedMessagesHandler.getStartedFullMessage());
+            }
+            else
+            {
+                send(player, timedMessagesHandler.getStartedJoinableMessage());
+            }
 
             if (nowQuestion)
             {
@@ -226,38 +240,72 @@ public class TimedParty extends AbstractParty
     @Override
     synchronized public void joinPlayer(Client player)
     {
-        if (full || started || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
+        if (full || playingPlayers.containsKey(player) || idlePlayers.get(player) == null)
         {
             return;
         }
 
         playingPlayers.put(player, idlePlayers.get(player));
         idlePlayers.remove(player);
-        totalCorrect.put(player, 0);
 
-        send(player, timedMessagesHandler.getHideMessage("control_buttons"));
-
-        if (playingPlayers.size() == startGameThreshold)
+        if (totalCorrect.get(player) == null)
         {
-            quizTimer.updateTime(startTimeout);
-        }
-
-        if (playingPlayers.size() >= startGameThreshold)
-        {
-            broadcast(playingPlayers, timedMessagesHandler.getCountdownStartMessage(category.getAlias()));
+            totalCorrect.put(player, 0);
         }
         else
         {
-            broadcast(playingPlayers, timedMessagesHandler.getCountdownWaitMessage(category.getAlias()));
+            int score = totalCorrect.get(player);
+
+            totalCorrect.remove(player);
+            totalCorrect.put(player, score);
+        }
+
+        send(player, timedMessagesHandler.getHideMessage("control_buttons"));
+
+        if (!started)
+        {
+            if (playingPlayers.size() == startGameThreshold)
+            {
+                quizTimer.updateTime(startTimeout);
+            }
+
+            if (playingPlayers.size() >= startGameThreshold)
+            {
+                broadcast(playingPlayers, timedMessagesHandler.getCountdownStartMessage(category.getAlias()));
+            }
+            else
+            {
+                broadcast(playingPlayers, timedMessagesHandler.getCountdownWaitMessage(category.getAlias()));
+            }
+        }
+        else
+        {
+            if (nowQuestion)
+            {
+                boostersHandler.handleBoostersMessages();
+            }
+            else if (nowAnswer || restart)
+            {
+                broadcast(playingPlayers, timedMessagesHandler.getHideMessage("autocomplete"));
+                broadcast(playingPlayers, timedMessagesHandler.getHideMessage("autocut"));
+            }
         }
 
         if (playingPlayers.size() >= maxPlayingSize)
         {
             full = true;
-            canAwait = false;
-            canJoin = false;
 
-            broadcast(idlePlayers, timedMessagesHandler.getFullMessage());
+            if (!started)
+            {
+                canAwait = false;
+                canJoin = false;
+
+                broadcast(idlePlayers, timedMessagesHandler.getFullMessage());
+            }
+            else
+            {
+                broadcast(idlePlayers, timedMessagesHandler.getStartedFullMessage());
+            }
         }
 
         send(player, timedMessagesHandler.getSuccessfulJoinMessage());
@@ -272,26 +320,36 @@ public class TimedParty extends AbstractParty
         idlePlayers.remove(player);
         blackList.remove(player);
 
-        if (!questionsLoaded || canAwait || started)
+        player.clearReadyBoosters();
+
+        if (!questionsLoaded || canAwait)
         {
             return;
         }
 
         full = false;
-        canJoin = true;
 
-        if (playingPlayers.size() >= startGameThreshold)
+        if (!started)
         {
-            broadcast(playingPlayers, timedMessagesHandler.getCountdownStartMessage(category.getAlias()));
+            canJoin = true;
+
+            if (playingPlayers.size() >= startGameThreshold)
+            {
+                broadcast(playingPlayers, timedMessagesHandler.getCountdownStartMessage(category.getAlias()));
+            }
+            else
+            {
+                quizTimer.updateTime(-1);
+
+                broadcast(playingPlayers, timedMessagesHandler.getCountdownWaitMessage(category.getAlias()));
+            }
+
+            broadcast(idlePlayers, timedMessagesHandler.getJoinableMessage(category.getAlias()));
         }
         else
         {
-            quizTimer.updateTime(-1);
-
-            broadcast(playingPlayers, timedMessagesHandler.getCountdownWaitMessage(category.getAlias()));
+            send(player, timedMessagesHandler.getStartedJoinableMessage());
         }
-
-        broadcast(idlePlayers, timedMessagesHandler.getJoinableMessage(category.getAlias()));
     }
 
     @Override
@@ -308,7 +366,7 @@ public class TimedParty extends AbstractParty
                 shouldConnect = true;
                 canAwait = true;
 
-                controller.reconnectEveryoneToTimed();
+                controller.reconnectEveryoneToTimed(timeLeft <= criticalBlockTime);
 
                 if (sendAwaitingOnce)
                 {
@@ -518,6 +576,9 @@ public class TimedParty extends AbstractParty
         quizTimer.updateTime(-1);
         loadCategory();
 
+        shouldConnect = false;
+        shouldJoin = false;
+
         for (var player : playingPlayers.keySet())
         {
             tmpPlayers.put(player, player);
@@ -538,12 +599,9 @@ public class TimedParty extends AbstractParty
         full = false;
         started = false;
 
-        shouldConnect = false;
-        shouldJoin = false;
-
         for (var player : tmpPlayers.keySet())
         {
-            player.clear();
+            player.clearBoosters();
 
             try
             {
@@ -560,7 +618,7 @@ public class TimedParty extends AbstractParty
             connectPlayer(player);
         }
 
-        controller.reconnectEveryoneFromTimed();
+        controller.reconnectEveryoneFromTimed(true);
 
         unMute();
     }

@@ -32,10 +32,6 @@ export class ScreenDistanceSystem
         if (dist < ScreenDistanceSystem.CONNECTION_DISTANCE)
         {
             this.dappClientSocket.connect()
-        }
-        else
-        {
-            this.dappClientSocket.close(DappClientSocket.getDistanceCode())
-        }
+        }        
     }
 }

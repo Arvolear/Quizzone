@@ -1,10 +1,13 @@
 {
     "display": {
-        "title": "Quiz-test"    
+        "title": "Quizzone",
+        "description": "Quizzone is a simple multiplayer game, where players complete entertaining quizzes to reach the peak of the leaderboard and prove who is the savviest and the greatest quizzer!",
+        "navmapThumbnail": "https://quiz-service.dapp-craft.com/images/Quizzone.jpg",
+        "favicon": "favicon_asset"
     },
-    "contact": {
+    "contact": {    
         "name": "Dappcraft",
-        "email": ""
+        "email": "hello@dapp-craft.com"
     },
     "owner": "0xEd498E75d471C3b874461a87Bb7146453CC8175A",
     "scene": {
@@ -22,14 +25,14 @@
     },
     "policy": {
         "contentRating": "E",
-        "fly": true,
+        "fly": false,
         "voiceEnabled": true,
         "blacklist": []
     },
     "main": "bin/game.js",
     "tags": [],
     "spawnPoints": [{
-        "name": "spawn1",
+        "name": "spawn_right",
         "default": true,
         "position": {
             "x": 29,
@@ -42,8 +45,8 @@
             "z": 32
         }
     }, {
-        "name": "spawn2",
-        "default": false,
+        "name": "spawn_left",
+        "default": true,
         "position": {
             "x": 3,
             "y": 0,
@@ -56,6 +59,7 @@
         }}
     ],
     "requiredPermissions": [
-        "ALLOW_TO_MOVE_PLAYER_INSIDE_SCENE"
+        "ALLOW_TO_MOVE_PLAYER_INSIDE_SCENE",
+        "ALLOW_TO_TRIGGER_AVATAR_EMOTE"
     ]
 }

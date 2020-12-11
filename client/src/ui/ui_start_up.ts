@@ -163,21 +163,14 @@ export class UIStartUp
 
     private joinTheQuiz(): void
     {
-        if (UICallback.properties.getComponent(UIPropertiesComponent).canJoin)
+        if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
         {
-            if (UIStartUp.autocompleteNum + UIStartUp.autocutNum > 0)
-            {
-                this.checkBuyBoosters()
-            }
-            else
-            {                
-                UIStartUp.uiCallback.hideAllWindows()
-                AppCallback.dappClientSocket.join()                
-            }
+            this.checkBuyBoosters()
         }
         else
         {
-            UIStartUp.uiCallback.showWaitEndError("Can\'t check in")
+            UIStartUp.uiCallback.hideAllWindows()
+            AppCallback.dappClientSocket.join()
         }
     }
 
@@ -198,9 +191,9 @@ export class UIStartUp
             UIStartUp.uiCallback.showNotEnoughManaFundsError()
         }
         else
-        {        
+        {
             UIStartUp.shallBuyBoosters = true
-            AppCallback.dappClientSocket.join()                           
+            AppCallback.dappClientSocket.join()
         }
     }
 

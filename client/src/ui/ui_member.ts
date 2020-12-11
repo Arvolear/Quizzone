@@ -19,13 +19,13 @@ export class UIMember
     private static general: General
 
     constructor(uiCallback: UICallback)
-    {        
+    {
         UIMember.uiCallback = uiCallback
         UIMember.membership = Membership.getInstance(uiCallback)
         UIMember.general = General.getInstance()
 
         this.configAutocomplete()
-    }   
+    }
 
     private configAutocomplete(): void
     {
@@ -85,27 +85,34 @@ export class UIMember
 
     public reopen(): void
     {
-        const balancePromise = executeTask(async () =>
-        {            
-            const playerBalanceStr = await UIMember.general.getMainBalance()     
-            const priceStr = await UIMember.membership.getMemberShipPrice()
+        if (General.playerWallet != null)
+        {
+            const balancePromise = executeTask(async () =>
+            {
+                const playerBalanceStr = await UIMember.general.getMainBalance()
+                const priceStr = await UIMember.membership.getMemberShipPrice()
 
-            let valueBalanceText = UIMember.member.elements[4] as CustomPromptText            
-            let dotIndex = playerBalanceStr.indexOf(".")
+                let valueBalanceText = UIMember.member.elements[4] as CustomPromptText
+                let dotIndex = playerBalanceStr.indexOf(".")
 
-            UIMember.mainBalance = parseFloat(playerBalanceStr);
-            valueBalanceText.text.value = "Your balance:  " + playerBalanceStr.substr(0, dotIndex > 0 ? dotIndex + 5 : playerBalanceStr.length) + "  ETH"
+                UIMember.mainBalance = parseFloat(playerBalanceStr);
+                valueBalanceText.text.value = "Your balance:  " + playerBalanceStr.substr(0, dotIndex > 0 ? dotIndex + 5 : playerBalanceStr.length) + "  ETH"
 
-            let valuePriceText = UIMember.member.elements[6] as CustomPromptText            
-            dotIndex = priceStr.indexOf(".")
+                let valuePriceText = UIMember.member.elements[6] as CustomPromptText
+                dotIndex = priceStr.indexOf(".")
 
-            UIMember.price = parseFloat(priceStr)
-            valuePriceText.text.value = priceStr.substr(0, dotIndex > 0 ? dotIndex + 4 : Math.max(priceStr.length, 4))
-        })
+                UIMember.price = parseFloat(priceStr)
+                valuePriceText.text.value = priceStr.substr(0, dotIndex > 0 ? dotIndex + 4 : Math.max(priceStr.length, 4))
+            })
 
-        balancePromise.then()
+            balancePromise.then()
 
-        UIMember.member.reopen()
+            UIMember.member.reopen()
+        }
+        else
+        {
+            UIMember.uiCallback.showConnectMetamaskError()
+        }
     }
 
     public close(): void
