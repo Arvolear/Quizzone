@@ -15,9 +15,9 @@ import { AnswerStatistics } from "../entities_utils/answer_statistics"
 import { Sounds } from "./sounds"
 
 export class DappClientSocket
-{    
-    // private static location = "wss://quiz-service.dapp-craft.com:8444"
-    private static location = "ws://localhost:8080"
+{
+    private static location = "wss://quiz-service.dapp-craft.com:8444"
+    // private static location = "ws://localhost:8080"
 
     private static sceneCallback: SceneCallback
     private static uiCallback: UICallback
@@ -26,7 +26,6 @@ export class DappClientSocket
 
     private static centralScreenMain: IEntity
 
-    private static DISTANCE_CODE: number = 3001
     private static LEAVE_CODE: number = 3002
 
     constructor(sceneCallback: SceneCallback, uiCallback: UICallback)
@@ -35,11 +34,6 @@ export class DappClientSocket
         DappClientSocket.uiCallback = uiCallback
 
         DappClientSocket.centralScreenMain = engine.getComponentGroup(CentralScreenComponent).entities[0]
-    }
-
-    static getDistanceCode(): number
-    {
-        return DappClientSocket.DISTANCE_CODE
     }
 
     static getLeaveCode(): number
@@ -196,7 +190,7 @@ export class DappClientSocket
                     var autocutPrice = parseInt(lines[2])
 
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
-                    
+
                     uiComp.full = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
@@ -217,7 +211,7 @@ export class DappClientSocket
                     var autocutPrice = parseInt(lines[2])
 
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 3)
-                    
+
                     uiComp.full = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
@@ -236,10 +230,10 @@ export class DappClientSocket
             case "awaiting_connected":
                 {
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
-                    
+
                     uiComp.full = false
                     uiComp.beforeTimed = true
-                    uiComp.canLeave = false                    
+                    uiComp.canLeave = false
 
                     centralComp.connected = actualMessage
                     centralComp.connectedLoaded = true
@@ -257,21 +251,21 @@ export class DappClientSocket
 
                     uiComp.full = true
                     uiComp.beforeTimed = false
-                    uiComp.canLeave = false                    
+                    uiComp.canLeave = false
 
                     centralComp.connected = actualMessage
-                    centralComp.connectedLoaded = true            
+                    centralComp.connectedLoaded = true
 
                     break
                 }
             case "started_full":
-                {                    
+                {
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
 
                     uiComp.full = true
                     uiComp.beforeTimed = false
-                    uiComp.canLeave = false     
-                    
+                    uiComp.canLeave = false
+
                     centralComp.hasStarted = true
 
                     break
@@ -279,7 +273,7 @@ export class DappClientSocket
             case "started_joinable":
                 {
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
-                                        
+
                     uiComp.full = false
                     uiComp.beforeTimed = false
                     uiComp.canLeave = false
@@ -291,7 +285,7 @@ export class DappClientSocket
             case "successful_join":
                 {
                     uiComp.joined = true
-                    uiComp.canLeave = true                 
+                    uiComp.canLeave = true
 
                     DappClientSocket.sceneCallback.turnOffButtonCollisions()
                     DappClientSocket.sceneCallback.setColliderAndTeleport()
@@ -304,11 +298,11 @@ export class DappClientSocket
             case "countdown":
                 {
                     var actualMessage = DappClientSocket.readToTheEndFrom(lines, 1)
-                    
+
                     uiComp.beforeTimed = false
 
                     centralComp.connected = actualMessage
-                    centralComp.connectedLoaded = true                              
+                    centralComp.connectedLoaded = true
 
                     sounds.playJoinMusic()
                     sounds.playJoinQuiz()
@@ -386,7 +380,7 @@ export class DappClientSocket
                     let question = DappClientSocket.getQuestionFrom(lines, 4)
 
                     DappClientSocket.sceneCallback.turnOnButtonCollisions()
-                    
+
                     uiComp.timeToQuizStart = ""
 
                     centralComp.hasStarted = true
@@ -409,8 +403,8 @@ export class DappClientSocket
                     var totalQuestions = parseInt(lines[2])
 
                     let question = DappClientSocket.getQuestionFrom(lines, 4)
-                    
-                    uiComp.canLeave = true                    
+
+                    uiComp.canLeave = true
                     uiComp.timeToQuizStart = ""
 
                     centralComp.hasStarted = true
@@ -495,7 +489,7 @@ export class DappClientSocket
                     }
                     else
                     {
-                        sounds.playWrong()                        
+                        sounds.playWrong()
                     }
 
                     sounds.muteMusic()
@@ -540,7 +534,7 @@ export class DappClientSocket
                 }
             case "finish":
                 {
-                    uiComp.canLeave = false                    
+                    uiComp.canLeave = false
 
                     centralComp.nowQuestion = false
                     centralComp.nowAnswer = false
@@ -578,7 +572,7 @@ export class DappClientSocket
                 {
                     var allBest = DappClientSocket.getLifetimeBestFrom(lines, 2)
                     var isPlayer = (lines[1] == "true")
-                    
+
                     bestComp.lifetimeBest = allBest
                     bestComp.isPlayer = isPlayer
                     bestComp.lifetimeBestLoaded = true
@@ -697,8 +691,7 @@ export class DappClientSocket
         lifetimeBestScreenDash.getComponent(LifetimeBestScreenComponent).clear()
         timedQuizScreenMain.getComponent(TimedQuizScreenComponent).clear()
 
-        if (event.code != DappClientSocket.DISTANCE_CODE &&
-            event.code != DappClientSocket.LEAVE_CODE)
+        if (event.code != DappClientSocket.LEAVE_CODE)
         {
             log("AN ERROR OCCURED")
 
@@ -709,17 +702,10 @@ export class DappClientSocket
         }
         else
         {
-            if (event.code == DappClientSocket.LEAVE_CODE)
-            {
-                DappClientSocket.sceneCallback.turnOnSpecialCaseCollision()
-                sounds.playLeaveQuiz()
+            log("LEAVE QUIZ DISCONNECT")
 
-                log("LEAVE QUIZ DISCONNECT")
-            }
-            else
-            {
-                log("DISTANCE DISCONNECT")
-            }
+            DappClientSocket.sceneCallback.turnOnSpecialCaseCollision()
+            sounds.playLeaveQuiz()
 
             centralScreenMain.getComponent(TextShape).value = ""
         }
@@ -730,7 +716,7 @@ export class DappClientSocket
         lifetimeBestScreenMain.getComponent(TextShape).value = ""
         lifetimeBestScreenRight.getComponent(TextShape).value = ""
         lifetimeBestScreenDash.getComponent(TextShape).value = ""
-        timedQuizScreenMain.getComponent(TextShape).value = ""        
+        timedQuizScreenMain.getComponent(TextShape).value = ""
 
         DappClientSocket.sceneCallback.turnOffButtonCollisions()
         DappClientSocket.sceneCallback.dropCollider()
