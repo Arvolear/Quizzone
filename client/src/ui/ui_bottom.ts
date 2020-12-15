@@ -1,5 +1,5 @@
-import { setSection } from "../../node_modules/@dcl/ui-utils/utils/resources"
-import { Delay } from "../../node_modules/@dcl/ui-utils/utils/timerComponents"
+import { setSection } from "../../node_modules/@arvolear/alternative-dcl-ui-utils/utils/resources"
+import { UIDelay } from "../../node_modules/@arvolear/alternative-dcl-ui-utils/utils/timerComponents"
 import { UICallback } from "../callbacks/ui_callback"
 
 export class UIBottom
@@ -131,7 +131,7 @@ export class UIBottom
         let dummyEntity = new Entity()
         engine.addEntity(dummyEntity)
 
-        dummyEntity.addComponentOrReplace(new Delay(duration > 0 ? duration : 5, () =>
+        dummyEntity.addComponentOrReplace(new UIDelay(duration > 0 ? duration : 5, () =>
         {
             UIBottom.tickImage.visible = false
             engine.removeEntity(dummyEntity)
