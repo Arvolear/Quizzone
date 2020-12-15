@@ -1,0 +1,10 @@
+/client/bin
+.idea/
+/client/node_modules
+/client/Dockerfile
+/client/.dclignore
+/server/target
+/server/log/*
+!/server/log/.gitkeep
+
+/ethereum/node_modules
