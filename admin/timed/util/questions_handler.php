@@ -295,7 +295,7 @@ function importQuestions($file, $shuffle)
         }
 
         for ($j = 0; $j < min(count($csv[$i]), count($types)); $j++) {
-            $_SESSION[$types[$j] . $i] = htmlspecialchars((trim($csv[$i][$j])));
+            $_SESSION[$types[$j] . $i] = htmlspecialchars(trim($csv[$i][$j]));
         }
 
         $_SESSION['answer' . $i] = empty($shuffle) ? $answer : $localAnswer;
