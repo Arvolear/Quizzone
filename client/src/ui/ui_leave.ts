@@ -1,5 +1,5 @@
-import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
-import * as ui from '../../node_modules/@dcl/ui-utils/index'
+import * as ui from "../../node_modules/@arvolear/alternative-dcl-ui-utils/index"
+import { ButtonStyles, PromptStyles } from '../../node_modules/@arvolear/alternative-dcl-ui-utils/utils/types';
 import { UICallback } from '../callbacks/ui_callback'
 import { DappClientSocket } from "../app/dapp_client_socket"
 import { AppCallback } from "../callbacks/app_callback"

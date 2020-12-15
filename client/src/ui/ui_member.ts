@@ -1,8 +1,8 @@
-import * as ui from '../../node_modules/@dcl/ui-utils/index'
+import * as ui from "../../node_modules/@arvolear/alternative-dcl-ui-utils/index"
+import { ButtonStyles, PromptStyles } from '../../node_modules/@arvolear/alternative-dcl-ui-utils/utils/types';
+import { CustomPromptText } from "../../node_modules/@arvolear/alternative-dcl-ui-utils/prompts/customPrompt/index"
 import { UICallback } from "../callbacks/ui_callback"
-import { ButtonStyles, PromptStyles } from "../../node_modules/@dcl/ui-utils/utils/types"
 import { UIPropertiesComponent } from "../components/ui_properties_component"
-import { CustomPromptText } from "../../node_modules/@dcl/ui-utils/prompts/customPrompt/index"
 import { Membership } from '../blockchain/membership'
 import { General } from '../blockchain/general'
 
