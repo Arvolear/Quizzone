@@ -159,12 +159,12 @@ function editQuestion($category, $id)
 
     $_SESSION['edit_category'] = $category;
     $_SESSION['edit_id'] = $id;
-    $_SESSION['edit_question'] = $row['question'];
-    $_SESSION['edit_variant1'] = $row['variant1'];
-    $_SESSION['edit_variant2'] = $row['variant2'];
-    $_SESSION['edit_variant3'] = $row['variant3'];
-    $_SESSION['edit_variant4'] = $row['variant4'];
-    $_SESSION['edit_answer'] = $row['answer'];
+    $_SESSION['edit_question'] = htmlspecialchars(trim($row['question']));
+    $_SESSION['edit_variant1'] = htmlspecialchars(trim($row['variant1']));
+    $_SESSION['edit_variant2'] = htmlspecialchars(trim($row['variant2']));
+    $_SESSION['edit_variant3'] = htmlspecialchars(trim($row['variant3']));
+    $_SESSION['edit_variant4'] = htmlspecialchars(trim($row['variant4']));
+    $_SESSION['edit_answer'] = htmlspecialchars(trim($row['answer']));
 
     header("Location: timed_question.php", true, 303);
     exit();
