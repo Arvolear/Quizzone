@@ -658,7 +658,7 @@ public class TimedParty extends AbstractParty
     }
 
     @Override
-    public boolean isStarted()
+    synchronized public boolean isStarted()
     {
         return started;
     }

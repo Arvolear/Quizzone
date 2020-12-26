@@ -23,7 +23,6 @@ public class RandomParty extends AbstractParty
     protected boolean canJoin = false;
     protected boolean full = false;
     protected boolean started = false;
-    protected boolean reconnecting = false;
 
     protected boolean nowQuestion = false;
     protected boolean nowAnswer = false;
@@ -473,8 +472,6 @@ public class RandomParty extends AbstractParty
         full = false;
         started = false;
 
-        reconnecting = true;
-
         for (var player : tmpPlayers.keySet())
         {
             player.clearBoosters();
@@ -493,8 +490,6 @@ public class RandomParty extends AbstractParty
 
             connectPlayer(player);
         }
-
-        reconnecting = false;
     }
 
     @Override
@@ -510,13 +505,8 @@ public class RandomParty extends AbstractParty
     }
 
     @Override
-    public boolean isStarted()
+    synchronized public boolean isStarted()
     {
         return started;
-    }
-
-    public boolean isReconnecting()
-    {
-        return reconnecting;
     }
 }

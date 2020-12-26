@@ -166,7 +166,7 @@ public class Controller implements IStopWatchCallback
                     party.finish();
                 }
 
-                if (!party.isReconnecting() && party.isCompletelyEmpty())
+                if (party.isCompletelyEmpty())
                 {
                     party.close();
                     realmToParties.remove(player.getRealm());

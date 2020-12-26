@@ -200,12 +200,12 @@ abstract public class AbstractParty implements IStopWatchCallback
         this.muted = false;
     }
 
-    public boolean isCompletelyEmpty()
+    synchronized public boolean isCompletelyEmpty()
     {
         return playingPlayers.isEmpty() && idlePlayers.isEmpty();
     }
 
-    public boolean isPlayingEmpty()
+    synchronized public boolean isPlayingEmpty()
     {
         return playingPlayers.isEmpty();
     }
