@@ -16,21 +16,6 @@ function checkDuplicateCategory($category)
     return false;
 }
 
-function checkQuestionsLowerNumber($category, $QuestionsLimit)
-{
-    global $DB;
-    global $conn;
-
-    $sql = "SELECT * FROM $DB.$category";
-    $result = mysqli_query($conn, $sql);
-
-    if (mysqli_num_rows($result) < $QuestionsLimit) {
-        return false;
-    }
-
-    return true;
-}
-
 function checkQuestionsUpperNumber($category, $QuestionsLimit)
 {
     global $DB;

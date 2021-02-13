@@ -78,8 +78,7 @@ function getAll()
 function publish($category, $alias, $year, $month, $day, $hour, $minute, $second)
 {
     global $MAIN_CATEGORIES;
-    global $EDIT_CATEGORIES;
-    global $QUESTION_LIMIT;
+    global $EDIT_CATEGORIES;    
 
     global $DB;
     global $conn;
@@ -89,12 +88,7 @@ function publish($category, $alias, $year, $month, $day, $hour, $minute, $second
     if (!validateDate($date)) {
         getWrongDateError();
         return;
-    }
-
-    if (!checkQuestionsLowerNumber($category, $QUESTION_LIMIT)) {
-        getNotEnoughTimedError($QUESTION_LIMIT);
-        return;
-    }
+    }    
 
     $category = addslashes($category);
     $alias = addslashes($alias);
@@ -119,8 +113,7 @@ function publish($category, $alias, $year, $month, $day, $hour, $minute, $second
 function republish($category, $alias, $year, $month, $day, $hour, $minute, $second)
 {
     global $MAIN_CATEGORIES;
-    global $FINISHED_CATEGORIES;
-    global $QUESTION_LIMIT;
+    global $FINISHED_CATEGORIES;    
 
     global $DB;
     global $conn;
@@ -129,11 +122,6 @@ function republish($category, $alias, $year, $month, $day, $hour, $minute, $seco
 
     if (!validateDate($date)) {
         getWrongDateError();
-        return;
-    }
-
-    if (!checkQuestionsLowerNumber($category, $QUESTION_LIMIT)) {
-        getNotEnoughTimedError($QUESTION_LIMIT);
         return;
     }
 

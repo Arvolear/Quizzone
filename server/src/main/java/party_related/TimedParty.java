@@ -128,7 +128,6 @@ public class TimedParty extends AbstractParty
         }
 
         sendAwaitingOnce = true;
-        questionsLoaded = true;
         category = categories.get(leastIndex);
         startTime = categories.get(leastIndex).getStartTime();
 
@@ -450,6 +449,7 @@ public class TimedParty extends AbstractParty
             if (category != null)
             {
                 questionnaire.loadQuestions(category.getCategory());
+                questionsLoaded = true;
                 setJoinable();
             }
         }

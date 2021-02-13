@@ -249,7 +249,7 @@ public class Controller implements IStopWatchCallback
     @Override
     public void updateTimer(String name, int timeLeft)
     {
-        if (timedParty != null && !timedParty.isQuestionsLoaded())
+        if (timedParty != null && !timedParty.isStarted())
         {
             timedParty.loadCategory();
         }
