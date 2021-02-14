@@ -264,7 +264,7 @@ public class PartyMessagesHandler
                 int res = right.getValue() - left.getValue();
 
                 return res == 0 ?
-                        party.playingPlayers.get(left.getKey()).getNick().compareTo(party.playingPlayers.get(right.getKey()).getNick()) :
+                        left.getKey().getNick().compareTo(right.getKey().getNick()) :
                         res;
             });
 
