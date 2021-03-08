@@ -8,7 +8,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
-@WebSocket(maxIdleTime=1800000)
+@WebSocket(maxIdleTime=3600000) // one hour
+/// notice - check nginx config proxy_read_timeout
 public class DappServerSocket
 {
     private final Controller controller = Controller.getInstance();

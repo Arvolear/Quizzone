@@ -22,6 +22,7 @@ export class Scene extends SceneCallback
     private scene: Entity
 
     private banner: Entity
+    private blackCanvas: Entity
 
     private becomeAMember: Entity
     private alreadyAMember: Entity
@@ -63,6 +64,7 @@ export class Scene extends SceneCallback
 
         this.configScene()
         // this.configBanner()
+        this.configBlackCanvas()
         this.configBecomeAMember()
         this.configAlreadyAMember()
         this.configGrass()
@@ -134,6 +136,27 @@ export class Scene extends SceneCallback
                 scale: new Vector3(1, 1, 1)
             })
         this.banner.addComponentOrReplace(transform)
+    }
+
+    private configBlackCanvas(): void
+    {
+        const canvasShape = new GLTFShape("models/canvas/black.glb")
+        canvasShape.withCollisions = false
+        canvasShape.isPointerBlocker = false
+        canvasShape.visible = true
+
+        this.blackCanvas = new Entity('canvas')
+        engine.addEntity(this.blackCanvas)
+        this.blackCanvas.setParent(this.scene)
+        this.blackCanvas.addComponentOrReplace(canvasShape)
+
+        const transform = new Transform(
+            {
+                position: new Vector3(27, 0.4, 31),
+                rotation: new Quaternion(0, 0, 0, 1),
+                scale: new Vector3(1, 1, 1)
+            })
+        this.blackCanvas.addComponentOrReplace(transform)
     }
 
     private configBecomeAMember(): void

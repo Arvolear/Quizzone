@@ -10,7 +10,7 @@
     <version>1.0</version>
 
     <properties>
-        <jettyVersion>9.4.31.v20200723</jettyVersion>
+        <jettyVersion>9.4.38.v20210224</jettyVersion>
         <mysqlVersion>8.0.21</mysqlVersion>
 
         <maven.compiler.source>11</maven.compiler.source>
@@ -55,7 +55,7 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jettyVersion}</version>
+                <version>10.0.0</version>
             </plugin>
         </plugins>
     </build>
